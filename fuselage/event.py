@@ -26,7 +26,9 @@ class EventState(object):
     """ A mapping of resource ids to the overridden policy name for that
     resource, if there is one. """
 
-    def __init__(self, load=False):
+    def __init__(self, save_file, simulate, load=False):
+        self.save_file = save_file
+        self.simulate = simulate
         self.loaded = not load
         self.overrides = {}
         self.simulate = False
@@ -59,6 +61,28 @@ class EventState(object):
             return resource.policies[policy_name]
         else:
             return None
+
+    def open(self):
+        if not self.simulate:
+            save_parent = os.path.realpath(
+                os.path.join(self.save_file, os.path.pardir))
+            if not os.path.exists(save_parent):
+                os.makedirs(save_parent)
+
+        if os.path.exists(self.save_file):
+            if self.resume:
+                self.loaded = False
+            elif self.no_resume:
+                if not self.simulate:
+                    os.unlink(self.save_file)
+                self.loaded = True
+            else:
+                raise error.SavedEventsAndNoInstruction(
+                    "There is a saved events file - you need to specify --resume or --no-resume")
+
+    def success(self):
+        if not self.simulate and os.path.exists(self.save_file):
+            os.unlink(self.save_file)
 
     def save(self):
         if not self.simulate:

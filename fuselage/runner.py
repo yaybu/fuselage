@@ -36,35 +36,14 @@ class Runner(object):
         self.simulate = root.simulate
         self.verbose = root.verbose
 
-        self.options = {}
-        if os.path.exists("/etc/yaybu"):
-            self.options = yay.load_uri("/etc/yaybu")
-
         if not self.simulate and not os.path.exists(self.get_data_path()):
             os.makedirs(self.get_data_path())
 
-        # This makes me a little sad inside, but the whole
-        # context thing needs a little thought before jumping in
-        self.state = event.EventState()
-        self.state.save_file = self.get_data_path("events.saved")
-        self.state.simulate = self.simulate
-
-        if not self.simulate:
-            save_parent = os.path.realpath(
-                os.path.join(self.state.save_file, os.path.pardir))
-            if not os.path.exists(save_parent):
-                os.makedirs(save_parent)
-
-        if os.path.exists(self.state.save_file):
-            if self.resume:
-                self.state.loaded = False
-            elif self.no_resume:
-                if not self.simulate:
-                    os.unlink(self.state.save_file)
-                self.state.loaded = True
-            else:
-                raise error.SavedEventsAndNoInstruction(
-                    "There is a saved events file - you need to specify --resume or --no-resume")
+        self.state = event.EventState(
+            save_file = self.get_data_path("events.saved"),
+            simulate = self.simulate,
+        )
+        self.state.open()
 
         # Actually apply the configuration
         bundle = resource.ResourceBundle.create_from_yay_expression(
@@ -73,10 +52,9 @@ class Runner(object):
 
         with self.root.ui.throbber("Provision %s" % self.host) as throbber:
             changed = bundle.apply(self, throbber)
-        self.root.changed(changed)
 
-        if not self.simulate and os.path.exists(self.state.save_file):
-            os.unlink(self.state.save_file)
+        #FIXME: Do we get here if no change has occured??
+        self.state.success()
 
     def change(self, change):
         renderer = TextRenderer.get(change, self.current_output)
