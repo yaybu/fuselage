@@ -28,12 +28,12 @@ class Execute(provider.Provider):
 
     def apply(self, context, output):
         creates = self.resource.creates.as_string()
-        if creates and context.transport.exists(creates):
+        if creates and os.path.exists(creates):
             # logging.info("%r: %s exists, not executing" % (self.resource, self.resource.creates))
             return False
 
         touch = self.resource.touch.as_string()
-        if touch and context.transport.exists(touch):
+        if touch and os.path.exists(touch):
             return False
 
         unless = self.resource.unless.as_string()

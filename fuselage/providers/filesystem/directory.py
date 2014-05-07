@@ -25,22 +25,21 @@ class Directory(provider.Provider):
     policies = (resources.directory.DirectoryAppliedPolicy,)
 
     def check_path(self, context, directory):
-        if context.transport.isdir(directory):
+        if os.path.isdir(directory):
             return
 
         simulate = context.simulate
-        transport = context.transport
         frags = directory.split("/")
         path = "/"
         for i in frags:
             path = os.path.join(path, i)
-            if not transport.exists(path):
+            if not os.path.exists(path):
                 if self.resource.parents.resolve():
                     return
                 if simulate:
                     return
                 raise error.PathComponentMissing(path)
-            if not transport.isdir(path):
+            if not os.path.isdir(path):
                 raise error.PathComponentNotDirectory(path)
 
     def apply(self, context, output):
@@ -64,10 +63,10 @@ class RemoveDirectory(provider.Provider):
     def apply(self, context, output):
         name = self.resource.name.as_string()
 
-        if context.transport.exists(name) and not context.transport.isdir(name):
+        if os.path.exists(name) and not os.path.isdir(name):
             raise error.InvalidProviderError(
                 "%r: %s exists and is not a directory" % (self, name))
-        if context.transport.exists(name):
+        if os.path.exists(name):
             context.change(ShellCommand(["/bin/rmdir", self.resource.name]))
             changed = True
         else:
@@ -82,10 +81,10 @@ class RemoveDirectoryRecursive(provider.Provider):
     def apply(self, context, output):
         name = self.resource.name.as_string()
 
-        if context.transport.exists(name) and not context.transport.isdir(name):
+        if os.path.exists(name) and not os.path.isdir(name):
             raise error.InvalidProviderError(
                 "%r: %s exists and is not a directory" % (self, name))
-        if context.transport.exists(name):
+        if os.path.exists(name):
             context.change(
                 ShellCommand(["/bin/rm", "-rf", self.resource.name]))
             changed = True

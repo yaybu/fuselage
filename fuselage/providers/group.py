@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import grp
+
 from yaybu import error
 from yaybu.provisioner import provider
 from yaybu.provisioner import resources
@@ -26,7 +28,7 @@ class Group(provider.Provider):
         fields = ("name", "passwd", "gid", "members",)
 
         try:
-            info_tuple = context.transport.getgrnam(
+            info_tuple = grp.getgrnam(
                 self.resource.name.as_string().encode("utf-8"))
         except KeyError:
             info = dict((f, None) for f in fields)
@@ -73,7 +75,7 @@ class GroupRemove(provider.Provider):
 
     def apply(self, context, output):
         try:
-            context.transport.getgrnam(
+            grp.getgrnam(
                 self.resource.name.as_string().encode("utf-8"))
         except KeyError:
             # If we get a key errror then there is no such group. This is good.

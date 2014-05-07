@@ -25,26 +25,26 @@ class Mount(provider.Provider):
     policies = (resources.mount.MountPolicy,)
 
     def check_path(self, context, directory):
-        if context.transport.isdir(directory):
+        if os.path.isdir(directory):
             return
 
         simulate = context.simulate
-        transport = context.transport
         frags = directory.split("/")
         path = "/"
         for i in frags:
             path = os.path.join(path, i)
-            if not transport.exists(path):
+            if not os.path.exists(path):
                 if self.resource.parents.resolve():
                     return
                 if simulate:
                     return
                 raise error.PathComponentMissing(path)
-            if not transport.isdir(path):
+            if not os.path.isdir(path):
                 raise error.PathComponentNotDirectory(path)
 
     def get_all_active_mounts(self, context):
-        path = context.transport.get("/proc/mounts")
+        with open("/proc/mounts", "r") as fp:
+            path = fp.read()
         d = {}
         for line in path.split("\n"):
             if not line.strip():

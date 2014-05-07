@@ -12,7 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import stat
+import pwd
+import grp
 
 from yaybu import error, changes
 from .execute import ShellCommand
@@ -32,20 +35,19 @@ class AttributeChanger(changes.Change):
     def apply(self, context, renderer):
         """ Apply the changes """
 
-        transport = context.transport
         uid = None
         gid = None
         mode = None
 
-        if transport.exists(self.filename):
-            st = transport.stat(self.filename)
+        if os.path.exists(self.filename):
+            st = os.stat(self.filename)
             uid = st.st_uid
             gid = st.st_gid
             mode = stat.S_IMODE(st.st_mode)
 
         if self.user is not None:
             try:
-                owner = transport.getpwnam(self.user)
+                owner = pwd.getpwnam(self.user)
             except KeyError:
                 if not context.simulate:
                     raise error.InvalidUser("User '%s' not found" % self.user)
@@ -60,7 +62,7 @@ class AttributeChanger(changes.Change):
 
         if self.group is not None:
             try:
-                group = transport.getgrnam(self.group)
+                group = grp.getgrnam(self.group)
             except KeyError:
                 if not context.simulate:
                     raise error.InvalidGroup("No such group '%s'" % self.group)

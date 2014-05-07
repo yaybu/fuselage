@@ -57,8 +57,6 @@ class ShellCommand(changes.Change):
         return map(uni, l)
 
     def apply(self, ctx, renderer):
-        transport = ctx.transport
-
         if isinstance(self.command, list):
             command = []
             for c in self.command:
@@ -101,16 +99,16 @@ class ShellCommand(changes.Change):
         if command[0].startswith("./"):
             if len(command[0]) <= 2:
                 command_exists = False
-            if not transport.exists(posixpath.join(self.cwd, command[0][2:])):
+            if not os.path.exists(posixpath.join(self.cwd, command[0][2:])):
                 command_exists = False
 
         elif command[0].startswith("/"):
-            if not transport.exists(command[0]):
+            if not os.path.exists(command[0]):
                 command_exists = False
 
         else:
             for path in env["PATH"].split(":"):
-                if transport.exists(posixpath.join(path, command[0])):
+                if os.path.exists(posixpath.join(path, command[0])):
                     break
             else:
                 command_exists = False
@@ -126,7 +124,8 @@ class ShellCommand(changes.Change):
             self.stderr = ""
             return
 
-        self.returncode, self.stdout, self.stderr = transport.execute(
+        # FIXME FIXME FIXME
+        self.returncode, self.stdout, self.stderr = subprocess.Popen(
             command, stdin=self.stdin, stdout=renderer.stdout, stderr=renderer.stderr, env=env, user=self.user, group=self.group, cwd=self.cwd, umask=self.umask)
         renderer.flush()
 

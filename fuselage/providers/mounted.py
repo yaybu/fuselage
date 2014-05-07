@@ -27,7 +27,7 @@ class Mounted(Provider):
 
     def apply(self, context, output):
         for w in self.resource.watch.as_list():
-            if context.transport.exists(w):
+            if os.path.exists(w):
                 context.change(ShellCommand(["touch", "-ac", w]))
 
         return True

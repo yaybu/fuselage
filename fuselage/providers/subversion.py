@@ -55,7 +55,7 @@ class Svn(Provider):
         return True
 
     def apply(self, context, output):
-        if not context.transport.exists("/usr/bin/svn"):
+        if not os.path.exists("/usr/bin/svn"):
             error_string = "'/usr/bin/svn' is not available; update your configuration to install subversion?"
             if not context.simulate:
                 raise MissingDependency(error_string)
@@ -64,7 +64,7 @@ class Svn(Provider):
 
         name = self.resource.name.as_string()
 
-        if not context.transport.exists(name):
+        if not os.path.exists(name):
             return self.action_checkout(context)
 
         changed = False
@@ -105,7 +105,7 @@ class Svn(Provider):
         return changed
 
     def action_export(self, context):
-        if context.transport.exists(self.resource.name.as_string()):
+        if os.path.exists(self.resource.name.as_string()):
             return
         self.svn(context, "export", self.url, self.resource.name)
 

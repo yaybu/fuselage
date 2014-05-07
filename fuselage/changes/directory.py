@@ -28,7 +28,7 @@ class EnsureDirectory(changes.Change):
 
     def apply(self, context, renderer):
         self.changed = False
-        if not context.transport.exists(self.path):
+        if not os.path.exists(self.path):
             command = ["/bin/mkdir"]
             if self.recursive:
                 command.append("-p")

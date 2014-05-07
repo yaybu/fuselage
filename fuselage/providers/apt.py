@@ -12,11 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import subprocess
+
 from yaybu.provisioner import provider
 from yaybu import error
 from yaybu.provisioner import resources
 from yaybu.provisioner.changes import ShellCommand
 
+# FIXME
 
 def is_installed(context, resource):
     # work out if the package is already installed

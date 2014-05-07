@@ -20,6 +20,9 @@ from .execute import ShellCommand
 from .attributes import AttributeChanger
 
 
+# FIXME: Set mode of file before writing to it
+
+
 def binary_buffers(*buffers):
     """ Check all of the passed buffers to see if any of them are binary. If
     any of them are binary this will return True. """
@@ -50,12 +53,12 @@ class EnsureFile(changes.Change):
 
     def empty_file(self, context):
         """ Write an empty file """
-        exists = context.transport.exists(self.filename)
+        exists = os.path.exists(self.filename)
         if not exists:
             context.change(ShellCommand(["touch", self.filename]))
             self.changed = True
         else:
-            st = context.transport.stat(self.filename)
+            st = os.stat(self.filename)
             if st.st_size != 0:
                 self.renderer.empty_file(self.filename)
                 context.change(
@@ -64,25 +67,27 @@ class EnsureFile(changes.Change):
 
     def overwrite_existing_file(self, context):
         """ Change the content of an existing file """
-        self.current = context.transport.get(self.filename)
+        with open(self.filename, "r") as fp:
+            self.current = fp.read()
         if self.current != self.contents:
             self.renderer.changed_file(
                 self.filename, self.current, self.contents, self.sensitive)
             if not context.simulate:
-                context.transport.put(self.filename, self.contents, self.mode)
+                with open(self.filename, "w") as fp:
+                    fp.write(self.contents)
             self.changed = True
 
     def write_new_file(self, context):
         """ Write contents to a new file. """
         self.renderer.new_file(self.filename, self.contents, self.sensitive)
         if not context.simulate:
-            context.transport.put(self.filename, self.contents, self.mode)
+            with open(self.filename, "w") as fp:
+                fp.write(self.contents)
         self.changed = True
 
     def write_file(self, context):
         """ Write to either an existing or new file """
-        exists = context.transport.exists(self.filename)
-        if exists:
+        if os.path.exists(self.filename):
             self.overwrite_existing_file(context)
         else:
             self.write_new_file(context)

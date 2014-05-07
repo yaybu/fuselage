@@ -13,6 +13,8 @@
 # limitations under the License.
 
 import stat
+import pwd
+import grp
 
 from yaybu import error
 from yaybu.provisioner import resources
@@ -30,7 +32,7 @@ class Link(provider.Provider):
         owner = self.resource.owner.as_string(default='')
         if owner:
             try:
-                return context.transport.getpwnam(owner).pw_uid
+                return pwd.getpwnam(owner).pw_uid
             except KeyError:
                 raise error.InvalidUser()
 
@@ -40,13 +42,13 @@ class Link(provider.Provider):
         group = self.resource.group.as_string(default='')
         if group:
             try:
-                return context.transport.getgrnam(group).gr_gid
+                return grp.getgrnam(group).gr_gid
             except KeyError:
                 raise error.InvalidGroup()
 
     def _stat(self, context):
         """ Extract stat information for the resource. """
-        st = context.transport.lstat(self.resource.name.as_string())
+        st = os.lstat(self.resource.name.as_string())
         uid = st.st_uid
         gid = st.st_gid
         mode = stat.S_IMODE(st.st_mode)
@@ -61,7 +63,7 @@ class Link(provider.Provider):
         mode = None
         isalink = False
 
-        if not context.transport.exists(to):
+        if not os.path.exists(to):
             if not context.simulate:
                 raise error.DanglingSymlink(
                     "Destination of symlink %r does not exist" % to)
@@ -72,13 +74,13 @@ class Link(provider.Provider):
         group = self._get_group(context)
 
         try:
-            linkto = context.transport.readlink(name)
+            linkto = os.readlink(name)
             isalink = True
         except OSError:
             isalink = False
 
         if not isalink or linkto != to:
-            if context.transport.lexists(name):
+            if os.lexists(name):
                 context.change(
                     ShellCommand(["/bin/rm", "-rf", self.resource.name]))
 
@@ -87,7 +89,7 @@ class Link(provider.Provider):
             changed = True
 
         try:
-            linkto = context.transport.readlink(name)
+            linkto = os.readlink(name)
             isalink = True
         except OSError:
             isalink = False
@@ -123,8 +125,8 @@ class RemoveLink(provider.Provider):
     def apply(self, context, output):
         name = self.resource.name.as_string()
 
-        if context.transport.lexists(name):
-            if not context.transport.islink(name):
+        if os.lexists(name):
+            if not os.islink(name):
                 raise error.InvalidProvider(
                     "%r: %s exists and is not a link" % (self, name))
             context.change(ShellCommand(["/bin/rm", self.resource.name]))

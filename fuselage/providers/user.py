@@ -37,7 +37,7 @@ class User(provider.Provider):
         username = self.resource.name.as_string()
 
         try:
-            info_tuple = context.transport.getpwnam(username)
+            info_tuple = pwd.getpwnam(username)
         except KeyError:
             info = dict((f, None) for f in fields)
             info["exists"] = False
@@ -53,7 +53,7 @@ class User(provider.Provider):
             info[field] = info_tuple[i]
 
         try:
-            shadow = context.transport.getspnam(username)
+            shadow = pwd.getspnam(username)
             info['passwd'] = shadow.sp_pwd
             if shadow.sp_pwd == "!":
                 info['disabled-login'] = True
@@ -105,7 +105,7 @@ class User(provider.Provider):
                     changed = True
             else:
                 try:
-                    gid = context.transport.getgrnam(group).gr_gid
+                    gid = grp.getgrnam(group).gr_gid
                 except KeyError:
                     if not context.simulate:
                         raise error.InvalidGroup(
@@ -122,7 +122,7 @@ class User(provider.Provider):
         if groups:
             desired_groups = set(groups)
             current_groups = set(
-                g.gr_name for g in context.transport.getgrall() if name in g.gr_mem)
+                g.gr_name for g in grp.getgrall() if name in g.gr_mem)
 
             append = self.resource.append.resolve()
             if append and len(desired_groups - current_groups) > 0:
@@ -171,7 +171,7 @@ class UserRemove(provider.Provider):
 
     def apply(self, context, output):
         try:
-            context.transport.getpwnam(
+            grp.getpwnam(
                 self.resource.name.as_string().encode("utf-8"))
         except KeyError:
             # If we get a key errror then there is no such user. This is good.

@@ -29,16 +29,16 @@ class File(provider.Provider):
     policies = (resources.file.FileApplyPolicy,)
 
     def check_path(self, ctx, directory, simulate):
-        if ctx.transport.isdir(directory):
+        if os.path.isdir(directory):
             return
         frags = directory.split("/")
         path = "/"
         for i in frags:
             path = os.path.join(path, i)
-            if not ctx.transport.exists(path):  # FIXME
+            if not os.path.exists(path):  # FIXME
                 if not simulate:
                     raise error.PathComponentMissing("Directory '%s' is missing" % path)
-            elif not ctx.transport.isdir(path):
+            elif not os.path.isdir(path):
                 raise error.PathComponentNotDirectory("Path '%s' is not a directory" % path)
 
     def render_json(self, context):
@@ -132,8 +132,8 @@ class RemoveFile(provider.Provider):
 
     def apply(self, context, output):
         name = self.resource.name.as_string()
-        if context.transport.exists(name):
-            if not context.transport.isfile(name):
+        if os.path.exists(name):
+            if not os.path.isfile(name):
                 raise error.InvalidProvider(
                     "%s exists and is not a file" % name)
             context.change(ShellCommand(["rm", self.resource.name]))

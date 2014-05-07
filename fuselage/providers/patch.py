@@ -28,16 +28,16 @@ class Patch(provider.Provider):
     policies = (resources.patch.PatchApplyPolicy,)
 
     def check_path(self, ctx, directory, simulate):
-        if ctx.transport.isdir(directory):
+        if os.path.isdir(directory):
             return
         frags = directory.split("/")
         path = "/"
         for i in frags:
             path = os.path.join(path, i)
-            if not ctx.transport.exists(path):  # FIXME
+            if not os.path.exists(path):  # FIXME
                 if not simulate:
                     raise error.PathComponentMissing(path)
-            elif not ctx.transport.isdir(path):
+            elif not os.path.isdir(path):
                 raise error.PathComponentNotDirectory(path)
 
     def get_patch(self, context):

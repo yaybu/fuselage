@@ -107,7 +107,7 @@ class Git(Provider):
 
     def checkout_needed(self, context):
         # Determine which SHA is currently checked out.
-        if context.transport.exists(os.path.join(self.resource.name.as_string(), ".git")):
+        if os.path.exists(os.path.join(self.resource.name.as_string(), ".git")):
             try:
                 rv, stdout, stderr = self.info(
                     context, "rev-parse", "--verify", "HEAD")
@@ -180,7 +180,7 @@ class Git(Provider):
 
     def apply(self, context, output):
         # If necessary, clone the repository
-        if not context.transport.exists(os.path.join(self.resource.name.as_string(), ".git")):
+        if not os.path.exists(os.path.join(self.resource.name.as_string(), ".git")):
             self.action_clone(context)
             changed = True
         else:

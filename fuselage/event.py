@@ -34,8 +34,9 @@ class EventState(object):
     def load(self):
         if self.loaded:
             return
-        if self.transport.exists(self.save_file):
-            self.overrides = json.loads(self.transport.get(self.save_file))
+        if os.path.exists(self.save_file):
+            with open(self.save_file, "r") as fp:
+                self.overrides = json.load(fp)
         self.loaded = True
 
     def override(self, resource, policy):
