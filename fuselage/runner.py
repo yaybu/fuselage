@@ -15,7 +15,7 @@
 import os
 import logging
 
-from fuselage import error, resource, event
+from fuselage import error, bundle, event
 from fuselage.changes import TextRenderer
 
 
@@ -42,7 +42,7 @@ class Runner(object):
         self.state.open()
 
         # Actually apply the configuration
-        bundle = resource.ResourceBundle.create_from_yay_expression(
+        bundle = bundle.ResourceBundle.create_from_yay_expression(
             self.params.resources, verbose_errors=self.verbose > 2)
         bundle.bind()
 
