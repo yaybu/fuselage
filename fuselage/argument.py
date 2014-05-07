@@ -13,10 +13,7 @@
 # limitations under the License.
 
 import error
-import datetime
-import dateutil.parser
 import types
-import urlparse
 import sys
 import os
 from abc import ABCMeta, abstractmethod, abstractproperty
@@ -29,9 +26,6 @@ unicode_glyphs = ''.join(
     if unicodedata.category(unichr(char))[0] in ('LMNPSZ')
     )
 
-
-# we abuse urlparse for our parsing needs
-urlparse.uses_netloc.append("package")
 
 class Argument(object):
 
@@ -62,6 +56,7 @@ class Argument(object):
     def __set__(self, instance, value):
         """ Set the property. The value will be a UTF-8 encoded string read from the yaml source file. """
 
+
 class Boolean(Argument):
 
     """ Represents a boolean. "1", "yes", "on" and "true" are all considered
@@ -76,6 +71,7 @@ class Boolean(Argument):
         else:
             value = bool(value)
         setattr(instance, self.arg_id, value)
+
 
 class String(Argument):
 
@@ -94,6 +90,7 @@ class String(Argument):
         for i in range(random.randint(0, 1024)):
             l.append(random.choice(unicode_glyphs))
         return "".join(l)
+
 
 class FullPath(Argument):
 
@@ -117,6 +114,7 @@ class FullPath(Argument):
             l.append(random.choice(unicode_glyphs))
         return "/" + "".join(l)
 
+
 class Integer(Argument):
 
     """ Represents an integer argument taken from the source file. This can
@@ -135,18 +133,6 @@ class Integer(Argument):
     def _generate_valid(self):
         return random.randint(0,sys.maxint)
 
-class DateTime(Argument):
-
-    """ Represents a date and time. This is parsed in ISO8601 format. """
-
-    def __set__(self, instance, value):
-        if isinstance(value, basestring):
-            value = dateutil.parser.parse(value)
-        setattr(instance, self.arg_id, value)
-
-    @classmethod
-    def _generate_valid(self):
-        return datetime.datetime.fromtimestamp(random.randint(0, sys.maxint))
 
 class Octal(Integer):
 
@@ -160,6 +146,7 @@ class Octal(Integer):
             value = int(value, 8)
         setattr(instance, self.arg_id, value)
 
+
 class Dict(Argument):
     def __set__(self, instance, value):
         setattr(instance, self.arg_id, value)
@@ -167,6 +154,7 @@ class Dict(Argument):
     @classmethod
     def _generate_valid(self):
         return {}
+
 
 class List(Argument):
     def __set__(self, instance, value):
@@ -191,6 +179,7 @@ class StandardPolicy:
     def __init__(self, policy_name):
         self.policy_name = policy_name
 
+
 class PolicyTrigger:
 
     def __init__(self, policy, when, on, immediately=True):
@@ -205,6 +194,7 @@ class PolicyTrigger:
         else:
             raise error.BindingError("Cannot bind %r to missing resource named '%s'" % (target, self.on))
         return resources[self.on]
+
 
 class PolicyCollection:
 
@@ -226,6 +216,7 @@ class PolicyCollection:
         else:
             import policy
             return policy.NullPolicy
+
 
 class PolicyArgument(Argument):
 
