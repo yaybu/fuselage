@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 class Runner(object):
 
-    def run(self):å
+    def run(self):
         root = self.root
         self.ypath = root.ypath
         self.resume = root.resume
