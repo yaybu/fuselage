@@ -18,13 +18,13 @@ and the contents of the files themselves. """
 
 import hashlib
 
-from yaybu.provisioner.resource import Resource
-from yaybu.core.policy import (Policy,
+from fuselage.resource import Resource
+from fuselage.policy import (Policy,
                                Absent,
                                Present,
                                NAND)
 
-from yaybu.core.argument import (
+from fuselage.argument import (
     Property,
     FullPath,
     String,

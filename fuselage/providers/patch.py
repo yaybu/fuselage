@@ -14,11 +14,8 @@
 
 import os
 
-from yaybu import error
-from yaybu.provisioner import resources
-from yaybu.provisioner import provider
-from yaybu.provisioner.changes import EnsureFile
-from yaybu.util import render_string
+from fuselage import error, resources, provider
+from fuselage.changes import EnsureFile, ShellCommand
 
 
 class Patch(provider.Provider):

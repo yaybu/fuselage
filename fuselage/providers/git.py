@@ -16,16 +16,15 @@ import os
 import logging
 import re
 
-from yaybu.error import CheckoutError, SystemError
-from yaybu.provisioner.provider import Provider
-from yaybu.provisioner import resources
-from yaybu.provisioner.changes import ShellCommand, EnsureDirectory
+from fuselage.error import CheckoutError, SystemError
+from fuselage import error, resources, provider
+from fuselage.changes import ShellCommand, EnsureDirectory
 
 
-log = logging.getLogger("git")
+log = logging.getLogger(__name__)
 
 
-class Git(Provider):
+class Git(provider.Provider):
 
     policies = (resources.checkout.CheckoutSyncPolicy,)
 

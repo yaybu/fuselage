@@ -12,10 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from yaybu import error
-from yaybu.provisioner import provider
-from yaybu.provisioner import resources
-from yaybu.provisioner.changes import ShellCommand
+from fuselage import error, resources, provider
+from fuselage.changes import ShellCommand
 
 
 class Execute(provider.Provider):

@@ -17,7 +17,7 @@ import stat
 import pwd
 import grp
 
-from yaybu import error, changes
+from fuselage import error, changes
 from .execute import ShellCommand
 
 

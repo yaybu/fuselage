@@ -15,7 +15,7 @@
 import difflib
 import string
 
-from yaybu import changes
+from fuselage import changes
 from .execute import ShellCommand
 from .attributes import AttributeChanger
 

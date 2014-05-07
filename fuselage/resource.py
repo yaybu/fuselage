@@ -12,16 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from yaybu.core.argument import Property, List, PolicyArgument, String
-from yaybu.core import policy
-from yaybu import error
 import collections
-from yaybu.util.backports import OrderedDict
 
-from yay import errors
-from yay.ast import bind, PythonicWrapper
-from yay.config import Config
-from yay.errors import LanguageError
+from fuselage.argument import Property, List, PolicyArgument, String
+from fuselage import policy
+from fuselage import error
+from fuselage.ordereddict import OrderedDict
 
 
 class ResourceType(type):

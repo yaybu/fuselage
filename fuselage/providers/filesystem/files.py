@@ -15,11 +15,8 @@
 import os
 import json
 
-from yaybu import error
-from yaybu.provisioner import resources
-from yaybu.provisioner import provider
-from yaybu.provisioner.changes import ShellCommand, EnsureFile
-from yaybu.util import render_template
+from fuselage import error, resources, provider
+from fuselage.changes import ShellCommand, EnsureFile
 
 
 class File(provider.Provider):

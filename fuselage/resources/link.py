@@ -14,13 +14,13 @@
 
 """ Resources representing symbolic links. """
 
-from yaybu.provisioner.resource import Resource
-from yaybu.core.policy import (Policy,
+from fuselage.resource import Resource
+from fuselage.policy import (Policy,
                                Absent,
                                Present,
                                )
 
-from yaybu.core.argument import (
+from fuselage.argument import (
     Property,
     FullPath,
     String,

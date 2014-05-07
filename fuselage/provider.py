@@ -16,7 +16,7 @@
 
 from abc import ABCMeta, abstractmethod
 
-from yaybu.core import policy
+from fuselage import policy
 
 
 class ProviderType(ABCMeta):

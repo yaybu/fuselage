@@ -12,15 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from yaybu import error
-from yaybu.provisioner import provider
-from yaybu.provisioner import resources
-from yaybu.provisioner.changes import ShellCommand
+from fuselage import error, resources, provider
+from fuselage.changes import ShellCommand
 
 
 import logging
 
-logger = logging.getLogger("provider")
+logger = logging.getLogger(__name__)
 
 
 class User(provider.Provider):

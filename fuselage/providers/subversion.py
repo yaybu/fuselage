@@ -14,16 +14,15 @@
 
 import logging
 
-from yaybu.provisioner.provider import Provider
-from yaybu.error import MissingDependency
-from yaybu.provisioner import resources
-from yaybu.provisioner.changes import ShellCommand, EnsureDirectory
+from fuselage.error import MissingDependency
+from fuselage import error, resources, provider
+from fuselage.changes import ShellCommand, EnsureDirectory
 
 
-log = logging.getLogger("subversion")
+log = logging.getLogger(__name__)
 
 
-class Svn(Provider):
+class Svn(provider.Provider):
 
     policies = (resources.checkout.CheckoutSyncPolicy,)
 

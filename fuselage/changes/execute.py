@@ -15,9 +15,7 @@
 import posixpath
 import shlex
 
-from yay.ast import AST
-
-from yaybu import error, changes
+from fuselage import error, changes
 
 
 class ShellCommand(changes.Change):

@@ -17,10 +17,9 @@ import logging
 import urlparse
 import urllib
 
-from yaybu.error import CheckoutError, SystemError
-from yaybu.provisioner.provider import Provider
-from yaybu.provisioner import resources
-from yaybu.provisioner.changes import ShellCommand, EnsureFile, EnsureDirectory
+from fuselage.error import CheckoutError, SystemError
+from fuselage import error, resources, provider
+from fuselage.changes import ShellCommand, EnsureFile, EnsureDirectory
 
 
 log = logging.getLogger(__name__)
@@ -112,7 +111,7 @@ def _inject_credentials(url, username=None, password=None):
     return url
 
 
-class Mercurial(Provider):
+class Mercurial(provider.Provider):
 
     policies = (resources.checkout.CheckoutSyncPolicy,)
 

@@ -15,12 +15,8 @@
 import os
 import logging
 
-from yaybu.provisioner import resource
-from yaybu.changes import TextRenderer
-from yaybu import error
-from yaybu.error import MissingAsset, UnmodifiedAsset
-
-from . import event
+from fuselage import error, resource, event
+from fuselage.changes import TextRenderer
 
 
 logger = logging.getLogger(__name__)
@@ -61,12 +57,9 @@ class Runner(object):
         return change.apply(self, renderer)
 
     def get_file(self, filename, etag=None):
-        try:
-            return self.root.openers.open(filename, etag)
-        except NotModified as e:
-            raise UnmodifiedAsset(str(e))
-        except NotFound as e:
-            raise MissingAsset(str(e))
+        # FIXME: What does this do now?
+        # Does it only work for pex bundles?
+        # Does it work standalone?
 
     def get_data_path(self, path=None):
         if not path:

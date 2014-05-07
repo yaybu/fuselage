@@ -14,9 +14,9 @@
 
 """ Resources representing mount points. """
 
-from yaybu.provisioner.resource import Resource
-from yaybu.core.policy import Policy, Present
-from yaybu.core.argument import (
+from fuselage.resource import Resource
+from fuselage.policy import Policy, Present
+from fuselage.argument import (
     Property,
     FullPath,
     String,

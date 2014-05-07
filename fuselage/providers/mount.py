@@ -14,10 +14,8 @@
 
 import os
 
-from yaybu import error
-from yaybu.provisioner import resources
-from yaybu.provisioner import provider
-from yaybu.provisioner.changes import ShellCommand
+from fuselage import error, resources, provider
+from fuselage.changes import ShellCommand
 
 
 class Mount(provider.Provider):

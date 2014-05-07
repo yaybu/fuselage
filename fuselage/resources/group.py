@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from yaybu.provisioner.resource import Resource
-from yaybu.core.policy import (
+from fuselage.resource import Resource
+from fuselage.policy import (
     Policy,
     Absent,
     Present,
 )
-from yaybu.core.argument import (
+from fuselage.argument import (
     Property,
     String,
     Integer,
