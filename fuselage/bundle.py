@@ -34,37 +34,6 @@ class ResourceBundle(OrderedDict):
         c.add({"resources": specification})
         return cls.create_from_yay_expression(c.resources)
 
-    @classmethod
-    def create_from_yay_expression(cls, expression, verbose_errors=False):
-        """ Given a Yay expression that resolves to a list of types and
-        parameters, build a resource bundle.  """
-        bundle = cls()
-        try:
-            for node in expression.get_iterable():
-                bundle.add_from_node(node)
-
-        except LanguageError as exc:
-            raise
-            p = error.ParseError()
-            p.msg = str(exc)
-            if exc.anchor:
-                p.file = exc.anchor.source
-                p.line = exc.anchor.lineno
-            p.column = 0
-            raise p
-
-        except error.ParseError as exc:
-            raise
-            if getattr(node, "anchor", None):
-                exc.msg += "\nFile %s, line %d, column %s" % (
-                    node.anchor.source, node.anchor.lineno, "unknown")
-                exc.file = node.anchor.source
-                exc.line = node.anchor.lineno
-            exc.column = 0
-            raise
-
-        return bundle
-
     def key_remap(self, kw):
         """ Maps - to _ to make resource attribute name more pleasant. """
         for k, v in kw.items():
