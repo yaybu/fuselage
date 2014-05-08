@@ -8,11 +8,11 @@ Fuselage
 .. image:: https://coveralls.io/repos/yaybu/fuselage/badge.png?branch=master
     :target: https://coveralls.io/r/yaybu/fuselage
 
-.. image:: https://pypip.in/f/fuselage/badge.png
-    :target: https://crate.io/packages/fuselage/
+.. image:: https://pypip.in/version/fuselage/badge.png
+    :target: https://pypi.python.org/pypi/fuselage/
 
 
-fuselage is a idempotent configuration bundle builder and runtime. 
+fuselage is a idempotent configuration bundle builder and runtime.
 
 Use a simple python API to describe a server configuration and bundle that as a
 script that can be executed on any system.
