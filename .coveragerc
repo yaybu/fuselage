@@ -1,0 +1,4 @@
+[run]
+source = fuselage
+omit =
+    fuselage/tests/*
