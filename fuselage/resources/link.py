@@ -15,10 +15,11 @@
 """ Resources representing symbolic links. """
 
 from fuselage.resource import Resource
-from fuselage.policy import (Policy,
-                               Absent,
-                               Present,
-                               )
+from fuselage.policy import (
+     Policy,
+     Absent,
+     Present,
+)
 
 from fuselage.argument import (
     FullPath,

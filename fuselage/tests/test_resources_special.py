@@ -20,6 +20,7 @@ from fuselage.resources import Special
 class TestSpecial(unittest.TestCase):
 
     def test_minimal(self):
-        c = Special(
+        r = Special(
             name='/tmp/my-special',
         )
+        self.assertEqual(r.name, '/tmp/my-special')

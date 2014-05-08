@@ -20,6 +20,7 @@ from fuselage.resources import Directory
 class TestDirectory(unittest.TestCase):
 
     def test_minimal(self):
-        c = Directory(
+        r = Directory(
             name='/tmp/my-directory',
         )
+        self.assertEqual(r.name, '/tmp/my-directory')

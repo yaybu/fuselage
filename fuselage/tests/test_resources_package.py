@@ -20,6 +20,7 @@ from fuselage.resources import Package
 class TestPackage(unittest.TestCase):
 
     def test_minimal(self):
-        c = Package(
+        r = Package(
             name='ubuntu-desktop',
         )
+        self.assertEqual(r.name, 'ubuntu-desktop')

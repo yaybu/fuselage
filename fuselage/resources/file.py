@@ -16,20 +16,19 @@
 both the metadata associated with the file (for example owner and permission)
 and the contents of the files themselves. """
 
-import hashlib
-
 from fuselage.resource import Resource
-from fuselage.policy import (Policy,
-                               Absent,
-                               Present,
-                               NAND)
+from fuselage.policy import (
+    Policy,
+    Absent,
+    Present,
+    NAND
+)
 
 from fuselage.argument import (
     FullPath,
     String,
     Octal,
     File,
-    Dict,
 )
 
 

@@ -19,7 +19,6 @@ from fuselage.policy import (
     NAND)
 
 from fuselage.argument import (
-    FullPath,
     String,
     Integer,
 )

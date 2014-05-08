@@ -15,10 +15,11 @@
 """ Resources dealing with filesystem objects other than files. """
 
 from fuselage.resource import Resource
-from fuselage.policy import (Policy,
-                               Absent,
-                               Present,
-                               )
+from fuselage.policy import (
+    Policy,
+    Absent,
+    Present,
+)
 from fuselage.argument import (
     FullPath,
     String,

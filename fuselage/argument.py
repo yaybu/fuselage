@@ -14,8 +14,7 @@
 
 import types
 import sys
-import os
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod
 import unicodedata
 import random
 
@@ -85,13 +84,16 @@ class String(Argument):
         setattr(instance, self.arg_id, value)
 
     @classmethod
-    def _generate_valid(self):
-        unicode_glyphs = ''.join(
+    def _get_unicode_glyphs(self):
+        return ''.join(
             unichr(char)
-            for char in range(sys.maxunicode+1)
+            for char in range(sys.maxunicode + 1)
             if unicodedata.category(unichr(char))[0] in ('LMNPSZ')
         )
 
+    @classmethod
+    def _generate_valid(self):
+        unicode_glyphs = self._get_unicode_glyphs()
         l = []
         for i in range(random.randint(0, 1024)):
             l.append(random.choice(unicode_glyphs))
@@ -111,6 +113,7 @@ class FullPath(String):
     @classmethod
     def _generate_valid(self):
         # TODO: needs work
+        unicode_glyphs = self._get_unicode_glyphs()
         l = []
         for i in range(random.randint(0, 1024)):
             l.append(random.choice(unicode_glyphs))
@@ -133,7 +136,7 @@ class Integer(Argument):
 
     @classmethod
     def _generate_valid(self):
-        return random.randint(0,sys.maxint)
+        return random.randint(0, sys.maxint)
 
 
 class Octal(Integer):
@@ -239,7 +242,8 @@ class PolicyArgument(Argument):
                             policy=policy,
                             when=condition['when'],
                             on=condition['on'],
-                            immediately=condition.get('immediately', 'true') == 'true')
+                            immediately=condition.get('immediately', 'true') == 'true',
                         )
+                    )
             coll = PolicyCollection(triggers=triggers)
         setattr(instance, self.arg_id, coll)

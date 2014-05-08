@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fuselage import error, resources, provider
+import os
+
+from fuselage import resources, provider
 from fuselage.changes import ShellCommand
 
 

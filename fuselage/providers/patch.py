@@ -15,7 +15,7 @@
 import os
 
 from fuselage import error, resources, provider
-from fuselage.changes import EnsureFile, ShellCommand
+from fuselage.changes import EnsureFile
 
 
 class Patch(provider.Provider):
@@ -38,7 +38,7 @@ class Patch(provider.Provider):
                 raise error.PathComponentNotDirectory(path)
 
     def get_patch(self, context):
-        patch = context.get_file(self.resource.patch
+        patch = context.get_file(self.resource.patch)
         data = patch.read()
         # FIXME: Would be good to validate the patch here a bit
         return data, "secret" in patch.labels

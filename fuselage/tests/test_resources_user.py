@@ -20,6 +20,7 @@ from fuselage.resources import User
 class TestUser(unittest.TestCase):
 
     def test_minimal(self):
-        c = User(
+        r = User(
             name='myuser',
         )
+        self.assertEqual(r.name, 'myuser')

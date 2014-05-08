@@ -20,6 +20,7 @@ from fuselage.resources import Patch
 class TestPatch(unittest.TestCase):
 
     def test_minimal(self):
-        c = Patch(
+        r = Patch(
             name='/tmp/my-patch',
         )
+        self.assertEqual(r.name, '/tmp/my-patch')

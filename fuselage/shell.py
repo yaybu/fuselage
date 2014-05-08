@@ -12,21 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
+import errno
 import subprocess
-import StringIO
-import change
-import error
-import os, getpass, pwd, grp, select
+import os
+import pwd
+import grp
+import select
 import shlex
 
-from yay import String
-
-from . import error
-
-class Command(String):
-    """ Horrible horrible cludge """
-    pass
+from . import error, change
 
 
 class Handle(object):
@@ -94,7 +88,7 @@ class ShellCommand(change.Change):
         if user:
             try:
                 u = pwd.getpwnam(user)
-            except KeyError as exc:
+            except KeyError:
                 raise error.InvalidUser("There is no such user '%s'" % user)
             self.uid = u.pw_uid
             self.homedir = u.pw_dir
@@ -107,7 +101,7 @@ class ShellCommand(change.Change):
         if group:
             try:
                 self.gid = grp.getgrnam(self.group).gr_gid
-            except KeyError as exc:
+            except KeyError:
                 raise error.InvalidGroup("There is no such group '%s'" % group)
 
     def preexec(self):
@@ -157,7 +151,7 @@ class ShellCommand(change.Change):
             # select loop will continue until the child process goes away, which
             # is undesirable when starting a daemon process.
             if not rlist and not wlist and not xlist:
-                if p.poll() != None:
+                if p.poll() is not None:
                     break
 
             # Read from all handles that select told us can be read from
@@ -180,13 +174,7 @@ class ShellCommand(change.Change):
         return map(uni, l)
 
     def apply(self, renderer):
-        if isinstance(self.command, Command):
-            logas = self.command.as_list(secret=True)
-            command = self.command.as_list(secret=False)
-        elif isinstance(self.command, String):
-            logas = shlex.split(self.command.protected.encode("UTF-8"))
-            command = shlex.split(self.command.unprotected.encode("UTF-8"))
-        elif isinstance(self.command, list):
+        if isinstance(self.command, list):
             logas = command = self.command[:]
         elif isinstance(self.command, basestring):
             logas = command = shlex.split(self.command.encode("UTF-8"))
@@ -202,7 +190,7 @@ class ShellCommand(change.Change):
             "LOGNAME": self.user,
             "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
             "SHELL": "/bin/sh",
-            }
+        }
 
         if self.env_passthru:
             for var in self.env_passthru:
@@ -211,10 +199,7 @@ class ShellCommand(change.Change):
 
         if self.env:
             for key, item in self.env.iteritems():
-                if isinstance(item, String):
-                    env[key] = item.unprotected.encode("UTF-8")
-                else:
-                    env[key] = item
+                env[key] = item
 
         self._generated_env = env
 
@@ -264,6 +249,7 @@ class ShellCommand(change.Change):
             renderer.exception(e)
             raise
 
+
 class ShellTextRenderer(change.TextRenderer):
 
     """ Render a ShellCommand on a textual changelog. """
@@ -280,7 +266,7 @@ class ShellTextRenderer(change.TextRenderer):
             self.logger.notice("returned %s", returncode)
 
     def stdout(self, data):
-       if self.verbose >= 2 and not self.inert:
+        if self.verbose >= 2 and not self.inert:
             self.logger.info(data)
 
     def stderr(self, data):
@@ -289,6 +275,7 @@ class ShellTextRenderer(change.TextRenderer):
 
     def exception(self, exception):
         self.logger.notice("Exception: %r" % exception)
+
 
 class Shell(object):
 

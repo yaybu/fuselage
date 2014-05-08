@@ -12,12 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import subprocess
-
 from fuselage import error, resources, provider
 from fuselage.changes import ShellCommand
 
-# FIXME
 
 def is_installed(context, resource):
     # work out if the package is already installed

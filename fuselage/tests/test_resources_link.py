@@ -20,6 +20,7 @@ from fuselage.resources import Link
 class TestLink(unittest.TestCase):
 
     def test_minimal(self):
-        c = Link(
+        r = Link(
             name='/tmp/my-link',
         )
+        self.assertEqual(r.name, '/tmp/my-link')

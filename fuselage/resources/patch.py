@@ -20,7 +20,6 @@ from fuselage.argument import (
     Integer,
     Octal,
     File,
-    Dict,
 )
 
 

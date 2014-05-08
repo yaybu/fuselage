@@ -142,7 +142,7 @@ class Resource(six.with_metaclass(ResourceType)):
 
     @classmethod
     def get_argument_names(klass):
-        for key in self.__args__:
+        for key in klass.__args__:
             yield key
 
     def get_argument_values(self):

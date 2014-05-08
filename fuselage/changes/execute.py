@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import subprocess
+import os
 import posixpath
 import shlex
 
@@ -58,21 +60,12 @@ class ShellCommand(changes.Change):
         if isinstance(self.command, list):
             command = []
             for c in self.command:
-                if isinstance(c, AST):
-                    command.append(c.as_string())
-                else:
-                    command.append(c)
+                command.append(c)
             logas = []
             for c in self.command:
-                if isinstance(c, AST):
-                    logas.append(c.as_safe_string())
-                else:
-                    logas.append(c)
+                logas.append(c.as_safe_string())
         elif isinstance(self.command, basestring):
             logas = command = shlex.split(self.command.encode("UTF-8"))
-        elif isinstance(self.command, AST):
-            command = shlex.split(self.command.as_string().encode("UTF-8"))
-            logas = shlex.split(self.command.as_safe_string().encode("UTF-8"))
 
         command = self._tounicode(command)
         logas = self._tounicode(logas)

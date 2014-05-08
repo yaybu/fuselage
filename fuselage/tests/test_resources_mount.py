@@ -20,6 +20,7 @@ from fuselage.resources import Mount
 class TestMount(unittest.TestCase):
 
     def test_minimal(self):
-        c = Mount(
+        r = Mount(
             name='/tmp/my-mount',
         )
+        self.assertEqual(r.name, '/tmp/my-mount')

@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pwd
+import grp
+import logging
+
 from fuselage import error, resources, provider
 from fuselage.changes import ShellCommand
 
-
-import logging
 
 logger = logging.getLogger(__name__)
 

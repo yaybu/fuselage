@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import logging
 
-from fuselage.error import MissingDependency
 from fuselage import error, resources, provider
 from fuselage.changes import ShellCommand, EnsureDirectory
 
@@ -56,7 +56,7 @@ class Svn(provider.Provider):
         if not os.path.exists("/usr/bin/svn"):
             error_string = "'/usr/bin/svn' is not available; update your configuration to install subversion?"
             if not context.simulate:
-                raise MissingDependency(error_string)
+                raise error.MissingDependency(error_string)
             log.info(error_string)
             log.info("This error was ignored in simulate mode")
 

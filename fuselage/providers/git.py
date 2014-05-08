@@ -16,7 +16,6 @@ import os
 import logging
 import re
 
-from fuselage.error import CheckoutError, SystemError
 from fuselage import error, resources, provider
 from fuselage.changes import ShellCommand, EnsureDirectory
 
@@ -71,8 +70,8 @@ class Git(provider.Provider):
 
         try:
             self.action(context, "init", self.resource.name)
-        except SystemError:
-            raise CheckoutError("Cannot initialise local repository.")
+        except error.SystemError:
+            raise error.CheckoutError("Cannot initialise local repository.")
 
         self.action_set_remote(context)
 
@@ -80,8 +79,8 @@ class Git(provider.Provider):
         try:
             self.action(context, "remote", "add", self.REMOTE_NAME,
                         self.resource.repository)
-        except SystemError:
-            raise CheckoutError("Could not set the remote repository.")
+        except error.SystemError:
+            raise error.CheckoutError("Could not set the remote repository.")
 
     def action_update_remote(self, context):
         # Determine if the remote repository has changed
@@ -93,13 +92,13 @@ class Git(provider.Provider):
                 log.info("The remote repository has changed.")
                 try:
                     self.action(context, "remote", "rm", self.REMOTE_NAME)
-                except SystemError:
-                    raise CheckoutError(
+                except error.SystemError:
+                    raise error.CheckoutError(
                         "Could not delete remote '%s'" % self.REMOTE_NAME)
                 self.action_set_remote(context)
                 return True
         else:
-            raise CheckoutError("Cannot determine repository remote.")
+            raise error.CheckoutError("Cannot determine repository remote.")
 
         return False
 
@@ -109,7 +108,7 @@ class Git(provider.Provider):
             try:
                 rv, stdout, stderr = self.info(
                     context, "rev-parse", "--verify", "HEAD")
-            except SystemError:
+            except error.SystemError:
                 head_sha = '0' * 40
             else:
                 head_sha = stdout[:40]
@@ -120,8 +119,8 @@ class Git(provider.Provider):
         try:
             rv, stdout, stderr = context.transport.execute(
                 ["git", "ls-remote", self.resource.repository], user=self.resource.user, cwd="/tmp")
-        except SystemError:
-            raise CheckoutError("Could not query the remote repository")
+        except error.SystemError:
+            raise error.CheckoutError("Could not query the remote repository")
 
         r = re.compile('([0-9a-f]{40})\t(.*)\n')
         refs_to_shas = dict([(b, a) for (a, b) in r.findall(stdout)])
@@ -140,7 +139,7 @@ class Git(provider.Provider):
         elif tag:
             as_tag = "refs/tags/%s" % tag
             if as_tag not in refs_to_shas.keys():
-                raise CheckoutError("Cannot find a tag called '%s'" % tag)
+                raise error.CheckoutError("Cannot find a tag called '%s'" % tag)
 
             annotated_tag = as_tag + "^{}"
             if annotated_tag in refs_to_shas.keys():
@@ -152,7 +151,7 @@ class Git(provider.Provider):
         elif branch:
             as_branch = "refs/heads/%s" % branch
             if as_branch not in refs_to_shas.keys():
-                raise CheckoutError(
+                raise error.CheckoutError(
                     "Cannot find a branch called '%s'" % branch)
             newref = "remotes/%s/%s" % (
                 self.REMOTE_NAME,
@@ -161,20 +160,20 @@ class Git(provider.Provider):
             if head_sha != refs_to_shas.get(as_branch):
                 return newref
         else:
-            raise CheckoutError(
+            raise error.CheckoutError(
                 "You must specify either a revision, tag or branch")
 
     def action_checkout(self, context, newref):
         try:
             self.action(context, "fetch", self.REMOTE_NAME)
-        except SystemError:
-            raise CheckoutError("Could not fetch '%s'" %
-                                self.resource.repository
+        except error.SystemError:
+            raise error.CheckoutError("Could not fetch '%s'" %
+                                self.resource.repository)
 
         try:
             self.action(context, "checkout", newref)
-        except SystemError:
-            raise CheckoutError("Could not check out '%s'" % newref)
+        except error.SystemError:
+            raise error.CheckoutError("Could not check out '%s'" % newref)
 
     def apply(self, context, output):
         # If necessary, clone the repository

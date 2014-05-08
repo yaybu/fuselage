@@ -20,6 +20,7 @@ from fuselage.resources import File
 class TestFile(unittest.TestCase):
 
     def test_minimal(self):
-        c = File(
+        r = File(
             name='/tmp/my-file',
         )
+        self.assertEqual(r.name, '/tmp/my-file')

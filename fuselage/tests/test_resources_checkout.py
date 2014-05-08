@@ -20,6 +20,7 @@ from fuselage.resources import Checkout
 class TestCheckout(unittest.TestCase):
 
     def test_minimal(self):
-        c = Checkout(
+        r = Checkout(
             name='/tmp/my-checkout',
         )
+        self.assertEqual(r.name, '/tmp/my-checkout')

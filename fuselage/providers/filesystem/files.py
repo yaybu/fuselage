@@ -45,27 +45,6 @@ class File(provider.Provider):
         sensitive = self.resource.args.contains_secrets()
         return contents, sensitive
 
-    def render_jinja2(self, context):
-        source = self.resource.source
-        if not source:
-            source = self.resource.template.as_string(default='')
-            if not source:
-                raise error.ExecutionError("You must specify a 'source' to use the 'Jinja2' renderer")
-
-        try:
-            args = self.resource.args
-            sensitive_args = self.resource.args.contains_secrets()
-        except error.NoMatching:
-            try:
-                args = self.resource.template_args
-                sensitive_args = self.resource.template_args.contains_secrets()
-            except error.NoMatching:
-                raise error.ExecutionError("You must set 'args' to use the 'Jinja2' renderer")
-
-        contents, sensitive = render_template(context, source, args)
-        sensitive = sensitive or sensitive_args
-        return contents, sensitive
-
     def render_static(self, context):
         source = self.resource.source
         if not source:
@@ -82,11 +61,6 @@ class File(provider.Provider):
         return None, False
 
     def render_guess(self, context):
-        try:
-            return self.render_jinja2(context)
-        except error.ExecutionError:
-            pass
-
         try:
             return self.render_static(context)
         except error.NoMatching:

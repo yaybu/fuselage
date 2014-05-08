@@ -20,6 +20,7 @@ from fuselage.resources import Service
 class TestService(unittest.TestCase):
 
     def test_minimal(self):
-        c = Service(
+        r = Service(
             name='myservice',
         )
+        self.assertEqual(r.name, 'myservice')

@@ -12,14 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import collections
 try:
     from collections import OrderedDict
 except ImportError:
     from fuselage.ordereddict import OrderedDict
 
-from fuselage.argument import Property, List, PolicyArgument, String
-from fuselage import policy
 from fuselage import error
 from fuselage.resource import ResourceType
 
@@ -33,9 +30,7 @@ class ResourceBundle(OrderedDict):
     @classmethod
     def create_from_list(cls, specification):
         """ Given a list of types and parameters, build a resource bundle """
-        c = Config()
-        c.add({"resources": specification})
-        return cls.create_from_yay_expression(c.resources)
+        raise NotImplementedError(cls.create_from_list)
 
     def key_remap(self, kw):
         """ Maps - to _ to make resource attribute name more pleasant. """
@@ -44,36 +39,32 @@ class ResourceBundle(OrderedDict):
             yield str(k), v
 
     def add_from_node(self, spec):
-        try:
-            spec.as_dict()
-        except errors.TypeError:
-            raise error.ParseError("Not a valid Resource definition", anchor=spec.anchor)
+        if not isinstance(spec, dict):
+            raise error.ParseError("Not a valid Resource definition")
 
         keys = list(spec.keys())
         if len(keys) > 1:
-            raise error.ParseError("Too many keys in list item", anchor=spec.anchor)
+            raise error.ParseError("Too many keys in list item")
 
         typename = keys[0]
-        instances = spec.get_key(typename)
+        instances = spec[typename]
 
-        try:
-            instances.as_dict()
+        if isinstance(instances, dict):
             iterable = [instances]
-        except errors.TypeError:
-            iterable = instances.get_iterable()
+        else:
+            iterable = instances
 
         for instance in iterable:
             self.add(typename, instance)
 
     def add(self, typename, instance):
         if not hasattr(instance, "keys"):
-            raise error.ParseError("Expected mapping for %s" % typename, anchor=getattr(instance, "anchor", None))
+            raise error.ParseError("Expected dict for %s" % typename)
 
         try:
             kls = ResourceType.resources[typename]
         except KeyError:
-            raise error.ParseError(
-                "There is no resource type of '%s'" % typename, anchor=instance.anchor)
+            raise error.ParseError("There is no resource type of '%s'" % typename)
 
         resource = kls(instance)
         if resource.id in self:
@@ -83,17 +74,12 @@ class ResourceBundle(OrderedDict):
         self[resource.id] = resource
 
         # Create implicit File[] nodes for any watched files
-        try:
-            for watched in resource.watch:
-                res = bind({
-                    "name": watched,
-                    "policy": "watched",
-                })
-                res.parent = instance
-                w = self.add("File", res)
-                w._original_hash = None
-        except errors.NoMatching:
-            pass
+        for watched in resource.watch:
+            w = self.add("File", {
+                "name": watched,
+                "policy": "watched",
+            })
+            w._original_hash = None
 
         return resource
 

@@ -17,7 +17,7 @@ import sys
 import logging
 import optparse
 
-from fuselage import error, bundle, event
+from fuselage import bundle, event
 from fuselage.changes import TextRenderer
 
 
@@ -50,19 +50,21 @@ class Runner(object):
             os.makedirs(self.state_path)
 
         self.state = event.EventState(
-            save_file = os.path.join(self.state_path, "events.saved"),
-            simulate = self.simulate,
+            save_file=os.path.join(self.state_path, "events.saved"),
+            simulate=self.simulate,
         )
         self.state.open()
 
         # Actually apply the configuration
-        bundle = bundle.ResourceBundle.create_from_yay_expression(
+        b = bundle.ResourceBundle.create_from_yay_expression(
             self.params.resources, verbose_errors=self.verbose > 2)
-        bundle.bind()
-        changed = bundle.apply(self)
+        b.bind()
+        changed = b.apply(self)
 
         #FIXME: Do we get here if no change has occured??
         self.state.success()
+
+        return changed
 
     def change(self, change):
         renderer = TextRenderer.get(change, self.current_output)
@@ -72,3 +74,4 @@ class Runner(object):
         # FIXME: What does this do now?
         # Does it only work for pex bundles?
         # Does it work standalone?
+        pass

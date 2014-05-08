@@ -20,6 +20,7 @@ from fuselage.resources import Group
 class TestGroup(unittest.TestCase):
 
     def test_minimal(self):
-        c = Group(
+        r = Group(
             name='somegroup',
         )
+        self.assertEqual(r.name, 'somegroup')

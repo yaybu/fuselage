@@ -17,7 +17,6 @@ import logging
 import urlparse
 import urllib
 
-from fuselage.error import CheckoutError, SystemError
 from fuselage import error, resources, provider
 from fuselage.changes import ShellCommand, EnsureFile, EnsureDirectory
 
@@ -153,8 +152,8 @@ class Mercurial(provider.Provider):
         if not os.path.exists(os.path.join(self.resource.name, ".hg")):
             try:
                 self.action(context, "init")
-            except SystemError:
-                raise CheckoutError("Cannot initialise local repository.")
+            except error.SystemError:
+                raise error.CheckoutError("Cannot initialise local repository.")
             created = True
 
         url = _inject_credentials(self.resource.repository,
@@ -162,7 +161,7 @@ class Mercurial(provider.Provider):
 
         try:
             context.change(EnsureFile(
-                os.path.join(self.resource.name., ".hg", "hgrc"),
+                os.path.join(self.resource.name, ".hg", "hgrc"),
                 hgrc % {"repository": url, "path":
                         self.resource.name},
                 self.resource.user,
@@ -170,8 +169,8 @@ class Mercurial(provider.Provider):
                 0o600,
                 True))
             # changed = changed or f.changed
-        except SystemError:
-            raise CheckoutError("Could not set the remote repository.")
+        except error.SystemError:
+            raise error.CheckoutError("Could not set the remote repository.")
 
         try:
             context.change(EnsureFile(
@@ -183,8 +182,8 @@ class Mercurial(provider.Provider):
                 0o600,
                 True))
             # changed = changed or f.changed
-        except SystemError:
-            raise CheckoutError(
+        except error.SystemError:
+            raise error.CheckoutError(
                 "Could not setup mercurial idempotence extension")
 
         should_args = []
@@ -197,8 +196,8 @@ class Mercurial(provider.Provider):
             try:
                 self.action(context, "pull", "--force")
                 changed = True
-            except SystemError:
-                raise CheckoutError(
+            except error.SystemError:
+                raise error.CheckoutError(
                     "Could not fetch changes from remote repository.")
 
         if created or self.info(context, "should-update", *should_args)[0] != 0:
@@ -212,7 +211,7 @@ class Mercurial(provider.Provider):
             try:
                 self.action(context, "update", *args)
                 changed = True
-            except SystemError:
-                raise CheckoutError("Could not update working copy.")
+            except error.SystemError:
+                raise error.CheckoutError("Could not update working copy.")
 
         return created or changed
