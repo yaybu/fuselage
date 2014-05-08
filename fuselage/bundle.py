@@ -13,11 +13,14 @@
 # limitations under the License.
 
 import collections
+try:
+    from collections import OrderedDict
+except ImportError:
+    from fuselage.ordereddict import OrderedDict
 
 from fuselage.argument import Property, List, PolicyArgument, String
 from fuselage import policy
 from fuselage import error
-from fuselage.ordereddict import OrderedDict
 from fuselage.resource import ResourceType
 
 
