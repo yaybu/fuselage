@@ -21,7 +21,7 @@ setup(name='fuselage',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-          'setuptools',
+          'six',
       ],
       extras_require = {
           'test': ['unittest2', 'mock', 'fakechroot'],

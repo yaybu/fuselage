@@ -98,19 +98,15 @@ class String(Argument):
         return "".join(l)
 
 
-class FullPath(Argument):
+class FullPath(String):
 
     """ Represents a full path on the filesystem. This should start with a
     '/'. """
 
     def __set__(self, instance, value):
-        if value is None:
-            pass
-        elif not isinstance(value, unicode):
-            value = unicode(value, 'utf-8')
         if not value.startswith("/"):
             raise error.ParseError("%s is not a full path" % value)
-        setattr(instance, self.arg_id, value)
+        super(FullPath, self).__set__(instance, value)
 
     @classmethod
     def _generate_valid(self):

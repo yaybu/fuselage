@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import collections
+import six
 
 from fuselage.argument import Argument, List, PolicyArgument, String
 from fuselage import policy
@@ -67,7 +68,7 @@ class AvailableResourcePolicies(dict):
             return policy.NullPolicy
 
 
-class Resource(object):
+class Resource(six.with_metaclass(ResourceType)):
 
     """ A resource represents a resource that can be configured on the system.
     This might be as simple as a symlink or as complex as a database schema
@@ -79,8 +80,6 @@ class Resource(object):
     configured for the policy to be used.
 
     """
-
-    __metaclass__ = ResourceType
 
     policies = AvailableResourcePolicies()
     """ A dictionary of policy names mapped to policy classes (not objects).

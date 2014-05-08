@@ -1,3 +1,4 @@
+six
 nose2
 coverage
 coveralls
