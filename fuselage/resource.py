@@ -14,7 +14,7 @@
 
 import collections
 
-from fuselage.argument import Property, List, PolicyArgument, String
+from fuselage.argument import Argument, List, PolicyArgument, String
 from fuselage import policy
 from fuselage import error
 from fuselage.ordereddict import OrderedDict
@@ -30,6 +30,11 @@ class ResourceType(type):
     def __new__(meta, class_name, bases, new_attrs):
         cls = type.__new__(meta, class_name, bases, new_attrs)
 
+        cls.__args__ = []
+        for b in bases:
+            if hasattr(b, "__args__"):
+                cls.__args__.extend(b.__args__)
+
         cls.policies = AvailableResourcePolicies()
 
         if class_name != 'Resource':
@@ -38,6 +43,10 @@ class ResourceType(type):
                 raise error.ParseError("Redefinition of resource %s" % rname)
             else:
                 meta.resources[rname] = cls
+
+        for key, value in new_attrs.items():
+            if isinstance(value, Argument):
+                cls.__args__.append(key)
 
         return cls
 
@@ -88,14 +97,14 @@ class Resource(object):
 
     """
 
-    policy = Property(PolicyArgument)
+    policy = PolicyArgument()
     """ The list of policies provided by configuration. This is an argument
     like any other, but has a complex representation that holds the conditions
     and options for the policies as specified in the input file. """
 
-    name = Property(String)
+    name = String()
 
-    watch = Property(List, default=[])
+    watch = List()
     """ A list of files to monitor while this resource is applied
 
     The file will be hashed before and after a resource is applied.
@@ -119,27 +128,20 @@ class Resource(object):
                   on: File[/var/local/sites/foobar/apache/apache.cfg]
     """
 
-    def __init__(self, inner):
+    def __init__(self, **kwargs):
         """ Takes a reference to a Yay AST node """
-        self.inner = PythonicWrapper(inner)
-        self.inner.parent = inner.parent
         self.observers = collections.defaultdict(list)
 
-        for k in dir(self):
-            prop = getattr(self, k)
-            if isinstance(prop, Property):
-                i = getattr(self.inner, k)
-                i.inner.parent = inner.parent
-                i.parent = inner.parent
-                p = prop.klass(self, i, **prop.kwargs)
-                setattr(self, k, p)
+        setattr(self, "name", kwargs["name"])
+        for key, value in kwargs.items:
+            if key not in self.__args__:
+                raise error.ParseError("'%s' is not a valid option for resource %s" % (key, self))
+            setattr(self, key, value)
 
     @classmethod
     def get_argument_names(klass):
-        for k in dir(klass):
-            attr = getattr(klass, k)
-            if isinstance(attr, Property):
-                yield k
+        for key in self.__args__:
+            yield key
 
     def get_argument_values(self):
         """ Return all argument names and values in a dictionary. If an
@@ -172,13 +174,6 @@ class Resource(object):
 
         # This will throw any error if any of our validation fails
         self.get_argument_values()
-
-        # Only allow keys that are in the schema
-        for key in self.inner.keys():
-            if key not in self.get_argument_names():
-                raise error.ParseError(
-                    "'%s' is not a valid option for resource %s" % (key, self),
-                    self.inner.anchor)
 
         # Error if doesn't conform to policy
         for p in self.get_potential_policies():
@@ -250,7 +245,7 @@ class Resource(object):
     @property
     def id(self):
         classname = getattr(self, '__resource_name__', self.__class__.__name__)
-        return "%s[%s]" % (classname, self.inner.name.as_string())
+        return "%s[%s]" % (classname, self.name)
 
     def __repr__(self):
         return self.id

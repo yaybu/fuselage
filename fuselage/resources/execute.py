@@ -15,7 +15,6 @@
 from fuselage.resource import Resource
 from fuselage.policy import Policy, Present, XOR
 from fuselage.argument import (
-    Property,
     FullPath,
     String,
     Integer,
@@ -50,11 +49,11 @@ class Execute(Resource):
 
     """
 
-    name = Property(String)
+    name = String()
     """ The name of this resource. This should be unique and descriptive, and
     is used so that resources can reference each other. """
 
-    command = Property(String)
+    command = String()
     """ If you wish to run a single command, then this is the command. """
 
     commands = Property(List)
@@ -84,23 +83,23 @@ class Execute(Resource):
     """ The user to execute the command as.
     """
 
-    group = Property(String)
+    group = String()
     """ The group to execute the command as.
     """
 
-    umask = Property(Octal, default='022')
+    umask = Octal(default='022')
     """ The umask to use when executing this command """
 
-    unless = Property(String, default="")
+    unless = String(default="")
     """ A command to run to determine is this execute should be actioned
     """
 
-    creates = Property(FullPath)
+    creates = FullPath()
     """ The full path to a file that execution of this command creates. This
     is used like a "touch test" in a Makefile. If this file exists then the
     execute command will NOT be executed. """
 
-    touch = Property(FullPath)
+    touch = FullPath()
     """ The full path to a file that yaybu will touch once this command has
     completed successfully. This is used like a "touch test" in a Makefile. If
     this file exists then the execute command will NOT be executed. """

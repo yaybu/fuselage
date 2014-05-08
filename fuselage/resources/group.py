@@ -19,7 +19,6 @@ from fuselage.policy import (
     Present,
 )
 from fuselage.argument import (
-    Property,
     String,
     Integer,
     Boolean,
@@ -38,17 +37,17 @@ class Group(Resource):
             system: true
     """
 
-    name = Property(String)
+    name = String()
     """ The name of the unix group. """
 
-    gid = Property(Integer)
+    gid = Integer()
     """ The group ID associated with the group. If this is not specified one will be chosen. """
 
-    system = Property(Boolean, default=False)
+    system = Boolean(default=False)
     """ Whether or not this is a system group - i.e. the new group id will be
     taken from the system group id list. """
 
-    password = Property(String)
+    password = String()
     """ The password for the group, if required """
 
 

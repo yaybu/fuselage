@@ -15,7 +15,6 @@
 from fuselage.resource import Resource
 from fuselage.policy import Policy, Present
 from fuselage.argument import (
-    Property,
     FullPath,
     String,
     Integer,
@@ -40,35 +39,32 @@ class Patch(Resource):
 
     """
 
-    name = Property(FullPath)
+    name = FullPath()
     """The full path to the file this resource represents."""
 
-    source = Property(FullPath)
+    source = FullPath()
     """ The full path to a file to copy to target and patch """
 
-    patch = Property(File)
+    patch = File()
 
-    strip = Property(Integer, default=0)
+    strip = Integer(default=0)
     """ Strip the smallest prefix containing ``strip`` leading slashes from
     each file name found in the patch. """
 
-    owner = Property(String, default="root")
+    owner = String(default="root")
     """A unix username or UID who will own created objects. An owner that
     begins with a digit will be interpreted as a UID, otherwise it will be
     looked up using the python 'pwd' module."""
 
-    group = Property(String, default="root")
+    group = String(default="root")
     """A unix group or GID who will own created objects. A group that begins
     with a digit will be interpreted as a GID, otherwise it will be looked up
     using the python 'grp' module."""
 
-    mode = Property(Octal, default="644")
+    mode = Octal(default="644")
     """A mode representation as an octal. This can begin with leading zeros if
     you like, but this is not required. DO NOT use yaml Octal representation
     (0o666), this will NOT work."""
-
-    template_args = Property(Dict, default={})
-    """The arguments passed to the template."""
 
 
 class PatchApplyPolicy(Policy):

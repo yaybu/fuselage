@@ -19,7 +19,6 @@ from fuselage.policy import (
     NAND)
 
 from fuselage.argument import (
-    Property,
     FullPath,
     String,
     Integer,
@@ -30,33 +29,33 @@ class Service(Resource):
 
     """ This represents service startup and shutdown via an init daemon. """
 
-    name = Property(String)
+    name = String()
     """ A unique name representing an initd service.
 
     This would normally match the name as it appears in /etc/init.d.
     """
 
-    priority = Property(Integer, default=99)
+    priority = Integer(default=99)
     """ Priority of the service within the boot order.
 
     This attribute will have no effect when using a dependency or event based
     init.d subsystem like upstart or systemd. """
 
-    start = Property(String)
+    start = String()
     """ A command that when executed will start the service.
 
     If not provided, the provider will use the default service start invocation
     for the init.d system in use.
     """
 
-    stop = Property(String)
+    stop = String()
     """ A command that when executed will start the service.
 
     If not provided, the provider will use the default service stop invocation
     for the init.d system in use.
     """
 
-    restart = Property(String)
+    restart = String()
     """ A command that when executed will restart the service.
 
     If not provided, the provider will use the default service restart invocation
@@ -64,14 +63,14 @@ class Service(Resource):
     if the restart script is avilable the service will be stopped and started instead.
     """
 
-    reconfig = Property(String)
+    reconfig = String()
     """ A command that when executed will make the service reload its
     configuration file. """
 
-    running = Property(String)
+    running = String()
     """ A comamnd to execute to determine if a service is running. Should have an exit code of 0 for success. """
 
-    pidfile = Property(FullPath)
+    pidfile = String()
     """ Where the service creates its pid file.
 
     This can be provided instead of a status command as an alternative way of checking if

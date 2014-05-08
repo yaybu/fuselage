@@ -20,7 +20,6 @@ from fuselage.policy import (Policy,
                                Present,
                                )
 from fuselage.argument import (
-    Property,
     FullPath,
     String,
     Integer,
@@ -32,19 +31,19 @@ class Special(Resource):
 
     """ A special file, as created by mknod. """
 
-    name = Property(FullPath)
+    name = FullPath()
     """ The full path to the special file on disk. """
 
-    owner = Property(String, default="root")
+    owner = String(default="root")
     """ The unix user who should own this special file. """
 
-    group = Property(String, default="root")
+    group = String(default="root")
     """ The unix group who should own this special file. """
 
-    mode = Property(Octal, default=0o644)
+    mode = Octal(default=0o644)
     """ The octal representation of the permissions for this special file. """
 
-    type = Property(String, default="fifo")
+    type = String(default="fifo")
     """ One of the following strings:
 
       block
@@ -57,11 +56,11 @@ class Special(Resource):
     It defaults to fifo
     """
 
-    major = Property(Integer)
+    major = Integer()
     """ The major number for the special file. If the type of the special file
     is block or character, then this must be specified. """
 
-    minor = Property(Integer)
+    minor = Integer()
     """ The minor number for the special file. If the type of the special file
     is block or character, then this must be specified. """
 

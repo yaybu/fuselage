@@ -25,7 +25,6 @@ from fuselage.policy import (Policy,
                                NAND)
 
 from fuselage.argument import (
-    Property,
     FullPath,
     String,
     Octal,
@@ -64,53 +63,26 @@ class File(Resource):
 
     """
 
-    name = Property(FullPath)
+    name = FullPath()
     """The full path to the file this resource represents."""
 
-    owner = Property(String, default="root")
+    owner = String(default="root")
     """A unix username or UID who will own created objects. An owner that
     begins with a digit will be interpreted as a UID, otherwise it will be
     looked up using the python 'pwd' module."""
 
-    group = Property(String, default="root")
+    group = String(default="root")
     """A unix group or GID who will own created objects. A group that begins
     with a digit will be interpreted as a GID, otherwise it will be looked up
     using the python 'grp' module."""
 
-    mode = Property(Octal, default="644")
+    mode = Octal(default="644")
     """A mode representation as an octal. This can begin with leading zeros if
     you like, but this is not required. DO NOT use yaml Octal representation
     (0o666), this will NOT work."""
 
-    source = Property(File)
-    """A file that will be rendered and applied to this resource. """
-
-    renderer = Property(String, default="guess")
-    """ How to render the file. 'static' just copies the file, 'jinja2' applies
-    a Jinja2 template and 'json' transforms the args dictionary into a JSON
-    file """
-
-    args = Property(Dict, default={})
-    """ The arguments passed to the renderer."""
-
-    static = Property(File)
-    """ DEPRECATED: A static file to copy into this resource. The file is
-    located on the yaybu path, so can be colocated with your recipes."""
-
-    template = Property(File)
-    """ DEPRECATED: A jinja2 template, used to generate the contents of this
-    resource. The template is located on the yaybu path, so can be colocated
-    with your recipes"""
-
-    template_args = Property(Dict, default={})
-    """ DEPRECATED: The arguments passed to the template."""
-
-    def hash(self, ctx):
-        name = self.name.as_string()
-        if not ctx.transport.exists(name):
-            return ""
-        return hashlib.sha1(ctx.transport.get(name)).hexdigest() + \
-            str(ctx.transport.stat(name).st_mtime)
+    source = File()
+    """A file that will be applied to this resource. """
 
 
 class FileApplyPolicy(Policy):

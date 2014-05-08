@@ -19,7 +19,6 @@ from fuselage.policy import (
     Present,
 )
 from fuselage.argument import (
-    Property,
     String,
     Boolean,
 )
@@ -38,16 +37,16 @@ class Package(Resource):
 
     """
 
-    name = Property(String)
+    name = String()
     """ The name of the package. This can be a single package or a list can be
     supplied. """
 
-    version = Property(String)
+    version = String()
     """ The version of the package, if only a single package is specified and
     the appropriate provider supports it (the Apt provider does not support
     it). """
 
-    purge = Property(Boolean, default=False)
+    purge = Boolean(default=False)
     """ When removing a package, whether to purge it or not. """
 
 

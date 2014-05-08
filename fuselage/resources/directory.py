@@ -20,7 +20,6 @@ from fuselage.policy import (Policy,
                                Present,
                                )
 from fuselage.argument import (
-    Property,
     FullPath,
     String,
     Octal,
@@ -43,19 +42,19 @@ class Directory(Resource):
 
     """
 
-    name = Property(FullPath)
+    name = FullPath()
     """ The full path to the directory on disk """
 
-    owner = Property(String, default="root")
+    owner = String(default="root")
     """ The unix username who should own this directory, by default this is 'root' """
 
-    group = Property(String, default="root")
+    group = String(default="root")
     """ The unix group who should own this directory, by default this is 'root' """
 
-    mode = Property(Octal, default="755")
+    mode = Octal(default="755")
     """ The octal mode that represents this directory's permissions, by default this is '755'. """
 
-    parents = Property(Boolean, default=False)
+    parents = Boolean(default=False)
     """ Create parent directories as needed, using the same ownership and
     permissions, this is False by default. """
 

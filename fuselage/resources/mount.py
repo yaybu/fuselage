@@ -17,7 +17,6 @@
 from fuselage.resource import Resource
 from fuselage.policy import Policy, Present
 from fuselage.argument import (
-    Property,
     FullPath,
     String,
 )
@@ -25,16 +24,16 @@ from fuselage.argument import (
 
 class Mount(Resource):
 
-    name = Property(FullPath)
+    name = FullPath()
     """The name of the file this resource represents."""
 
     """ The type of mount e.g. ext3 """
-    fs_type = Property(String)
+    fs_type = String()
 
     """ The options to pass to mount """
-    options = Property(String, default="defaults")
+    options = String(default="defaults")
 
-    device = Property(FullPath)
+    device = FullPath()
     """ The pathname to which to link the symlink. Dangling symlinks ARE
     considered errors in Yaybu. """
 

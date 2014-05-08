@@ -17,10 +17,18 @@ import json
 
 class EventState(object):
 
-    """ Represents the current state of events """
+    """
+    Represents the current state of events
 
-    save_file = "events.saved"
-    """ The file to save to.  This is touched by the runner. """
+    Createw a JSON state file on the target system. fuselage is idempotent - it
+    doesn't rely on this to know if it's applied your changes. It relies on it
+    on it to keep track of watch triggers.
+
+    For example, if you make a change to a File, fuselage doesn't need this
+    state data to make sure the file is updated. But if you have an Execute
+    that watches the File then this state date will ensure the Execute is
+    trigger when resuming from failure.
+    """
 
     overrides = {}
     """ A mapping of resource ids to the overridden policy name for that
@@ -86,5 +94,5 @@ class EventState(object):
 
     def save(self):
         if not self.simulate:
-            data = json.dumps(self.overrides)
-            self.transport.put(self.save_file, data)
+            with open(self.save_file, "w") as fp:
+                json.dump(self.overrides, fp)

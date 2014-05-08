@@ -21,7 +21,6 @@ from fuselage.policy import (Policy,
                                )
 
 from fuselage.argument import (
-    Property,
     FullPath,
     String,
 )
@@ -43,20 +42,20 @@ class Link(Resource):
 
     """
 
-    name = Property(FullPath)
+    name = FullPath()
     """The name of the file this resource represents."""
 
-    owner = Property(String, default="root")
+    owner = String(default="root")
     """A unix username or UID who will own created objects. An owner that
     begins with a digit will be interpreted as a UID, otherwise it will be
     looked up using the python 'pwd' module."""
 
-    group = Property(String, default="root")
+    group = String(default="root")
     """A unix group or GID who will own created objects. A group that begins
     with a digit will be interpreted as a GID, otherwise it will be looked up
     using the python 'grp' module."""
 
-    to = Property(FullPath)
+    to = FullPath()
     """ The pathname to which to link the symlink. Dangling symlinks ARE
     considered errors in Yaybu. """
 

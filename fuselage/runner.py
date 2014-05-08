@@ -13,7 +13,9 @@
 # limitations under the License.
 
 import os
+import sys
 import logging
+import optparse
 
 from fuselage import error, bundle, event
 from fuselage.changes import TextRenderer
@@ -24,19 +26,31 @@ logger = logging.getLogger(__name__)
 
 class Runner(object):
 
-    def run(self):
-        root = self.root
-        self.ypath = root.ypath
-        self.resume = root.resume
-        self.no_resume = root.no_resume
-        self.simulate = root.simulate
-        self.verbose = root.verbose
+    state_path = "/var/run/yaybu"
 
-        if not self.simulate and not os.path.exists(self.get_data_path()):
-            os.makedirs(self.get_data_path())
+    def run(self, argv=sys.argv):
+        p = optparse.OptionParser
+        p.add_option("--simulate", action="store_true")
+        p.add_option("--resume", action="store_true")
+        p.add_option("--no-resume", action="store_true")
+        p.add_option("-v", "--verbose", action="count")
+        p.add_option("-q", "--quiet", action="count")
+        opts, args = p.parse_args(argv)
+
+        #if len(args) != 1 or args[0] not in ("apply", "test"):
+        #    p.print_help()
+        #    raise SystemExit(1)
+
+        self.resume = opts.resume
+        self.no_resume = opts.no_resume
+        self.simulate = opts.simulate
+        self.verbose = opts.verbose
+
+        if not self.simulate and not os.path.exists(self.state_path):
+            os.makedirs(self.state_path)
 
         self.state = event.EventState(
-            save_file = self.get_data_path("events.saved"),
+            save_file = os.path.join(self.state_path, "events.saved"),
             simulate = self.simulate,
         )
         self.state.open()
@@ -45,9 +59,7 @@ class Runner(object):
         bundle = bundle.ResourceBundle.create_from_yay_expression(
             self.params.resources, verbose_errors=self.verbose > 2)
         bundle.bind()
-
-        with self.root.ui.throbber("Provision %s" % self.host) as throbber:
-            changed = bundle.apply(self, throbber)
+        changed = bundle.apply(self)
 
         #FIXME: Do we get here if no change has occured??
         self.state.success()
@@ -60,8 +72,3 @@ class Runner(object):
         # FIXME: What does this do now?
         # Does it only work for pex bundles?
         # Does it work standalone?
-
-    def get_data_path(self, path=None):
-        if not path:
-            return "/var/run/yaybu"
-        return os.path.join("/var/run/yaybu", path)
