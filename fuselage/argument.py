@@ -22,13 +22,6 @@ import random
 from fuselage import error
 
 
-unicode_glyphs = ''.join(
-    unichr(char)
-    for char in xrange(sys.maxunicode+1)
-    if unicodedata.category(unichr(char))[0] in ('LMNPSZ')
-    )
-
-
 class Argument(object):
 
     """ Stores the argument value on the instance object. It's a bit fugly,
@@ -88,6 +81,12 @@ class String(Argument):
 
     @classmethod
     def _generate_valid(self):
+        unicode_glyphs = ''.join(
+            unichr(char)
+            for char in range(sys.maxunicode+1)
+            if unicodedata.category(unichr(char))[0] in ('LMNPSZ')
+        )
+
         l = []
         for i in range(random.randint(0, 1024)):
             l.append(random.choice(unicode_glyphs))
