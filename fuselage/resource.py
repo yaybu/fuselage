@@ -17,7 +17,6 @@ import collections
 from fuselage.argument import Argument, List, PolicyArgument, String
 from fuselage import policy
 from fuselage import error
-from fuselage.ordereddict import OrderedDict
 
 
 class ResourceType(type):

@@ -23,7 +23,7 @@
 try:
     from UserDict import DictMixin
 except ImportError:
-    from collectins import MutableMapping
+    from collections import MutableMapping
     class DictMixin(MutableMapping):
         pass
 
