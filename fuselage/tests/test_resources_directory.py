@@ -1,4 +1,4 @@
-# Copyright 2011-2014 Isotoma Limited
+# Copyright 2014 Isotoma Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,31 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .checkout import Checkout
-from .directory import Directory
-from .execute import Execute
-from .file import File
-from .group import Group
-from .link import Link
-from .mount import Mount
-from .package import Package
-from .patch import Patch
-from .service import Service
-from .special import Special
-from .user import User
+import unittest
+
+from fuselage.resources import Directory
 
 
-__all__ = [
-    "Checkout",
-    "Directory",
-    "Execute",
-    "File",
-    "Group",
-    "Link",
-    "Mount",
-    "Package",
-    "Patch",
-    "Service",
-    "Special",
-    "User",
-]
+class TestDirectory(unittest.TestCase):
+
+    def test_minimal(self):
+        c = Directory(
+            name='/tmp/my-directory',
+        )

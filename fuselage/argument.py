@@ -80,7 +80,7 @@ class String(Argument):
     def __set__(self, instance, value):
         if value is None:
             pass
-        elif not isinstance(value, (unicode, yay.String)):
+        elif not isinstance(value, (unicode,)):
             value = unicode(value, 'utf-8')
         setattr(instance, self.arg_id, value)
 
