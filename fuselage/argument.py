@@ -12,13 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import error
 import types
 import sys
 import os
 from abc import ABCMeta, abstractmethod, abstractproperty
 import unicodedata
 import random
+
+from fuselage import error
+
 
 unicode_glyphs = ''.join(
     unichr(char)
