@@ -72,11 +72,16 @@ class String(Argument):
 
     """ Represents a string. """
 
+    try:
+        UNICODE_TYPE = unicode
+    except NameError:
+        UNICODE_TYPE = str
+
     def __set__(self, instance, value):
         if value is None:
             pass
-        elif not isinstance(value, (unicode,)):
-            value = unicode(value, 'utf-8')
+        elif not isinstance(value, (self.UNICODE_TYPE,)):
+            value = self.UNICODE_TYPE(value, 'utf-8')
         setattr(instance, self.arg_id, value)
 
     @classmethod
