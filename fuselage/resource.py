@@ -132,8 +132,12 @@ class Resource(object):
         """ Takes a reference to a Yay AST node """
         self.observers = collections.defaultdict(list)
 
-        setattr(self, "name", kwargs["name"])
-        for key, value in kwargs.items:
+        try:
+            setattr(self, "name", kwargs["name"])
+        except KeyError:
+            raise error.ParseError("Unnamed resource!")
+
+        for key, value in kwargs.items():
             if key not in self.__args__:
                 raise error.ParseError("'%s' is not a valid option for resource %s" % (key, self))
             setattr(self, key, value)

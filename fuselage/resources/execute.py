@@ -56,13 +56,13 @@ class Execute(Resource):
     command = String()
     """ If you wish to run a single command, then this is the command. """
 
-    commands = Property(List)
+    commands = List()
     """ If you wish to run multiple commands, provide a list """
 
-    cwd = Property(FullPath, default='/')
+    cwd = FullPath(default='/')
     """ The current working directory in which to execute the command. """
 
-    environment = Property(Dict)
+    environment = Dict()
     """
 
     The environment to provide to the command, for example::
@@ -74,12 +74,12 @@ class Execute(Resource):
                 FOO: bar
     """
 
-    returncode = Property(Integer, default=0)
+    returncode = Integer(default=0)
     """ The expected return code from the command, defaulting to 0. If the
     command does not return this return code then the resource is considered
     to be in error. """
 
-    user = Property(String, default="root")
+    user = String(default="root")
     """ The user to execute the command as.
     """
 
