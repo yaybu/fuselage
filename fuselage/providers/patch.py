@@ -38,7 +38,7 @@ class Patch(provider.Provider):
                 raise error.PathComponentNotDirectory(path)
 
     def get_patch(self, context):
-        patch = context.get_file(self.resource.patch.as_string())
+        patch = context.get_file(self.resource.patch
         data = patch.read()
         # FIXME: Would be good to validate the patch here a bit
         return data, "secret" in patch.labels
@@ -46,17 +46,16 @@ class Patch(provider.Provider):
     def apply_patch(self, context, output):
         patch, sensitive = self.get_patch(context)
 
-        cmd = 'patch -t --dry-run -N --silent -r - -o - %s -' % self.resource.source.as_string(
-        )
+        cmd = 'patch -t --dry-run -N --silent -r - -o - %s -' % self.resource.source
         returncode, stdout, stderr = context.transport.execute(
             cmd, stdin=patch)
 
         if returncode != 0:
             output.info("Patch does not apply cleanly")
             output.info(
-                "Patch file used was %s" % self.resource.patch.as_string())
+                "Patch file used was %s" % self.resource.patch)
             output.info(
-                "File to patch was %s" % self.resource.source.as_string())
+                "File to patch was %s" % self.resource.source)
 
             output.info("")
             output.info("Reported error was:")
@@ -69,23 +68,18 @@ class Patch(provider.Provider):
     def test(self, context):
         # Validate that the file exists and any template values can be filled
         # in
-        with context.root.ui.throbber("Check '%s' exists" % self.resource.patch.as_string()):
+        with context.root.ui.throbber("Check '%s' exists" % self.resource.patch):
             self.get_patch(context)
 
     def apply(self, context, output):
-        name = self.resource.name.as_string()
+        name = self.resource.name
 
         self.check_path(context, os.path.dirname(name), context.simulate)
 
         contents, sensitive = self.apply_patch(context, output)
 
-        template_args = self.resource.template_args.resolve()
-        if template_args:
-            contents, secret = render_string(context, contents, template_args)
-            sensitive = sensitive or secret
-
-        fc = EnsureFile(name, contents, self.resource.owner.as_string(),
-                        self.resource.group.as_string(), self.resource.mode.resolve(), sensitive)
+        fc = EnsureFile(name, contents, self.resource.owner,
+                        self.resource.group, self.resource.mode, sensitive)
         context.change(fc)
 
         return fc.changed

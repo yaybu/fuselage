@@ -32,7 +32,7 @@ class Mount(provider.Provider):
         for i in frags:
             path = os.path.join(path, i)
             if not os.path.exists(path):
-                if self.resource.parents.resolve():
+                if self.resource.parents:
                     return
                 if simulate:
                     return
@@ -63,7 +63,7 @@ class Mount(provider.Provider):
         return self.get_all_active_mounts(context)[path]
 
     def apply(self, context, output):
-        name = self.resource.name.as_string()
+        name = self.resource.name
 
         self.check_path(context, name)
 
@@ -74,7 +74,7 @@ class Mount(provider.Provider):
         except KeyError:
             command = ["mount"]
 
-            fs_type = self.resource.fs_type.as_string()
+            fs_type = self.resource.fs_type
             if fs_type:
                 if fs_type == "bind":
                     command.append("--bind")
@@ -83,7 +83,7 @@ class Mount(provider.Provider):
             command.append(self.resource.device)
             command.append(self.resource.name)
 
-            options = self.resource.options.resolve()
+            options = self.resource.options
             if options:
                 command.extend(("-o", options))
 

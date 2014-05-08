@@ -33,20 +33,19 @@ class Svn(provider.Provider):
             'subversion',
         ]
 
-        return resource.scm.as_string(default='').lower() in identities
+        return resource.scm.lower() in identities
 
     @property
     def url(self):
-        repository = self.resource.repository.as_string()
-        tag = self.resource.tag.as_string(default='')
-        if tag:
-            return repository + "/tags/" + tag
-        return repository + "/" + self.resource.branch.as_string()
+        repository = self.resource.repository
+        if self.resource.tag:
+            return repository + "/tags/" + self.resource.tag
+        return repository + "/" + self.resource.branch
 
     def action_checkout(self, context):
-        name = self.resource.name.as_string()
-        user = self.resource.user.as_string()
-        group = self.resource.group.as_string()
+        name = self.resource.name
+        user = self.resource.user
+        group = self.resource.group
 
         context.change(EnsureDirectory(name, user, group, 0o755))
 
@@ -61,7 +60,7 @@ class Svn(provider.Provider):
             log.info(error_string)
             log.info("This error was ignored in simulate mode")
 
-        name = self.resource.name.as_string()
+        name = self.resource.name
 
         if not os.path.exists(name):
             return self.action_checkout(context)
@@ -104,7 +103,7 @@ class Svn(provider.Provider):
         return changed
 
     def action_export(self, context):
-        if os.path.exists(self.resource.name.as_string()):
+        if os.path.exists(self.resource.name):
             return
         self.svn(context, "export", self.url, self.resource.name)
 
@@ -116,8 +115,8 @@ class Svn(provider.Provider):
 
         command.extend([action, "--non-interactive"])
 
-        scm_username = self.resource.scm_username.as_string(default='')
-        scm_password = self.resource.scm_password.as_string(default='')
+        scm_username = self.resource.scm_username
+        scm_password = self.resource.scm_password
         if scm_username:
             command.extend(["--username", self.resource.scm_username])
         if scm_password:
@@ -137,6 +136,6 @@ class Svn(provider.Provider):
 
     def svn(self, context, action, *args, **kwargs):
         command = self.get_svn_args(action, *args, **kwargs)
-        sc = ShellCommand(command, user=self.resource.user.as_string())
+        sc = ShellCommand(command, user=self.resource.user)
         context.change(sc)
         return sc.returncode, sc.stdout, sc.stderr

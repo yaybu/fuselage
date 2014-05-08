@@ -46,7 +46,7 @@ class Link(provider.Provider):
 
     def _stat(self, context):
         """ Extract stat information for the resource. """
-        st = os.lstat(self.resource.name.as_string())
+        st = os.lstat(self.resource.name)
         uid = st.st_uid
         gid = st.st_gid
         mode = stat.S_IMODE(st.st_mode)
@@ -54,8 +54,8 @@ class Link(provider.Provider):
 
     def apply(self, context, output):
         changed = False
-        name = self.resource.name.as_string()
-        to = self.resource.to.as_string()
+        name = self.resource.name
+        to = self.resource.to
         uid = None
         gid = None
         mode = None
@@ -121,7 +121,7 @@ class RemoveLink(provider.Provider):
         return super(RemoveLink, self).isvalid(*args, **kwargs)
 
     def apply(self, context, output):
-        name = self.resource.name.as_string()
+        name = self.resource.name
 
         if os.lexists(name):
             if not os.islink(name):

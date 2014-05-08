@@ -25,22 +25,21 @@ class Execute(provider.Provider):
         return super(Execute, self).isvalid(*args, **kwargs)
 
     def apply(self, context, output):
-        creates = self.resource.creates.as_string()
+        creates = self.resource.creates
         if creates and os.path.exists(creates):
             # logging.info("%r: %s exists, not executing" % (self.resource, self.resource.creates))
             return False
 
-        touch = self.resource.touch.as_string()
+        touch = self.resource.touch
         if touch and os.path.exists(touch):
             return False
 
-        unless = self.resource.unless.as_string()
+        unless = self.resource.unless
         if unless:
             try:
                 if context.transport.execute(unless,
-                                             user=self.resource.user.as_string(
-                                             ),
-                                             cwd=self.resource.cwd.as_string(),
+                                             user=self.resource.user.as_string,
+                                             cwd=self.resource.cwd,
                                              )[0] == 0:
                     return False
 
@@ -50,7 +49,7 @@ class Execute(provider.Provider):
                 # resource as applied.
                 if context.simulate:
                     output.info(
-                        "User '%s' not found; assuming this recipe will create it" % self.resource.user.as_string())
+                        "User '%s' not found; assuming this recipe will create it" % self.resource.user)
                     return True
                 raise
 
@@ -60,11 +59,11 @@ class Execute(provider.Provider):
                 # resource as applied.
                 if context.simulate:
                     output.info(
-                        "Group '%s' not found; assuming this recipe will create it" % self.resource.group.as_string())
+                        "Group '%s' not found; assuming this recipe will create it" % self.resource.group)
                     return True
                 raise
 
-        command = self.resource.command.as_string()
+        command = self.resource.command
         if command:
             commands = [self.resource.command]
         else:
@@ -90,7 +89,7 @@ class Execute(provider.Provider):
                     raise error.CommandError(
                         "%s failed with return code %d" % (self.resource, rc))
 
-        if self.resource.touch.as_string():
+        if self.resource.touch:
             context.change(ShellCommand(["touch", self.resource.touch]))
 
         return True

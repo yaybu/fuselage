@@ -32,8 +32,7 @@ class Git(provider.Provider):
 
     @classmethod
     def isvalid(self, policy, resource, yay):
-        scm = resource.scm.as_string(default='')
-        return scm and scm.lower() == "git"
+        return resource.scm and resource.scm.lower() == "git"
 
     def get_git_command(self, action, *args):
         command = [
@@ -50,16 +49,16 @@ class Git(provider.Provider):
     def info(self, context, action, *args):
         rc, stdout, stderr = context.transport.execute(
             self.get_git_command(action, *args),
-            user=self.resource.user.as_string(),
-            cwd=self.resource.name.as_string(),
+            user=self.resource.user,
+            cwd=self.resource.name,
         )
         return rc, stdout, stderr
 
     def action(self, context, action, *args):
         context.change(ShellCommand(
             self.get_git_command(action, *args),
-            user=self.resource.user.as_string(),
-            cwd=self.resource.name.as_string(),
+            user=self.resource.user,
+            cwd=self.resource.name,
         ))
 
     def action_clone(self, context):
@@ -67,11 +66,11 @@ class Git(provider.Provider):
         typical clone, does not check it out
 
         """
-        context.change(EnsureDirectory(self.resource.name.as_string(),
-                       self.resource.user.as_string(), self.resource.group.as_string(), 0o755))
+        context.change(EnsureDirectory(self.resource.name,
+                       self.resource.user, self.resource.group, 0o755))
 
         try:
-            self.action(context, "init", self.resource.name.as_string())
+            self.action(context, "init", self.resource.name)
         except SystemError:
             raise CheckoutError("Cannot initialise local repository.")
 
@@ -80,7 +79,7 @@ class Git(provider.Provider):
     def action_set_remote(self, context):
         try:
             self.action(context, "remote", "add", self.REMOTE_NAME,
-                        self.resource.repository.as_string())
+                        self.resource.repository)
         except SystemError:
             raise CheckoutError("Could not set the remote repository.")
 
@@ -90,7 +89,7 @@ class Git(provider.Provider):
         rv, stdout, stderr = self.info(context, "remote", "-v")
         remote = remote_re.search(stdout)
         if remote:
-            if not self.resource.repository.as_string() == remote.group(1):
+            if not self.resource.repository == remote.group(1):
                 log.info("The remote repository has changed.")
                 try:
                     self.action(context, "remote", "rm", self.REMOTE_NAME)
@@ -106,7 +105,7 @@ class Git(provider.Provider):
 
     def checkout_needed(self, context):
         # Determine which SHA is currently checked out.
-        if os.path.exists(os.path.join(self.resource.name.as_string(), ".git")):
+        if os.path.exists(os.path.join(self.resource.name, ".git")):
             try:
                 rv, stdout, stderr = self.info(
                     context, "rev-parse", "--verify", "HEAD")
@@ -120,7 +119,7 @@ class Git(provider.Provider):
 
         try:
             rv, stdout, stderr = context.transport.execute(
-                ["git", "ls-remote", self.resource.repository.as_string()], user=self.resource.user.as_string(), cwd="/tmp")
+                ["git", "ls-remote", self.resource.repository], user=self.resource.user, cwd="/tmp")
         except SystemError:
             raise CheckoutError("Could not query the remote repository")
 
@@ -129,9 +128,9 @@ class Git(provider.Provider):
 
         # Revision takes precedent over branch
 
-        revision = self.resource.revision.as_string()
-        tag = self.resource.tag.as_string()
-        branch = self.resource.branch.as_string()
+        revision = self.resource.revision
+        tag = self.resource.tag
+        branch = self.resource.branch
 
         if revision:
             newref = revision
@@ -170,7 +169,7 @@ class Git(provider.Provider):
             self.action(context, "fetch", self.REMOTE_NAME)
         except SystemError:
             raise CheckoutError("Could not fetch '%s'" %
-                                self.resource.repository.as_string())
+                                self.resource.repository
 
         try:
             self.action(context, "checkout", newref)
@@ -179,7 +178,7 @@ class Git(provider.Provider):
 
     def apply(self, context, output):
         # If necessary, clone the repository
-        if not os.path.exists(os.path.join(self.resource.name.as_string(), ".git")):
+        if not os.path.exists(os.path.join(self.resource.name, ".git")):
             self.action_clone(context)
             changed = True
         else:

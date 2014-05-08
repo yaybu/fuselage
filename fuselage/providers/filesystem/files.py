@@ -39,25 +39,25 @@ class File(provider.Provider):
                 raise error.PathComponentNotDirectory("Path '%s' is not a directory" % path)
 
     def render_json(self, context):
-        args = self.resource.args.resolve()
+        args = self.resource.args
 
         contents = json.dumps(args, sort_keys=True, indent=4)
         sensitive = self.resource.args.contains_secrets()
         return contents, sensitive
 
     def render_jinja2(self, context):
-        source = self.resource.source.as_string()
+        source = self.resource.source
         if not source:
             source = self.resource.template.as_string(default='')
             if not source:
                 raise error.ExecutionError("You must specify a 'source' to use the 'Jinja2' renderer")
 
         try:
-            args = self.resource.args.resolve()
+            args = self.resource.args
             sensitive_args = self.resource.args.contains_secrets()
         except error.NoMatching:
             try:
-                args = self.resource.template_args.resolve()
+                args = self.resource.template_args
                 sensitive_args = self.resource.template_args.contains_secrets()
             except error.NoMatching:
                 raise error.ExecutionError("You must set 'args' to use the 'Jinja2' renderer")
@@ -67,7 +67,7 @@ class File(provider.Provider):
         return contents, sensitive
 
     def render_static(self, context):
-        source = self.resource.source.as_string()
+        source = self.resource.source
         if not source:
             source = self.resource.static.as_string(default='')
             if not source:
@@ -106,7 +106,7 @@ class File(provider.Provider):
             self.render(context)
 
     def apply(self, context, output):
-        name = self.resource.name.as_string()
+        name = self.resource.name
 
         self.check_path(context, os.path.dirname(name), context.simulate)
 
@@ -115,9 +115,9 @@ class File(provider.Provider):
         fc = EnsureFile(
             name,
             contents,
-            self.resource.owner.as_string(),
-            self.resource.group.as_string(),
-            self.resource.mode.resolve(),
+            self.resource.owner,
+            self.resource.group,
+            self.resource.mode,
             sensitive)
         context.change(fc)
 
@@ -128,7 +128,7 @@ class RemoveFile(provider.Provider):
     policies = (resources.file.FileRemovePolicy,)
 
     def apply(self, context, output):
-        name = self.resource.name.as_string()
+        name = self.resource.name
         if os.path.exists(name):
             if not os.path.isfile(name):
                 raise error.InvalidProvider(

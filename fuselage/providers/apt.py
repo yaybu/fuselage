@@ -21,7 +21,7 @@ from fuselage.changes import ShellCommand
 
 def is_installed(context, resource):
     # work out if the package is already installed
-    command = ["dpkg-query", "-W", "-f='${Status}'", resource.name.as_string()]
+    command = ["dpkg-query", "-W", "-f='${Status}'", resource.name]
 
     try:
         rc, stdout, stderr = context.transport.execute(command)
@@ -54,7 +54,7 @@ class AptInstall(provider.Provider):
         # the search returned 1, package is not installed, continue and install
         # it
         command = ["apt-get", "install", "-q",
-                   "-y", self.resource.name.as_string()]
+                   "-y", self.resource.name]
 
         try:
             context.change(ShellCommand(command, env=env))
@@ -91,7 +91,7 @@ class AptUninstall(provider.Provider):
         command = ["apt-get", "remove", "-q", "-y"]
         if self.resource.purge.as_bool():
             command.append("--purge")
-        command.append(self.resource.name.as_string())
+        command.append(self.resource.name)
 
         try:
             context.change(ShellCommand(command, env=env))

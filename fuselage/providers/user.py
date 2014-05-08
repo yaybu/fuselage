@@ -32,7 +32,7 @@ class User(provider.Provider):
     def get_user_info(self, context):
         fields = ("name", "passwd", "uid", "gid", "gecos", "dir", "shell")
 
-        username = self.resource.name.as_string()
+        username = self.resource.name
 
         try:
             info_tuple = pwd.getpwnam(username)
@@ -71,30 +71,30 @@ class User(provider.Provider):
             command = ['useradd', '-N']
             changed = True  # we definitely make a change
 
-        name = self.resource.name.as_string()
+        name = self.resource.name
 
-        fullname = self.resource.fullname.as_string(default='')
+        fullname = self.resource.fullname
         if fullname and info["gecos"] != fullname:
             command.extend(["--comment", self.resource.fullname])
             changed = True
 
-        password = self.resource.password.as_string(default='')
+        password = self.resource.password
         if password and not info["exists"]:
             command.extend(["--password", self.resource.password])
             changed = True
 
-        home = self.resource.home.as_string(default='')
+        home = self.resource.home
         if home and info["dir"] != home:
             command.extend(["--home", self.resource.home])
             changed = True
 
-        uid = self.resource.uid.as_string(default='')
+        uid = self.resource.uid
         if uid and info["uid"] != int(uid):
             command.extend(["--uid", self.resource.uid])
             changed = True
 
-        gid = self.resource.gid.as_string(default='')
-        group = self.resource.group.as_string(default='')
+        gid = self.resource.gid
+        group = self.resource.group
         if gid or group:
             if gid:
                 gid = int(gid)
@@ -116,13 +116,13 @@ class User(provider.Provider):
                     command.extend(["--gid", str(gid)])
                     changed = True
 
-        groups = self.resource.groups.resolve()  # as_list(default=[])
+        groups = self.resource.groups
         if groups:
             desired_groups = set(groups)
             current_groups = set(
                 g.gr_name for g in grp.getgrall() if name in g.gr_mem)
 
-            append = self.resource.append.resolve()
+            append = self.resource.append
             if append and len(desired_groups - current_groups) > 0:
                 if info["exists"]:
                     command.append("-a")
@@ -133,17 +133,17 @@ class User(provider.Provider):
                 command.extend(["-G", ",".join(desired_groups)])
                 changed = True
 
-        shell = self.resource.shell.as_string(default='')
+        shell = self.resource.shell
         if shell and shell != info["shell"]:
             command.extend(["--shell", str(self.resource.shell)])
             changed = True
 
-        disabled_login = self.resource.disabled_login.resolve()
+        disabled_login = self.resource.disabled_login
         if disabled_login and not info["disabled-login"]:
             command.extend(["--password", "!"])
             changed = True
 
-        system = self.resource.system.resolve()
+        system = self.resource.system
         if not info["exists"] and system:
             command.extend(["--system"])
             changed = True
@@ -170,7 +170,7 @@ class UserRemove(provider.Provider):
     def apply(self, context, output):
         try:
             grp.getpwnam(
-                self.resource.name.as_string().encode("utf-8"))
+                self.resource.name.encode("utf-8"))
         except KeyError:
             # If we get a key errror then there is no such user. This is good.
             return False

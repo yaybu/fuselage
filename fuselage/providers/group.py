@@ -27,7 +27,7 @@ class Group(provider.Provider):
 
         try:
             info_tuple = grp.getgrnam(
-                self.resource.name.as_string().encode("utf-8"))
+                self.resource.name.encode("utf-8"))
         except KeyError:
             info = dict((f, None) for f in fields)
             info["exists"] = False
@@ -49,7 +49,7 @@ class Group(provider.Provider):
             command = ["groupadd"]
             changed = True
 
-        gid = self.resource.gid.resolve()
+        gid = self.resource.gid
         if gid and info["gid"] != gid:
             command.extend(["--gid", self.resource.gid])
 
@@ -74,7 +74,7 @@ class GroupRemove(provider.Provider):
     def apply(self, context, output):
         try:
             grp.getgrnam(
-                self.resource.name.as_string().encode("utf-8"))
+                self.resource.name.encode("utf-8"))
         except KeyError:
             # If we get a key errror then there is no such group. This is good.
             return False

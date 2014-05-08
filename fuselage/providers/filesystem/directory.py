@@ -32,7 +32,7 @@ class Directory(provider.Provider):
         for i in frags:
             path = os.path.join(path, i)
             if not os.path.exists(path):
-                if self.resource.parents.resolve():
+                if self.resource.parents:
                     return
                 if simulate:
                     return
@@ -41,16 +41,16 @@ class Directory(provider.Provider):
                 raise error.PathComponentNotDirectory(path)
 
     def apply(self, context, output):
-        name = self.resource.name.as_string()
+        name = self.resource.name
 
         self.check_path(context, os.path.dirname(name))
 
         return context.change(EnsureDirectory(
             name,
-            self.resource.owner.as_string(),
-            self.resource.group.as_string(),
-            self.resource.mode.resolve(),
-            self.resource.parents.resolve(),
+            self.resource.owner,
+            self.resource.group,
+            self.resource.mode,
+            self.resource.parents,
         ))
 
 
@@ -59,7 +59,7 @@ class RemoveDirectory(provider.Provider):
     policies = (resources.directory.DirectoryRemovedPolicy,)
 
     def apply(self, context, output):
-        name = self.resource.name.as_string()
+        name = self.resource.name
 
         if os.path.exists(name) and not os.path.isdir(name):
             raise error.InvalidProviderError(
@@ -77,7 +77,7 @@ class RemoveDirectoryRecursive(provider.Provider):
     policies = (resources.directory.DirectoryRemovedRecursivePolicy,)
 
     def apply(self, context, output):
-        name = self.resource.name.as_string()
+        name = self.resource.name
 
         if os.path.exists(name) and not os.path.isdir(name):
             raise error.InvalidProviderError(
