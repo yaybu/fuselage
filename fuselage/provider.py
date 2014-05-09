@@ -14,6 +14,7 @@
 
 """ Core classes for providers """
 
+import six
 from abc import ABCMeta, abstractmethod
 
 from fuselage import policy
@@ -26,13 +27,12 @@ class ProviderType(ABCMeta):
     def __new__(meta, class_name, bases, new_attrs):
         cls = super(ProviderType, meta).__new__(
             meta, class_name, bases, new_attrs)
-        for p in cls.policies:
+        for p in getattr(cls, "policies", []):
             p.providers.append(cls)
         return cls
 
 
-class Provider(object):
-    __metaclass__ = ProviderType
+class Provider(six.with_metaclass(ProviderType)):
 
     # every provider should have a name
     name = None
