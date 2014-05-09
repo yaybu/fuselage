@@ -14,8 +14,12 @@
 
 import os
 import logging
-import urlparse
-import urllib
+try:
+    from urllib.parse import urlparse, urlunparse, quote
+except ImportError:
+    from urlparse import urlparse, urlunparse
+    from urllib import quote
+
 
 from fuselage import error, resources, provider
 from fuselage.changes import ShellCommand, EnsureFile, EnsureDirectory
@@ -97,15 +101,15 @@ cmdtable = {
 
 def _inject_credentials(url, username=None, password=None):
     if username and password:
-        p = urlparse.urlparse(url)
+        p = urlparse(url)
         netloc = '%s:%s@%s' % (
-            urllib.quote(username, ''),
-            urllib.quote(password, ''),
+            quote(username, ''),
+            quote(password, ''),
             p.hostname,
         )
         if p.port:
             netloc += ":" + str(p.port)
-        url = urlparse.urlunparse(
+        url = urlunparse(
             (p.scheme, netloc, p.path, p.params, p.query, p.fragment))
     return url
 
