@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import files
-import link
-import directory
+from . import files
+from . import link
+from . import directory
 
 __all__ = [
     "files",
