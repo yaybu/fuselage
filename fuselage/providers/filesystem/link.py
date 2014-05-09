@@ -117,10 +117,6 @@ class RemoveLink(provider.Provider):
 
     policies = (resources.link.LinkRemovedPolicy,)
 
-    @classmethod
-    def isvalid(self, *args, **kwargs):
-        return super(RemoveLink, self).isvalid(*args, **kwargs)
-
     def apply(self, context, output):
         name = self.resource.name
 

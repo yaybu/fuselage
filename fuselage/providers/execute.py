@@ -22,10 +22,6 @@ class Execute(provider.Provider):
 
     policies = (resources.execute.ExecutePolicy,)
 
-    @classmethod
-    def isvalid(self, *args, **kwargs):
-        return super(Execute, self).isvalid(*args, **kwargs)
-
     def apply(self, context, output):
         creates = self.resource.creates
         if creates and os.path.exists(creates):

@@ -21,7 +21,6 @@ from fuselage.policy import (
     Policy,
     Absent,
     Present,
-    NAND
 )
 
 from fuselage.argument import (
@@ -96,10 +95,9 @@ class FileApplyPolicy(Policy):
     resource = File
     name = "apply"
     default = True
-    signature = (Present("name"),
-                 NAND(Present("template"),
-                      Present("static")),
-                 )
+    signature = (
+        Present("name"),
+    )
 
 
 class FileRemovePolicy(Policy):

@@ -44,7 +44,7 @@ class Provider(object):
         self.resource = resource
 
     @classmethod
-    def isvalid(self, policy, resource, yay):
+    def isvalid(self, policy, resource):
         """ Returns True if this provider is valid for the specified resource,
         within the context of the provided yay structure. This returns True by
         default. If you want your provider to be more discriminating, then

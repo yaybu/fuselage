@@ -27,10 +27,6 @@ class User(provider.Provider):
 
     policies = (resources.user.UserApplyPolicy,)
 
-    @classmethod
-    def isvalid(self, *args, **kwargs):
-        return super(User, self).isvalid(*args, **kwargs)
-
     def get_user_info(self, context):
         fields = ("name", "passwd", "uid", "gid", "gecos", "dir", "shell")
 
@@ -164,10 +160,6 @@ class User(provider.Provider):
 class UserRemove(provider.Provider):
 
     policies = (resources.user.UserRemovePolicy,)
-
-    @classmethod
-    def isvalid(self, *args, **kwargs):
-        return super(UserRemove, self).isvalid(*args, **kwargs)
 
     def apply(self, context, output):
         try:

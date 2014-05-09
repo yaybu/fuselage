@@ -22,5 +22,7 @@ class TestMount(unittest.TestCase):
     def test_minimal(self):
         r = Mount(
             name='/tmp/my-mount',
+            fs_type='ext3',
+            device='/dev/sda1',
         )
         self.assertEqual(r.name, '/tmp/my-mount')

@@ -17,11 +17,12 @@ import stat
 import pwd
 import grp
 
-from fuselage import error, changes
+from fuselage import error
+from fuselage.changes import base
 from .execute import ShellCommand
 
 
-class AttributeChanger(changes.Change):
+class AttributeChanger(base.Change):
 
     """ Make the changes required to a file's attributes """
 

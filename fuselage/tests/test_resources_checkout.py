@@ -22,5 +22,7 @@ class TestCheckout(unittest.TestCase):
     def test_minimal(self):
         r = Checkout(
             name='/tmp/my-checkout',
+            repository='https://svn.github.com/yaybu/example',
+            scm='git',
         )
         self.assertEqual(r.name, '/tmp/my-checkout')

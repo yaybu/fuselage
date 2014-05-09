@@ -84,6 +84,7 @@ class CheckoutSyncPolicy(Policy):
     signature = (
         Present("name"),
         Present("repository"),
+        Present("scm"),
     )
 
 
@@ -99,4 +100,5 @@ class CheckoutExportPolicy(Policy):
     signature = (
         Present("name"),
         Present("repository"),
+        Present("scm"),
     )

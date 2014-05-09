@@ -16,7 +16,7 @@ import os
 import difflib
 import string
 
-from fuselage import changes
+from fuselage.changes import base
 from .execute import ShellCommand
 from .attributes import AttributeChanger
 
@@ -35,7 +35,7 @@ def binary_buffers(*buffers):
     return False
 
 
-class EnsureFile(changes.Change):
+class EnsureFile(base.Change):
 
     """ Apply a content change to a file in a managed way. Simulation mode is
     catered for. Additionally the minimum changes required to the contents are
@@ -107,7 +107,7 @@ class EnsureFile(changes.Change):
         return self
 
 
-class FileChangeTextRenderer(changes.TextRenderer):
+class FileChangeTextRenderer(base.TextRenderer):
     renderer_for = EnsureFile
 
     def empty_file(self, filename):

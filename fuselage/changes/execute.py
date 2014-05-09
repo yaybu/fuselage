@@ -17,10 +17,11 @@ import os
 import posixpath
 import shlex
 
-from fuselage import error, changes
+from fuselage import error
+from fuselage.changes import base
 
 
-class ShellCommand(changes.Change):
+class ShellCommand(base.Change):
 
     """ Execute and log a change """
 
@@ -131,7 +132,7 @@ def _handle_slash_r(line):
     return line
 
 
-class ShellTextRenderer(changes.TextRenderer):
+class ShellTextRenderer(base.TextRenderer):
 
     """ Render a ShellCommand. """
 

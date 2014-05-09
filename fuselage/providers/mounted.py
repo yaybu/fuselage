@@ -23,7 +23,7 @@ class Mounted(provider.Provider):
     policies = (resources.checkout.CheckoutSyncPolicy,)
 
     @classmethod
-    def isvalid(self, policy, resource, yay):
+    def isvalid(self, policy, resource):
         return resource.scm in ("dummy", "mounted", "mount")
 
     def apply(self, context, output):

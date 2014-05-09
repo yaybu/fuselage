@@ -30,7 +30,7 @@ class Git(provider.Provider):
     REMOTE_NAME = "origin"
 
     @classmethod
-    def isvalid(self, policy, resource, yay):
+    def isvalid(self, policy, resource):
         return resource.scm and resource.scm.lower() == "git"
 
     def get_git_command(self, action, *args):

@@ -18,6 +18,7 @@ import unittest
 from fuselage import argument
 from fuselage import resource
 
+
 class TestArguments(unittest.TestCase):
 
     def test_octal(self):

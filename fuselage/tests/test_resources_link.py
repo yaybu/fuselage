@@ -22,5 +22,6 @@ class TestLink(unittest.TestCase):
     def test_minimal(self):
         r = Link(
             name='/tmp/my-link',
+            to='/dev',
         )
         self.assertEqual(r.name, '/tmp/my-link')

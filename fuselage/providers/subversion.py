@@ -27,7 +27,7 @@ class Svn(provider.Provider):
     policies = (resources.checkout.CheckoutSyncPolicy,)
 
     @classmethod
-    def isvalid(self, policy, resource, yay):
+    def isvalid(self, policy, resource):
         identities = [
             'svn',
             'subversion',

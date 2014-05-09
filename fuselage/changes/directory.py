@@ -14,12 +14,12 @@
 
 import os
 
-from fuselage import changes
+from fuselage.changes import base
 from .execute import ShellCommand
 from .attributes import AttributeChanger
 
 
-class EnsureDirectory(changes.Change):
+class EnsureDirectory(base.Change):
 
     def __init__(self, path, owner, group, mode, recursive=False):
         self.path = path

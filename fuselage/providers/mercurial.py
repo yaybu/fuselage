@@ -115,7 +115,7 @@ class Mercurial(provider.Provider):
     policies = (resources.checkout.CheckoutSyncPolicy,)
 
     @classmethod
-    def isvalid(self, policy, resource, yay):
+    def isvalid(self, policy, resource):
         return resource.scm and resource.scm.lower() == "mercurial"
 
     def get_hg_command(self, action, *args):

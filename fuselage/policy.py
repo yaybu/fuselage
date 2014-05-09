@@ -59,15 +59,25 @@ class Policy(object):
     def conforms(self, resource):
         """ Test if the provided resource conforms to the signature for this
         policy. """
-        for a in self.signature:
-            if not a.test(resource):
-                return False
-        return True
+        return AND(*self.signature).test(resource)
 
-    def get_provider(self, yay):
+    @classmethod
+    def validate(self, resource):
+        a = AND(*self.signature)
+        if a.test(resource):
+            return
+
+        msg = [
+            "The resource '%s' is using the policy '%s' but doesn't confirm to that policy" %
+            (resource, self.name), ""]
+        msg.extend(a.describe(resource))
+        raise error.NonConformingPolicy("\n".join(msg))
+
+    def get_provider(self):
         """ Get the one and only one provider that is valid for this resource,
         policy and overall context """
-        valid = [p.isvalid(self, self.resource, yay) for p in self.providers]
+        import fuselage.providers  # noqa
+        valid = [p.isvalid(self, self.resource) for p in self.providers]
         if valid.count(True) > 1:
             raise error.TooManyProviders()
         if valid.count(True) == 0:
@@ -96,7 +106,9 @@ class Present(ArgumentAssertion):
         resource. """
         if getattr(resource, self.name) is not None:
             return True
-        return False
+
+    def describe(self, resource):
+        yield "'%s' must be present (%s)" % (self.name, self.test(resource))
 
 
 class Absent(ArgumentAssertion):
@@ -105,9 +117,15 @@ class Absent(ArgumentAssertion):
     value. An argument with a default value is always defined. """
 
     def test(self, resource):
-        if getattr(resource, self.name) is None:
+        val = getattr(resource, self.name)
+        if val is None:
+            return True
+        if val == resource.__defaults__[self.name]:
             return True
         return False
+
+    def describe(self, resource):
+        yield "'%s' must be absent (%s)" % (self.name, self.test(resource))
 
 
 class AND(ArgumentAssertion):
@@ -121,6 +139,13 @@ class AND(ArgumentAssertion):
                 return False
         return True
 
+    def describe(self, resource):
+        yield "The follow conditions must all be met:"
+        for a in self.args:
+            for msg in a.describe(resource):
+                yield "  " + msg
+        yield ""
+
 
 class NAND(ArgumentAssertion):
 
@@ -132,6 +157,13 @@ class NAND(ArgumentAssertion):
         if len(results) > 1:
             return False
         return True
+
+    def describe(self, resource):
+        yield "No more than 1 of the following conditions should be true:"
+        for a in self.args:
+            for msg in a.describe(resource):
+                yield "  " + msg
+        yield ""
 
 
 class XOR(ArgumentAssertion):
@@ -147,3 +179,30 @@ class XOR(ArgumentAssertion):
             return True
         else:
             return False
+
+    def describe(self, resource):
+        yield "Only one of the following conditions should be true:"
+        for a in self.args:
+            for msg in a.describe(resource):
+                yield "  " + msg
+        yield ""
+
+
+class OR(ArgumentAssertion):
+
+    def __init__(self, *args):
+        self.args = args
+
+    def test(self, resource):
+        l = [1 for a in self.args if a.test(resource)]
+        if len(l) == 0:
+            return False
+        else:
+            return True
+
+    def describe(self, resource):
+        yield "At least one of the following conditions should be true:"
+        for a in self.args:
+            for msg in a.describe(resource):
+                yield "  " + msg
+        yield ""

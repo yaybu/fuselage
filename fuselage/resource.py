@@ -31,6 +31,8 @@ class ResourceType(type):
         cls = type.__new__(meta, class_name, bases, new_attrs)
 
         cls.__args__ = []
+        cls.__defaults__ = {}
+
         for b in bases:
             if hasattr(b, "__args__"):
                 cls.__args__.extend(b.__args__)
@@ -47,6 +49,7 @@ class ResourceType(type):
         for key, value in new_attrs.items():
             if isinstance(value, Argument):
                 cls.__args__.append(key)
+                cls.__defaults__[key] = value.default
 
         return cls
 
@@ -140,6 +143,8 @@ class Resource(six.with_metaclass(ResourceType)):
                 raise error.ParseError("'%s' is not a valid option for resource %s" % (key, self))
             setattr(self, key, value)
 
+        self.validate()
+
     @classmethod
     def get_argument_names(klass):
         for key in klass.__args__:
@@ -157,7 +162,7 @@ class Resource(six.with_metaclass(ResourceType)):
     def register_observer(self, when, resource, policy):
         self.observers[when].append((resource, policy))
 
-    def validate(self, context):
+    def validate(self):
         """ Validate that this resource is correctly specified. Will raise
         an exception if it is invalid. Returns True if it is valid.
 
@@ -182,7 +187,7 @@ class Resource(six.with_metaclass(ResourceType)):
             p.validate(self)
 
             # throws an exception if there is not oneandonlyone provider
-            p.get_provider(context)
+            p.get_provider()
 
         return True
 
@@ -190,7 +195,7 @@ class Resource(six.with_metaclass(ResourceType)):
         """ Apply the provider for the selected policy, and then fire any
         events that are being observed. """
         for policy in self.get_potential_policies():
-            Provider = policy.get_provider(context)
+            Provider = policy.get_provider()
             p = Provider(self)
             p.test(context)
 
@@ -202,7 +207,7 @@ class Resource(six.with_metaclass(ResourceType)):
         else:
             pol_class = self.policies[policy]
             pol = pol_class(self)
-        prov_class = pol.get_provider(context)
+        prov_class = pol.get_provider()
         prov = prov_class(self)
         changed = prov.apply(context, output)
         context.state.clear_override(self)
@@ -227,9 +232,8 @@ class Resource(six.with_metaclass(ResourceType)):
         return bound
 
     def get_potential_policies(self):
-        policy = self.policy.resolve()
-        if policy:
-            return [P(self) for P in policy.all_potential_policies(self)]
+        if self.policy:
+            return [P(self) for P in self.policy.all_potential_policies(self)]
         else:
             return [self.policies.default()(self)]
 

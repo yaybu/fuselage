@@ -22,5 +22,6 @@ class TestExecute(unittest.TestCase):
     def test_minimal(self):
         r = Execute(
             name='my-command',
+            command='touch /foo',
         )
         self.assertEqual(r.name, 'my-command')
