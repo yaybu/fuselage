@@ -28,7 +28,23 @@ class Runner(object):
 
     state_path = "/var/run/yaybu"
 
-    def run(self, argv=sys.argv):
+    def __init__(self, resources, resume=False, no_resume=False, simulate=False, verbosity=logging.INFO):
+        self.resources = resources
+
+        if self.resume and self.no_resume:
+            raise error.Meh("'resume' and 'no_resume' cannot both be True")
+        self.resume = resume
+        self.no_resume = no_resume
+        self.simulate = simulate
+        self.verbosity = verbosity
+
+        self.state = event.EventState(
+            save_file=os.path.join(self.state_path, "events.saved"),
+            simulate=self.simulate,
+        )
+
+    @classmethod
+    def setup_from_cmdline(argv=sys.argv):
         p = optparse.OptionParser
         p.add_option("--simulate", action="store_true")
         p.add_option("--resume", action="store_true")
@@ -37,29 +53,23 @@ class Runner(object):
         p.add_option("-q", "--quiet", action="count")
         opts, args = p.parse_args(argv)
 
-        #if len(args) != 1 or args[0] not in ("apply", "test"):
-        #    p.print_help()
-        #    raise SystemExit(1)
+        resources = bundle.ResourceBundle()
 
-        self.resume = opts.resume
-        self.no_resume = opts.no_resume
-        self.simulate = opts.simulate
-        self.verbose = opts.verbose
+        return cls(
+            resources,
+            resume=opts.resume,
+            no_resume=opts.no_resume,
+            simulate=opts.simulate,
+            verbosity=opts.verbosity,
+        )
 
+    def run(self):
         if not self.simulate and not os.path.exists(self.state_path):
             os.makedirs(self.state_path)
 
-        self.state = event.EventState(
-            save_file=os.path.join(self.state_path, "events.saved"),
-            simulate=self.simulate,
-        )
         self.state.open()
 
-        # Actually apply the configuration
-        b = bundle.ResourceBundle.create_from_yay_expression(
-            self.params.resources, verbose_errors=self.verbose > 2)
-        b.bind()
-        changed = b.apply(self)
+        changed = self.resources.apply(self)
 
         #FIXME: Do we get here if no change has occured??
         self.state.success()

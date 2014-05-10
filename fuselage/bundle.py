@@ -88,27 +88,16 @@ class ResourceBundle(OrderedDict):
 
         self[resource.id] = resource
 
-    def test(self, ctx):
-        for resource in self.values():
-            resource.validate(ctx)
-            resource.test(ctx)
-
-    def apply(self, ctx, throbber):
+    def apply(self, runner):
         """ Apply the resources to the system, using the provided context and
         overall configuration. """
         for resource in self.values():
-            resource.validate(ctx)
             if hasattr(resource, "_original_hash"):
-                resource._original_hash = resource.hash(ctx)
+                resource._original_hash = resource.hash(runner)
 
-        throbber.set_upper(len(self.values()))
         something_changed = False
         for i, resource in enumerate(self.values(), start=1):
-            with throbber.section(resource.id) as output:
-                ctx.current_output = output
-                if resource.apply(ctx, output):
-                    something_changed = True
-                ctx.current_output = None
-            throbber.set_current(i)
+            if resource.apply(runner, output):
+                something_changed = True
 
         return something_changed
