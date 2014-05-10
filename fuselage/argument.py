@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import types
+import six
 import sys
 from abc import ABCMeta, abstractmethod
 import unicodedata
@@ -57,7 +57,7 @@ class Boolean(Argument):
     to be True boolean values. Anything else is False. """
 
     def __set__(self, instance, value):
-        if type(value) in types.StringTypes:
+        if isinstance(value, six.string_types):
             if value.lower() in ("1", "yes", "on", "true"):
                 value = True
             else:
@@ -235,7 +235,7 @@ class PolicyArgument(Argument):
 
     def __set__(self, instance, value):
         """ Set either a default policy or a set of triggers on the policy collection """
-        if type(value) in types.StringTypes:
+        if isinstance(value, six.string_types):
             coll = PolicyCollection(StandardPolicy(value))
         else:
             triggers = []
