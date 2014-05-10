@@ -187,15 +187,14 @@ class StandardPolicy:
 
 class PolicyTrigger:
 
-    def __init__(self, policy, when, on, immediately=True):
+    def __init__(self, policy, when, on:
         self.policy = policy
         self.when = when
         self.on = on
-        self.immediately = immediately
 
     def bind(self, resources, target):
         if self.on in resources:
-            resources[self.on].register_observer(self.when, target, self.policy, self.immediately)
+            resources[self.on].register_observer(self.when, target, self.policy)
         else:
             raise error.BindingError("Cannot bind %r to missing resource named '%s'" % (target, self.on))
         return resources[self.on]
@@ -242,7 +241,6 @@ class PolicyArgument(Argument):
                             policy=policy,
                             when=condition['when'],
                             on=condition['on'],
-                            immediately=condition.get('immediately', 'true') == 'true',
                         )
                     )
             coll = PolicyCollection(triggers=triggers)
