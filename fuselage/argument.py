@@ -187,7 +187,7 @@ class StandardPolicy:
 
 class PolicyTrigger:
 
-    def __init__(self, policy, when, on:
+    def __init__(self, policy, when, on):
         self.policy = policy
         self.when = when
         self.on = on
@@ -220,6 +220,13 @@ class PolicyCollection:
         else:
             import policy
             return policy.NullPolicy
+
+    def all_potential_policies(self, resource):
+        if self.literal:
+            yield resource.policies[self.literal.policy_name]
+        else:
+            for pol in set(t.policy for t in self.triggers):
+                yield resource.policies[pol]
 
 
 class PolicyArgument(Argument):

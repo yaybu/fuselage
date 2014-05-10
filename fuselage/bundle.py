@@ -57,7 +57,7 @@ class ResourceBundle(OrderedDict):
         for instance in iterable:
             self.add(typename, instance)
 
-    def add(self, typename, instance):
+    def add_from_dict(self, typename, instance):
         if not hasattr(instance, "keys"):
             raise error.ParseError("Expected dict for %s" % typename)
 
@@ -67,11 +67,6 @@ class ResourceBundle(OrderedDict):
             raise error.ParseError("There is no resource type of '%s'" % typename)
 
         resource = kls(instance)
-        if resource.id in self:
-            raise error.ParseError(
-                "'%s' cannot be defined multiple times" % resource.id, anchor=instance.anchor)
-
-        self[resource.id] = resource
 
         # Create implicit File[] nodes for any watched files
         for watched in resource.watch:
@@ -83,18 +78,15 @@ class ResourceBundle(OrderedDict):
 
         return resource
 
-    def bind(self):
-        """ Bind all the resources so they can observe each others for policy
-        triggers. """
-        for i, resource in enumerate(self.values()):
-            for bound in resource.bind(self):
-                if bound == resource:
-                    raise error.BindingError(
-                        "Attempt to bind %r to itself!" % resource)
-                j = self.values().index(bound)
-                if j > i:
-                    raise error.BindingError(
-                        "Attempt to bind forwards on %r" % resource)
+    def add(self, resource):
+        if resource.id in self:
+            raise error.ParseError("Resources cannot be defined multiple times")
+
+        for bound in resource.bind(self):
+            if bound == resource:
+                raise error.BindingError("Resources cannot bind to themselves")
+
+        self[resource.id] = resource
 
     def test(self, ctx):
         for resource in self.values():

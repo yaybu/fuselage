@@ -225,9 +225,8 @@ class Resource(six.with_metaclass(ResourceType)):
         """ Bind this resource to all the resources on which it triggers.
         Returns a list of the resources to which we are bound. """
         bound = []
-        policy = self.policy.resolve()
-        if policy:
-            for trigger in policy.triggers:
+        if self.policy:
+            for trigger in self.policy.triggers:
                 bound.append(trigger.bind(resources, self))
         return bound
 
