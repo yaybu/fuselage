@@ -17,7 +17,7 @@ import sys
 import logging
 import optparse
 
-from fuselage import bundle, event
+from fuselage import bundle, error, event
 from fuselage.changes import TextRenderer
 
 
@@ -29,10 +29,10 @@ class Runner(object):
     state_path = "/var/run/yaybu"
 
     def __init__(self, resources, resume=False, no_resume=False, simulate=False, verbosity=logging.INFO):
-        self.resources = resources
-
         if self.resume and self.no_resume:
-            raise error.Meh("'resume' and 'no_resume' cannot both be True")
+            raise error.ParseError("'resume' and 'no_resume' cannot both be True")
+
+        self.resources = resources
         self.resume = resume
         self.no_resume = no_resume
         self.simulate = simulate
@@ -44,7 +44,7 @@ class Runner(object):
         )
 
     @classmethod
-    def setup_from_cmdline(argv=sys.argv):
+    def setup_from_cmdline(cls, argv=sys.argv):
         p = optparse.OptionParser
         p.add_option("--simulate", action="store_true")
         p.add_option("--resume", action="store_true")

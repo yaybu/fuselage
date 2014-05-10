@@ -204,11 +204,6 @@ class NothingChanged(ExecutionError):
     """ returns error code 254 to the invoking environment. """
 
 
-class ConnectionError(ExecutionError):
-    """ An error occured while establishing a remote connection """
-    returncode = 255
-
-
 class SystemError(ExecutionError):
     """ An error represented by something in the errno list. """
 

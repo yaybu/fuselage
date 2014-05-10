@@ -97,7 +97,7 @@ class ResourceBundle(OrderedDict):
 
         something_changed = False
         for i, resource in enumerate(self.values(), start=1):
-            if resource.apply(runner, output):
+            if resource.apply(runner):
                 something_changed = True
 
         return something_changed
