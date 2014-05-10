@@ -62,3 +62,10 @@ class TestBundle(unittest.TestCase):
             command='apache2ctl graceful',
             policy={"execute": {"when": "apply", "on": "Execute[restart-apache]"}},
         ))
+
+    def test_create(self):
+        r = self.bundle.create("File",
+            name="/tmp/example",
+        )
+        self.assertEqual(r.name, "/tmp/example")
+        self.assertEqual(len(self.bundle), 1)

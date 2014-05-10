@@ -27,18 +27,7 @@ class ResourceBundle(OrderedDict):
     that consists of scalars, lists and dictionaries and this class will
     instantiate the appropriate resources into the structure. """
 
-    @classmethod
-    def create_from_list(cls, specification):
-        """ Given a list of types and parameters, build a resource bundle """
-        raise NotImplementedError(cls.create_from_list)
-
-    def key_remap(self, kw):
-        """ Maps - to _ to make resource attribute name more pleasant. """
-        for k, v in kw.items():
-            k = k.replace("-", "_")
-            yield str(k), v
-
-    def add_from_node(self, spec):
+    def load(self, spec):
         if not isinstance(spec, dict):
             raise error.ParseError("Not a valid Resource definition")
 
@@ -55,18 +44,15 @@ class ResourceBundle(OrderedDict):
             iterable = instances
 
         for instance in iterable:
-            self.add(typename, instance)
+            self.create(typename, instance)
 
-    def add_from_dict(self, typename, instance):
-        if not hasattr(instance, "keys"):
-            raise error.ParseError("Expected dict for %s" % typename)
-
+    def create(self, typename, **kwargs):
         try:
             kls = ResourceType.resources[typename]
         except KeyError:
             raise error.ParseError("There is no resource type of '%s'" % typename)
 
-        resource = kls(instance)
+        resource = kls(**kwargs)
 
         # Create implicit File[] nodes for any watched files
         for watched in resource.watch:
@@ -75,6 +61,8 @@ class ResourceBundle(OrderedDict):
                 "policy": "watched",
             })
             w._original_hash = None
+
+        self.add(resource)
 
         return resource
 
