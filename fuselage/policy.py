@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import six
 from fuselage import error
 
 
@@ -22,12 +23,12 @@ class PolicyType(type):
     def __new__(meta, class_name, bases, new_attrs):
         cls = type.__new__(meta, class_name, bases, new_attrs)
         cls.providers = []
-        if cls.resource is not None:
+        if getattr(cls, "resource", None) is not None:
             cls.resource.policies[cls.name] = cls
         return cls
 
 
-class Policy(object):
+class Policy(six.with_metaclass(PolicyType)):
 
     """
     A policy is a representation of a resource. A policy requires a
@@ -38,8 +39,6 @@ class Policy(object):
     Providers must provide all selected policies to be a valid provider for
     the resource.
     """
-
-    __metaclass__ = PolicyType
 
     # specify true if you wish this policy to be enabled by default
     default = False
