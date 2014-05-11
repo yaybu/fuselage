@@ -107,7 +107,7 @@ class EnsureFile(base.Change):
         return self
 
 
-class FileChangeTextRenderer(base.TextRenderer):
+class FileChangeTextRenderer(object):
     renderer_for = EnsureFile
 
     def empty_file(self, filename):

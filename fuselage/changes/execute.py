@@ -132,7 +132,7 @@ def _handle_slash_r(line):
     return line
 
 
-class ShellTextRenderer(base.TextRenderer):
+class ShellTextRenderer(object):
 
     """ Render a ShellCommand. """
 
