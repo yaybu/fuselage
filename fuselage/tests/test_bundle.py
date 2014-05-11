@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import StringIO
+import six
 import unittest
 
 from fuselage import bundle, error, resources
@@ -73,7 +73,7 @@ class TestBundle(unittest.TestCase):
         self.assertEqual(len(self.bundle), 1)
 
     def test_load(self):
-        self.bundle.load(StringIO.StringIO("""
+        self.bundle.load(six.StringIO("""
         {"resources": [{"File": {"name": "/tmp"}}]}
         """))
         self.assertEqual(self.bundle["File[/tmp]"].name, "/tmp")
