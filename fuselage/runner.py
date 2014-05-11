@@ -18,7 +18,7 @@ import logging
 import optparse
 
 from fuselage import bundle, error, event
-
+from fuselage import logging as handlers
 
 logger = logging.getLogger(__name__)
 
@@ -59,10 +59,22 @@ class Runner(object):
             resume=opts.resume,
             no_resume=opts.no_resume,
             simulate=opts.simulate,
-            verbosity=opts.verbosity,
+            verbosity=logging.INFO + (10 * (opts.verbose - opts.quiet)),
         )
 
+    def configure_logging(self):
+        root = logging.getLogger()
+        if not sys.stdout.isatty():
+            root.addHandler(handlers.JSONHandler(stream=sys.stdout))
+        else:
+            handler = logging.StreamHandler(stream=sys.stdout)
+            root.addHandler(handler)
+        root.addHandler(handlers.SysLogHandler())
+        root.setLevel(self.verbosity)
+
     def run(self):
+        self.configure_logging()
+
         if not self.simulate and not os.path.exists(self.state_path):
             os.makedirs(self.state_path)
 
