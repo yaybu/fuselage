@@ -62,19 +62,15 @@ class ResourceBundle(OrderedDict):
             })
             w._original_hash = None
 
-        self.add(resource)
-
-        return resource
+        return self.add(resource)
 
     def add(self, resource):
         if resource.id in self:
             raise error.ParseError("Resources cannot be defined multiple times")
 
-        for bound in resource.bind(self):
-            if bound == resource:
-                raise error.BindingError("Resources cannot bind to themselves")
-
+        resource.bind(self)
         self[resource.id] = resource
+        return resource
 
     def apply(self, runner):
         """ Apply the resources to the system, using the provided context and
