@@ -14,10 +14,12 @@
 
 from . import (
     apt,
+    directory,
     execute,
-    filesystem,
+    files,
     git,
     group,
+    link,
     mercurial,
     mount,
     mounted,
@@ -29,10 +31,12 @@ from . import (
 
 __all__ = [
     "apt",
+    "directory",
     "execute",
-    "filesystem",
+    "files",
     "git",
     "group",
+    "link",
     "mercurial",
     "mount",
     "mounted",
