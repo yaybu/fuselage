@@ -39,7 +39,7 @@ class Group(provider.Provider):
 
         return info
 
-    def apply(self, context, output):
+    def apply(self, context):
         changed = False
         info = self.get_group_info(context)
 
@@ -71,7 +71,7 @@ class GroupRemove(provider.Provider):
 
     policies = (resources.group.GroupRemovePolicy,)
 
-    def apply(self, context, output):
+    def apply(self, context):
         try:
             grp.getgrnam(
                 self.resource.name.encode("utf-8"))

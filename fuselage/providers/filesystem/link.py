@@ -53,7 +53,7 @@ class Link(provider.Provider):
         mode = stat.S_IMODE(st.st_mode)
         return uid, gid, mode
 
-    def apply(self, context, output):
+    def apply(self, context):
         changed = False
         name = self.resource.name
         to = self.resource.to
@@ -66,7 +66,7 @@ class Link(provider.Provider):
             if not context.simulate:
                 raise error.DanglingSymlink(
                     "Destination of symlink %r does not exist" % to)
-            output.info(
+            self.changelog.info(
                 "Destination of sylink %r does not exist" % to)
 
         owner = self._get_owner(context)
@@ -117,7 +117,7 @@ class RemoveLink(provider.Provider):
 
     policies = (resources.link.LinkRemovedPolicy,)
 
-    def apply(self, context, output):
+    def apply(self, context):
         name = self.resource.name
 
         if os.lexists(name):

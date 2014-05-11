@@ -62,7 +62,7 @@ class Mount(provider.Provider):
     def get_mount(self, context, path):
         return self.get_all_active_mounts(context)[path]
 
-    def apply(self, context, output):
+    def apply(self, context):
         name = self.resource.name
 
         self.check_path(context, name)

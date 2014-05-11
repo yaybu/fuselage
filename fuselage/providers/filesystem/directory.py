@@ -40,7 +40,7 @@ class Directory(provider.Provider):
             if not os.path.isdir(path):
                 raise error.PathComponentNotDirectory(path)
 
-    def apply(self, context, output):
+    def apply(self, context):
         name = self.resource.name
 
         self.check_path(context, os.path.dirname(name))
@@ -58,7 +58,7 @@ class RemoveDirectory(provider.Provider):
 
     policies = (resources.directory.DirectoryRemovedPolicy,)
 
-    def apply(self, context, output):
+    def apply(self, context):
         name = self.resource.name
 
         if os.path.exists(name) and not os.path.isdir(name):
@@ -76,7 +76,7 @@ class RemoveDirectoryRecursive(provider.Provider):
 
     policies = (resources.directory.DirectoryRemovedRecursivePolicy,)
 
-    def apply(self, context, output):
+    def apply(self, context):
         name = self.resource.name
 
         if os.path.exists(name) and not os.path.isdir(name):

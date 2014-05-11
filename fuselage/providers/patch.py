@@ -43,7 +43,7 @@ class Patch(provider.Provider):
         # FIXME: Would be good to validate the patch here a bit
         return data, "secret" in patch.labels
 
-    def apply_patch(self, context, output):
+    def apply_patch(self, context):
         patch, sensitive = self.get_patch(context)
 
         cmd = 'patch -t --dry-run -N --silent -r - -o - %s -' % self.resource.source
@@ -51,32 +51,26 @@ class Patch(provider.Provider):
             cmd, stdin=patch)
 
         if returncode != 0:
-            output.info("Patch does not apply cleanly")
-            output.info(
+            self.changelog.info("Patch does not apply cleanly")
+            self.changelog.info(
                 "Patch file used was %s" % self.resource.patch)
-            output.info(
+            self.changelog.info(
                 "File to patch was %s" % self.resource.source)
 
-            output.info("")
-            output.info("Reported error was:")
-            map(output.info, stderr.split("\n"))
+            self.changelog.info("")
+            self.changelog.info("Reported error was:")
+            map(self.changelog.info, stderr.split("\n"))
 
             raise error.CommandError("Unable to apply patch")
 
         return stdout, sensitive
 
-    def test(self, context):
-        # Validate that the file exists and any template values can be filled
-        # in
-        with context.root.ui.throbber("Check '%s' exists" % self.resource.patch):
-            self.get_patch(context)
-
-    def apply(self, context, output):
+    def apply(self, context):
         name = self.resource.name
 
         self.check_path(context, os.path.dirname(name), context.simulate)
 
-        contents, sensitive = self.apply_patch(context, output)
+        contents, sensitive = self.apply_patch(context)
 
         fc = EnsureFile(name, contents, self.resource.owner,
                         self.resource.group, self.resource.mode, sensitive)

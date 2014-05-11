@@ -59,7 +59,7 @@ class User(provider.Provider):
 
         return info
 
-    def apply(self, context, output):
+    def apply(self, context):
         info = self.get_user_info(context)
 
         if info['exists']:
@@ -106,7 +106,7 @@ class User(provider.Provider):
                     if not context.simulate:
                         raise error.InvalidGroup(
                             "Group '%s' is not valid" % group)
-                    output.info(
+                    self.changelog.info(
                         "Group '%s' doesn't exist; assuming recipe already created it" % group)
                     gid = "GID_CURRENTLY_UNASSIGNED"
 
@@ -161,7 +161,7 @@ class UserRemove(provider.Provider):
 
     policies = (resources.user.UserRemovePolicy,)
 
-    def apply(self, context, output):
+    def apply(self, context):
         try:
             grp.getpwnam(
                 self.resource.name.encode("utf-8"))

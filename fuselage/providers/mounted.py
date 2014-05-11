@@ -26,7 +26,7 @@ class Mounted(provider.Provider):
     def isvalid(self, policy, resource):
         return resource.scm in ("dummy", "mounted", "mount")
 
-    def apply(self, context, output):
+    def apply(self, context):
         for w in self.resource.watch:
             if os.path.exists(w):
                 context.change(ShellCommand(["touch", "-ac", w]))

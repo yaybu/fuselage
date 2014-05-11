@@ -40,7 +40,7 @@ class AptInstall(provider.Provider):
 
     policies = (resources.package.PackageInstallPolicy,)
 
-    def apply(self, context, output):
+    def apply(self, context):
         if is_installed(context, self.resource):
             return False
 
@@ -77,7 +77,7 @@ class AptUninstall(provider.Provider):
 
     policies = (resources.package.PackageUninstallPolicy,)
 
-    def apply(self, context, output):
+    def apply(self, context):
         if not is_installed(context, self.resource):
             return False
 

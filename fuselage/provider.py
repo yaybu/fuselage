@@ -16,6 +16,7 @@
 
 import six
 from abc import ABCMeta, abstractmethod
+import logging
 
 from fuselage import policy
 
@@ -43,6 +44,17 @@ class Provider(six.with_metaclass(ProviderType)):
     def __init__(self, resource):
         self.resource = resource
 
+        logger = logging.getLogger(self.__module__)
+        self.logger = logging.LoggerAdapter(logger, {
+            "resource": resource.id,
+        })
+
+        logger = logging.getLogger("fuselage.audit")
+        self.changelog = logging.LoggerAdapter(logger, {
+            "resource": resource.id,
+            "change": True,
+        })
+
     @classmethod
     def isvalid(self, policy, resource):
         """ Returns True if this provider is valid for the specified resource,
@@ -51,10 +63,6 @@ class Provider(six.with_metaclass(ProviderType)):
         make it so. In particular if you want two providers for a policy, then
         only one of those providers may return True from this method. """
         return True
-
-    def test(self, context):
-        """ Checks as much as possible is valid - allowing the config to fail
-        early """
 
     @abstractmethod
     def apply(self, shell):

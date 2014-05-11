@@ -13,13 +13,9 @@
 # limitations under the License.
 
 import os
-import logging
 
 from fuselage import error, resources, provider
 from fuselage.changes import ShellCommand, EnsureDirectory
-
-
-log = logging.getLogger(__name__)
 
 
 class Svn(provider.Provider):
@@ -52,13 +48,13 @@ class Svn(provider.Provider):
         self.svn(context, "co", self.url, self.resource.name)
         return True
 
-    def apply(self, context, output):
+    def apply(self, context):
         if not os.path.exists("/usr/bin/svn"):
             error_string = "'/usr/bin/svn' is not available; update your configuration to install subversion?"
             if not context.simulate:
                 raise error.MissingDependency(error_string)
-            log.info(error_string)
-            log.info("This error was ignored in simulate mode")
+            self.changelog.info(error_string)
+            self.changelog.info("This error was ignored in simulate mode")
 
         name = self.resource.name
 
@@ -75,8 +71,7 @@ class Svn(provider.Provider):
         old_repo_root = info["Repository Root"]
         new_repo_root = repo_info["Repository Root"]
         if old_repo_root != new_repo_root:
-            log.info("Switching repository root from '%s' to '%s'" %
-                     (old_repo_root, new_repo_root))
+            self.changelog.info("Switching repository root from '%s' to '%s'" % (old_repo_root, new_repo_root))
             self.svn(context, "switch", "--relocate",
                      old_repo_root, new_repo_root, self.resource.name)
             changed = True
@@ -85,7 +80,7 @@ class Svn(provider.Provider):
         old_url = info["URL"]
         new_url = repo_info["URL"]
         if old_url != new_url:
-            log.info("Switching branch from '%s' to '%s'" % (old_url, new_url))
+            self.changelog.info("Switching branch from '%s' to '%s'" % (old_url, new_url))
             self.svn(context, "switch", new_url, self.resource.name)
             changed = True
 
@@ -95,8 +90,7 @@ class Svn(provider.Provider):
         current_rev = info["Last Changed Rev"]
         target_rev = repo_info["Last Changed Rev"]
         if current_rev != target_rev:
-            log.info("Switching revision from %s to %s" %
-                     (current_rev, target_rev))
+            self.changelog.info("Switching revision from %s to %s" % (current_rev, target_rev))
             self.svn(context, "up", "-r", target_rev, self.resource.name)
             changed = True
 

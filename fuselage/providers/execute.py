@@ -22,14 +22,15 @@ class Execute(provider.Provider):
 
     policies = (resources.execute.ExecutePolicy,)
 
-    def apply(self, context, output):
+    def apply(self, context):
         creates = self.resource.creates
         if creates and os.path.exists(creates):
-            # logging.info("%r: %s exists, not executing" % (self.resource, self.resource.creates))
+            self.logger.debug("%r exists, not executing" % (self.resource.creates,))
             return False
 
         touch = self.resource.touch
         if touch and os.path.exists(touch):
+            self.logger.debug("%r exists, not executing" % (self.resource.touch,))
             return False
 
         unless = self.resource.unless
@@ -46,7 +47,7 @@ class Execute(provider.Provider):
                 # guard. We bail out with True so that Yaybu treates the
                 # resource as applied.
                 if context.simulate:
-                    output.info(
+                    self.changelog.info(
                         "User '%s' not found; assuming this recipe will create it" % self.resource.user)
                     return True
                 raise
@@ -56,7 +57,7 @@ class Execute(provider.Provider):
                 # guard. We bail out with True so that Yaybu treates the
                 # resource as applied.
                 if context.simulate:
-                    output.info(
+                    self.changelog.info(
                         "Group '%s' not found; assuming this recipe will create it" % self.resource.group)
                     return True
                 raise
@@ -70,22 +71,16 @@ class Execute(provider.Provider):
         for command in commands:
             try:
                 context.change(ShellCommand(command,
-                                            cwd=self.resource.cwd.as_string(
-                                            ) or None,
-                                            env=self.resource.environment.resolve(
-                                            ) or None,
-                                            user=self.resource.user.as_string(
-                                            ),
-                                            group=self.resource.group.as_string(
-                                            ) or None,
-                                            umask=self.resource.umask.as_int(),
+                                            cwd=self.resource.cwd or None,
+                                            env=self.resource.environment or None,
+                                            user=self.resource.user or None,
+                                            group=self.resource.group or None,
+                                            umask=self.resource.umask,
                                             ))
             except error.SystemError as exc:
-                returncode = self.resource.returncode.as_int(default=0)
-                rc = exc.returncode
-                if rc != returncode:
+                if exc.returncode != self.resource.returncode:
                     raise error.CommandError(
-                        "%s failed with return code %d" % (self.resource, rc))
+                        "%s failed with return code %d" % (self.resource, exc.returncode))
 
         if self.resource.touch:
             context.change(ShellCommand(["touch", self.resource.touch]))
