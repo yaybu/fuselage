@@ -64,8 +64,9 @@ class TestBundle(unittest.TestCase):
         ))
 
     def test_create(self):
-        r = self.bundle.create("File",
+        # FIXME: dict is a pep8 workaround
+        r = self.bundle.create("File", **dict(
             name="/tmp/example",
-        )
+        ))
         self.assertEqual(r.name, "/tmp/example")
         self.assertEqual(len(self.bundle), 1)
