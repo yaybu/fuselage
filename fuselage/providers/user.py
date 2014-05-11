@@ -106,7 +106,7 @@ class User(provider.Provider):
                     if not context.simulate:
                         raise error.InvalidGroup(
                             "Group '%s' is not valid" % group)
-                    self.changelog.info(
+                    self.logger.warning(
                         "Group '%s' doesn't exist; assuming recipe already created it" % group)
                     gid = "GID_CURRENTLY_UNASSIGNED"
 

@@ -51,15 +51,15 @@ class Patch(provider.Provider):
             cmd, stdin=patch)
 
         if returncode != 0:
-            self.changelog.info("Patch does not apply cleanly")
-            self.changelog.info(
+            self.logger.error("Patch does not apply cleanly")
+            self.logger.error(
                 "Patch file used was %s" % self.resource.patch)
-            self.changelog.info(
+            self.logger.error(
                 "File to patch was %s" % self.resource.source)
 
-            self.changelog.info("")
-            self.changelog.info("Reported error was:")
-            map(self.changelog.info, stderr.split("\n"))
+            self.logger.error("")
+            self.logger.error("Reported error was:")
+            map(self.logger.error, stderr.split("\n"))
 
             raise error.CommandError("Unable to apply patch")
 

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import shlex
 
 from fuselage import provider
@@ -24,30 +25,32 @@ class _ServiceMixin(object):
     features = ["restart", ]
 
     def status(self, context):
-        running = self.resource.running.as_string(default='')
-        if running:
-            rc, stdout, stderr = context.transport.execute(running)
+        if self.resource.running:
+            rc, stdout, stderr = context.transport.execute(self.resource.running)
             if rc == 0:
                 return "running"
             else:
                 return "not-running"
 
-        pidfile = self.resource.pidfile.as_string(default='')
-        if not pidfile:
+        if not self.resource.pidfile:
             return "unknown"
 
-        if not context.transport.exists(pidfile):
+        if not os.path.exists(self.resource.pidfile):
             return "not-running"
 
-        pid = context.transport.get(pidfile).strip()
-        try:
-            pid = int(pid)
-        except:
-            return "unknown"
+        with open(self.resource.pidfile, "r") as fp:
+            try:
+                pid = int(fp.read().strip())
+            except:
+                return "unknown"
 
-        if context.transport.execute(["kill", "-0", str(pid)])[0] == 0:
+        # if os.path.exists("/proc/%s" % pid):
+        #     return "running"
+
+        try:
+            os.kill(0, pid)
             return "running"
-        else:
+        except OSError:
             return "not-running"
 
     def do(self, context, action):

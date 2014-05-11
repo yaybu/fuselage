@@ -47,7 +47,7 @@ class Execute(provider.Provider):
                 # guard. We bail out with True so that Yaybu treates the
                 # resource as applied.
                 if context.simulate:
-                    self.changelog.info(
+                    self.logger.warning(
                         "User '%s' not found; assuming this recipe will create it" % self.resource.user)
                     return True
                 raise
@@ -57,7 +57,7 @@ class Execute(provider.Provider):
                 # guard. We bail out with True so that Yaybu treates the
                 # resource as applied.
                 if context.simulate:
-                    self.changelog.info(
+                    self.logger.warning(
                         "Group '%s' not found; assuming this recipe will create it" % self.resource.group)
                     return True
                 raise

@@ -53,8 +53,8 @@ class Svn(provider.Provider):
             error_string = "'/usr/bin/svn' is not available; update your configuration to install subversion?"
             if not context.simulate:
                 raise error.MissingDependency(error_string)
-            self.changelog.info(error_string)
-            self.changelog.info("This error was ignored in simulate mode")
+            self.logger.warning(error_string)
+            self.logger.warning("This error was ignored in simulate mode")
 
         name = self.resource.name
 

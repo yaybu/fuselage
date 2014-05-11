@@ -46,13 +46,13 @@ class Provider(six.with_metaclass(ProviderType)):
 
         logger = logging.getLogger(self.__module__)
         self.logger = logging.LoggerAdapter(logger, {
-            "resource": resource.id,
+            "fuselage.resource": resource.id,
         })
 
-        logger = logging.getLogger("fuselage.audit")
-        self.changelog = logging.LoggerAdapter(logger, {
-            "resource": resource.id,
-            "change": True,
+        # logger = logging.getLogger("fuselage.audit")
+        self.changelog = logging.LoggerAdapter(self.logger, {
+            # "resource": resource.id,
+            "fuselage.changelog": True,
         })
 
     @classmethod
