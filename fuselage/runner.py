@@ -18,7 +18,6 @@ import logging
 import optparse
 
 from fuselage import bundle, error, event
-from fuselage.changes import TextRenderer
 
 
 logger = logging.getLogger(__name__)
