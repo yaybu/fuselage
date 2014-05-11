@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
+
 try:
     from collections import OrderedDict
 except ImportError:
@@ -27,24 +29,38 @@ class ResourceBundle(OrderedDict):
     that consists of scalars, lists and dictionaries and this class will
     instantiate the appropriate resources into the structure. """
 
-    def load(self, spec):
-        if not isinstance(spec, dict):
-            raise error.ParseError("Not a valid Resource definition")
+    def load(self, fp):
+        obj = json.load(fp)
+        return self._load_bundle(obj)
 
-        keys = list(spec.keys())
-        if len(keys) > 1:
-            raise error.ParseError("Too many keys in list item")
+    def loads(self, s):
+        obj = json.loads(s)
+        return self._load_bundle(obj)
 
-        typename = keys[0]
-        instances = spec[typename]
+    def _load_bundle(self, obj):
+        if not isinstance(obj, dict):
+            raise error.ParseError("Bundle is not a dictionary")
 
-        if isinstance(instances, dict):
-            iterable = [instances]
-        else:
-            iterable = instances
+        if "resources" not in obj:
+            raise error.ParseError("Bundle doesn't have a resources key")
 
-        for instance in iterable:
-            self.create(typename, instance)
+        if not isinstance(obj["resources"], list):
+            raise error.ParseError("Bundle's resource list is not a list")
+
+        for resource in obj["resources"]:
+            if not isinstance(resource, dict):
+                raise error.ParseError("Not a valid resource definition")
+
+            if len(resource) != 1:
+                raise error.ParseError("Wrong number of keys in outer resource definition")
+
+            typename = resource.keys()[0]
+            instances = resource[typename]
+            if isinstance(instances, dict):
+                instances = [instances]
+
+            for instance in instances:
+                self.create(typename, **instance)
 
     def create(self, typename, **kwargs):
         try:

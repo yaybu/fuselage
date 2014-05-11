@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import StringIO
 import unittest
 
 from fuselage import bundle, error, resources
@@ -70,3 +71,52 @@ class TestBundle(unittest.TestCase):
         ))
         self.assertEqual(r.name, "/tmp/example")
         self.assertEqual(len(self.bundle), 1)
+
+    def test_load(self):
+        self.bundle.load(StringIO.StringIO("""
+        {"resources": [{"File": {"name": "/tmp"}}]}
+        """))
+        self.assertEqual(self.bundle["File[/tmp]"].name, "/tmp")
+
+    def test_loads(self):
+        self.bundle.loads("""
+        {"resources": [{"File": {"name": "/tmp"}}]}
+        """)
+        self.assertEqual(self.bundle["File[/tmp]"].name, "/tmp")
+
+    def test_load_bundle__root_not_dict(self):
+        self.assertRaises(error.ParseError, self.bundle._load_bundle, [])
+
+    def test_load_bundle__no_resources_key(self):
+        self.assertRaises(error.ParseError, self.bundle._load_bundle, {
+            "resourcees": [],
+        })
+
+    def test_load_bundle__resources_not_list(self):
+        self.assertRaises(error.ParseError, self.bundle._load_bundle, {
+            "resources": "hello",
+        })
+
+    def test_load_bundle__resources_res_not_dict(self):
+        self.assertRaises(error.ParseError, self.bundle._load_bundle, {
+            "resources": ["hello"],
+        })
+
+    def test_load_bundle__resources_too_few_keys(self):
+        self.assertRaises(error.ParseError, self.bundle._load_bundle, {
+            "resources": [{}],
+        })
+
+    def test_load_bundle__resources_too_many_keys(self):
+        self.assertRaises(error.ParseError, self.bundle._load_bundle, {
+            "resources": [
+                {"Directory": {"name": "/tmp/baz"}, "File": {"name": "/tmp/foo"}},
+            ],
+        })
+
+    def test_load_bundle__invalid_type(self):
+        self.assertRaises(error.ParseError, self.bundle._load_bundle, {
+            "resources": [
+                {"Director": {"name": "/tmp/baz"}},
+            ],
+        })
