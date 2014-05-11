@@ -75,13 +75,3 @@ class Runner(object):
         self.state.success()
 
         return changed
-
-    def change(self, change):
-        renderer = TextRenderer.get(change, self.current_output)
-        return change.apply(self, renderer)
-
-    def get_file(self, filename, etag=None):
-        # FIXME: What does this do now?
-        # Does it only work for pex bundles?
-        # Does it work standalone?
-        pass
