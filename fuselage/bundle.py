@@ -54,7 +54,7 @@ class ResourceBundle(OrderedDict):
             if len(resource) != 1:
                 raise error.ParseError("Wrong number of keys in outer resource definition")
 
-            typename = resource.keys()[0]
+            typename = list(resource.keys())[0]
             instances = resource[typename]
             if isinstance(instances, dict):
                 instances = [instances]
