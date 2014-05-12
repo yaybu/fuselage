@@ -12,15 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
+from fuselage.tests.base import TestCaseWithBundle
 from fuselage.resources import User
 
 
-class TestUser(unittest.TestCase):
+class TestUser(TestCaseWithBundle):
 
     def test_minimal(self):
-        r = User(
+        r = self.bundle.add(User(
             name='myuser',
-        )
+        ))
         self.assertEqual(r.name, 'myuser')

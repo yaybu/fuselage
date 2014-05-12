@@ -12,15 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
+from fuselage.tests.base import TestCaseWithBundle
 from fuselage.resources import File
 
 
-class TestFile(unittest.TestCase):
+class TestFile(TestCaseWithBundle):
 
     def test_minimal(self):
-        r = File(
+        r = self.bundle.add(File(
             name='/tmp/my-file',
-        )
+        ))
         self.assertEqual(r.name, '/tmp/my-file')

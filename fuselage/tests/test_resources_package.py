@@ -12,15 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
+from fuselage.tests.base import TestCaseWithBundle
 from fuselage.resources import Package
 
 
-class TestPackage(unittest.TestCase):
+class TestPackage(TestCaseWithBundle):
 
     def test_minimal(self):
-        r = Package(
+        r = self.bundle.add(Package(
             name='ubuntu-desktop',
-        )
+        ))
         self.assertEqual(r.name, 'ubuntu-desktop')

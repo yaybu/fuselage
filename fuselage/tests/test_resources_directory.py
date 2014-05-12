@@ -12,15 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
+from fuselage.tests.base import TestCaseWithBundle
 from fuselage.resources import Directory
 
 
-class TestDirectory(unittest.TestCase):
+class TestDirectory(TestCaseWithBundle):
 
     def test_minimal(self):
-        r = Directory(
+        r = self.bundle.add(Directory(
             name='/tmp/my-directory',
-        )
+        ))
         self.assertEqual(r.name, '/tmp/my-directory')

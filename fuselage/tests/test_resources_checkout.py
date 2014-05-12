@@ -12,17 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
+from fuselage.tests.base import TestCaseWithBundle
 from fuselage.resources import Checkout
 
 
-class TestCheckout(unittest.TestCase):
+class TestCheckout(TestCaseWithBundle):
 
     def test_minimal(self):
-        r = Checkout(
+        r = self.bundle.add(Checkout(
             name='/tmp/my-checkout',
             repository='https://svn.github.com/yaybu/example',
             scm='git',
-        )
+        ))
         self.assertEqual(r.name, '/tmp/my-checkout')

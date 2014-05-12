@@ -12,15 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
+from fuselage.tests.base import TestCaseWithBundle
 from fuselage.resources import Group
 
 
-class TestGroup(unittest.TestCase):
+class TestGroup(TestCaseWithBundle):
 
     def test_minimal(self):
-        r = Group(
+        r = self.bundle.add(Group(
             name='somegroup',
-        )
+        ))
         self.assertEqual(r.name, 'somegroup')

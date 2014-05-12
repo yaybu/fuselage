@@ -12,17 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
+from fuselage.tests.base import TestCaseWithBundle
 from fuselage.resources import Mount
 
 
-class TestMount(unittest.TestCase):
+class TestMount(TestCaseWithBundle):
 
     def test_minimal(self):
-        r = Mount(
+        r = self.bundle.add(Mount(
             name='/tmp/my-mount',
             fs_type='ext3',
             device='/dev/sda1',
-        )
+        ))
         self.assertEqual(r.name, '/tmp/my-mount')

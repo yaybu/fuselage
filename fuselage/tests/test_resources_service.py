@@ -12,15 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
+from fuselage.tests.base import TestCaseWithBundle
 from fuselage.resources import Service
 
 
-class TestService(unittest.TestCase):
+class TestService(TestCaseWithBundle):
 
     def test_minimal(self):
-        r = Service(
+        r = self.bundle.add(Service(
             name='myservice',
-        )
+        ))
         self.assertEqual(r.name, 'myservice')

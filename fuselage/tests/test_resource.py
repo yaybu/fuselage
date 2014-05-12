@@ -12,17 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
+from fuselage.tests.base import TestCaseWithBundle
 from fuselage import resource
 
 
-class TestCheckout(unittest.TestCase):
+class TestResource(TestCaseWithBundle):
 
     def test_repr(self):
-        r = resource.Resource(name="foo")
+        r = self.bundle.add(resource.Resource(name="foo"))
         self.assertEqual(repr(r), "Resource[foo]")
 
     def test_id(self):
-        r = resource.Resource(name="foo")
+        r = self.bundle.add(resource.Resource(name="foo"))
         self.assertEqual(r.id, "Resource[foo]")

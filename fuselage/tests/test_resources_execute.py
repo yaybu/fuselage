@@ -12,16 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
+from fuselage.tests.base import TestCaseWithBundle
 from fuselage.resources import Execute
 
 
-class TestExecute(unittest.TestCase):
+class TestExecute(TestCaseWithBundle):
 
     def test_minimal(self):
-        r = Execute(
+        r = self.bundle.add(Execute(
             name='my-command',
             command='touch /foo',
-        )
+        ))
         self.assertEqual(r.name, 'my-command')

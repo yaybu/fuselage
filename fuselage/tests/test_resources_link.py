@@ -12,16 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
+from fuselage.tests.base import TestCaseWithBundle
 from fuselage.resources import Link
 
 
-class TestLink(unittest.TestCase):
+class TestLink(TestCaseWithBundle):
 
     def test_minimal(self):
-        r = Link(
+        r = self.bundle.add(Link(
             name='/tmp/my-link',
             to='/dev',
-        )
+        ))
         self.assertEqual(r.name, '/tmp/my-link')

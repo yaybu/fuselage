@@ -12,15 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
+from fuselage.tests.base import TestCaseWithBundle
 from fuselage.resources import Patch
 
 
-class TestPatch(unittest.TestCase):
+class TestPatch(TestCaseWithBundle):
 
     def test_minimal(self):
-        r = Patch(
+        r = self.bundle.add(Patch(
             name='/tmp/my-patch',
-        )
+        ))
         self.assertEqual(r.name, '/tmp/my-patch')
