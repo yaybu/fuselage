@@ -97,7 +97,7 @@ class Process(subprocess.Popen):
                 # one second so that we can poll (below) and check the process
                 # hasn't disappeared.
                 rlist, wlist, xlist = select.select(readlist, [], [], 1)
-            except select.error, e:
+            except select.error as e:
                 if e.args[0] == errno.EINTR:
                     continue
                 raise
