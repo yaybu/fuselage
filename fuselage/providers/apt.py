@@ -50,8 +50,7 @@ class AptInstall(provider.Provider):
 
         # the search returned 1, package is not installed, continue and install
         # it
-        command = ["apt-get", "install", "-q",
-                   "-y", self.resource.name]
+        command = ["apt-get", "install", "-q", "-y", self.resource.name]
 
         try:
             context.change(ShellCommand(command, env=env))
@@ -86,7 +85,7 @@ class AptUninstall(provider.Provider):
         }
 
         command = ["apt-get", "remove", "-q", "-y"]
-        if self.resource.purge.as_bool():
+        if self.resource.purge:
             command.append("--purge")
         command.append(self.resource.name)
 

@@ -12,12 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import subprocess
+import six
 import os
-import posixpath
 import shlex
 
-from fuselage import error
+from fuselage import error, shell
 from fuselage.changes import base
 
 
@@ -27,22 +26,16 @@ class ShellCommand(base.Change):
 
     changed = True
 
-    def __init__(
-        self,
-        command,
-        shell=None,
-        stdin=None,
-        cwd=None,
-        env=None,
-        user="root",
-        group=None,
-        umask=None,
-            expected=0):
+    def __init__(self, command, shell=None, stdin=None, cwd=None, env=None, user="root", group=None, umask=None, expected=0):
         self.command = command
         self.shell = shell
         self.stdin = stdin
         self.cwd = cwd
-        self.env = env
+
+        self.env = {
+            "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        }
+        self.env.update(env)
 
         self.user = user
         self.group = group
@@ -57,55 +50,29 @@ class ShellCommand(base.Change):
             return unicode(x, "utf-8")
         return map(uni, l)
 
+    def command_exists(self, command):
+        if command[0].startswith("./"):
+            if len(command[0]) <= 2:
+                return False
+            return os.path.exists(os.path.join(self.cwd, command[0][2:]))
+
+        elif command[0].startswith("/"):
+            return os.path.exists(command[0])
+
+        for path in self.env["PATH"].split(os.pathsep):
+            if os.path.exists(os.path.join(path, command[0])):
+                return True
+
     def apply(self, ctx, renderer):
         if isinstance(self.command, list):
-            command = []
-            for c in self.command:
-                command.append(c)
-            logas = []
-            for c in self.command:
-                logas.append(c.as_safe_string())
-        elif isinstance(self.command, basestring):
+            logas = command = self.command
+        elif isinstance(self.command, six.string_types):
             logas = command = shlex.split(self.command.encode("UTF-8"))
 
         command = self._tounicode(command)
         logas = self._tounicode(logas)
-        renderer.command(logas)
 
-        env = {
-            "PATH":
-            "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-        }
-
-        if self.env:
-            for key, item in self.env.iteritems():
-                env[key] = item
-
-        if ctx.simulate:
-            self.returncode = 0
-            self.stdout = ""
-            self.stderr = ""
-            return
-
-        command_exists = True
-        if command[0].startswith("./"):
-            if len(command[0]) <= 2:
-                command_exists = False
-            if not os.path.exists(posixpath.join(self.cwd, command[0][2:])):
-                command_exists = False
-
-        elif command[0].startswith("/"):
-            if not os.path.exists(command[0]):
-                command_exists = False
-
-        else:
-            for path in env["PATH"].split(":"):
-                if os.path.exists(posixpath.join(path, command[0])):
-                    break
-            else:
-                command_exists = False
-
-        if not command_exists:
+        if not self.command_exists(command):
             if not ctx.simulate:
                 raise error.BinaryMissing(
                     "Command '%s' not found" % command[0])
@@ -116,10 +83,23 @@ class ShellCommand(base.Change):
             self.stderr = ""
             return
 
-        # FIXME FIXME FIXME
-        self.returncode, self.stdout, self.stderr = subprocess.Popen(
-            command, stdin=self.stdin, stdout=renderer.stdout, stderr=renderer.stderr, env=env, user=self.user, group=self.group, cwd=self.cwd, umask=self.umask)
-        renderer.flush()
+        if ctx.simulate:
+            self.returncode = 0
+            self.stdout = ""
+            self.stderr = ""
+            return
+
+        p = shell.Process(
+            command=command,
+            user=self.user,
+            group=self.group,
+            umask=self.umask,
+            env=self.env,
+        )
+
+        p.attach_callback(self.changelog.info)
+        self.stdout, self.stderr = p.communicate(stdin=self.stdin)
+        self.returncode = p.wait()
 
         if self.expected is not None and self.returncode != self.expected:
             raise error.SystemError(self.returncode, self.stdout, self.stderr)
