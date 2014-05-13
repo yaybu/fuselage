@@ -25,6 +25,7 @@ class TestResource(unittest.TestCase):
         try:
             class Dummy(resource.Resource):
                 __resource_name__ = "Dummy"
+
             class Dummy2(resource.Resource):
                 __resource_name__ = "Dummy"
         except error.ParseError:
