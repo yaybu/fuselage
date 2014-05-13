@@ -191,14 +191,6 @@ class Resource(six.with_metaclass(ResourceType)):
 
         return True
 
-    def test(self, context):
-        """ Apply the provider for the selected policy, and then fire any
-        events that are being observed. """
-        for policy in self.get_potential_policies():
-            Provider = policy.get_provider()
-            p = Provider(self)
-            p.test(context)
-
     def apply(self, runner, policy=None):
         """ Apply the provider for the selected policy, and then fire any
         events that are being observed. """
