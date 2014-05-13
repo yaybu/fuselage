@@ -24,9 +24,9 @@ from fuselage.changes import ShellCommand
 class _ServiceMixin(object):
     features = ["restart", ]
 
-    def status(self, context):
+    def status(self):
         if self.resource.running:
-            rc, stdout, stderr = context.transport.execute(self.resource.running)
+            rc, stdout, stderr = self.transport.execute(self.resource.running)
             if rc == 0:
                 return "running"
             else:
@@ -53,41 +53,34 @@ class _ServiceMixin(object):
         except OSError:
             return "not-running"
 
-    def do(self, context, action):
+    def do(self, action):
         try:
-            context.change(ShellCommand(self.get_command(action)))
+            self.change(ShellCommand(self.get_command(action)))
         except error.SystemError as exc:
             raise error.CommandError(
                 "%s failed with return code %d" % (action, exc.returncode))
 
-    def ensure_enabled(self, context):
+    def ensure_enabled(self):
         pass
 
-    def ensure_disabled(self, context):
+    def ensure_disabled(self):
         pass
 
     def get_command(self, action):
-        return (
-            shlex.split(
-                getattr(
-                    self.resource,
-                    action).as_string(
-                ).encode(
-                    "UTF-8"))
-        )
+        return shlex.split(getattr(self.resource, action).encode("utf-8"))
 
 
 class Start(_ServiceMixin, provider.Provider):
 
     policies = (resources.service.ServiceStartPolicy,)
 
-    def apply(self, context, output):
-        changed = self.ensure_enabled(context)
+    def apply(self, output):
+        changed = self.ensure_enabled()
 
-        if self.status(context) == "running":
+        if self.status() == "running":
             return changed
 
-        self.do(context, "start")
+        self.do("start")
 
         return True
 
@@ -96,13 +89,13 @@ class Stop(_ServiceMixin, provider.Provider):
 
     policies = (resources.service.ServiceStopPolicy,)
 
-    def apply(self, context, output):
-        changed = self.ensure_disabled(context)
+    def apply(self, output):
+        changed = self.ensure_disabled()
 
-        if self.status(context) == "not-running":
+        if self.status() == "not-running":
             return changed
 
-        self.do(context, "stop")
+        self.do("stop")
 
         return True
 
@@ -111,17 +104,17 @@ class Restart(_ServiceMixin, provider.Provider):
 
     policies = (resources.service.ServiceRestartPolicy,)
 
-    def apply(self, context, output):
-        self.ensure_enabled(context)
+    def apply(self, output):
+        self.ensure_enabled()
 
-        if self.status(context) == "not-running":
-            self.do(context, "start")
+        if self.status() == "not-running":
+            self.do("start")
             return True
 
         if "restart" in self.features:
-            self.do(context, "restart")
+            self.do("restart")
         else:
-            self.do(context, "stop")
-            self.do(context, "start")
+            self.do("stop")
+            self.do("start")
 
         return True

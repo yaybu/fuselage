@@ -22,7 +22,7 @@ class Group(provider.Provider):
 
     policies = (resources.group.GroupApplyPolicy,)
 
-    def get_group_info(self, context):
+    def get_group_info(self):
         fields = ("name", "passwd", "gid", "members",)
 
         try:
@@ -39,9 +39,9 @@ class Group(provider.Provider):
 
         return info
 
-    def apply(self, context):
+    def apply(self):
         changed = False
-        info = self.get_group_info(context)
+        info = self.get_group_info()
 
         if info["exists"]:
             command = ["groupmod"]
@@ -59,7 +59,7 @@ class Group(provider.Provider):
             return False
 
         try:
-            context.change(ShellCommand(command))
+            self.change(ShellCommand(command))
         except error.SystemError as exc:
             raise error.InvalidGroup("%s on %s failed with return code %d" %
                                      (command[0], self.resource, exc.returncode))
@@ -71,7 +71,7 @@ class GroupRemove(provider.Provider):
 
     policies = (resources.group.GroupRemovePolicy,)
 
-    def apply(self, context):
+    def apply(self):
         try:
             grp.getgrnam(
                 self.resource.name.encode("utf-8"))
@@ -82,7 +82,7 @@ class GroupRemove(provider.Provider):
         command = ["groupdel", self.resource.name]
 
         try:
-            context.change(ShellCommand(command))
+            self.change(ShellCommand(command))
         except error.SystemError as exc:
             raise error.InvalidGroup(
                 "groupdel on %s failed with return code %d" % (self.resource, exc.returncode))

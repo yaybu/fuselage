@@ -63,7 +63,7 @@ class ShellCommand(base.Change):
             if os.path.exists(os.path.join(path, command[0])):
                 return True
 
-    def apply(self, ctx, renderer):
+    def apply(self, ctx):
         if isinstance(self.command, list):
             logas = command = self.command
         elif isinstance(self.command, six.string_types):
@@ -73,11 +73,7 @@ class ShellCommand(base.Change):
         logas = self._tounicode(logas)
 
         if not self.command_exists(command):
-            if not ctx.simulate:
-                raise error.BinaryMissing(
-                    "Command '%s' not found" % command[0])
-            renderer.stderr(
-                "Command '%s' not found; assuming this recipe will create it" % command[0])
+            ctx.raise_or_log(error.BinaryMissing("Command '%s' not found" % command[0]))
             self.returncode = 0
             self.stdout = ""
             self.stderr = ""

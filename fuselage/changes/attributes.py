@@ -33,7 +33,7 @@ class AttributeChanger(base.Change):
         self.mode = mode
         self.changed = False
 
-    def apply(self, context, renderer):
+    def apply(self, context):
         """ Apply the changes """
 
         uid = None
@@ -50,10 +50,7 @@ class AttributeChanger(base.Change):
             try:
                 owner = pwd.getpwnam(self.user)
             except KeyError:
-                if not context.simulate:
-                    raise error.InvalidUser("User '%s' not found" % self.user)
-                renderer.warning(
-                    "User '%s' not found; assuming this recipe will create it" % self.user)
+                context.raise_or_log(error.InvalidUser("User '%s' not found" % self.user))
                 owner = None
 
             if not owner or owner.pw_uid != uid:
@@ -65,10 +62,7 @@ class AttributeChanger(base.Change):
             try:
                 group = grp.getgrnam(self.group)
             except KeyError:
-                if not context.simulate:
-                    raise error.InvalidGroup("No such group '%s'" % self.group)
-                renderer.warning(
-                    "Group '%s' not found; assuming this recipe will create it" % self.group)
+                context.raise_or_log(error.InvalidGroup("No such group '%s'" % self.group))
                 group = None
 
             if not group or group.gr_gid != gid:

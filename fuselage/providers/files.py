@@ -24,37 +24,31 @@ class File(provider.Provider):
 
     policies = (resources.file.FileApplyPolicy,)
 
-    def check_path(self, ctx, directory, simulate):
+    def check_path(self, directory):
         if os.path.isdir(directory):
             return
         frags = directory.split("/")
         path = "/"
         for i in frags:
             path = os.path.join(path, i)
-            if not os.path.exists(path):  # FIXME
-                if not simulate:
-                    raise error.PathComponentMissing("Directory '%s' is missing" % path)
+            if not os.path.exists(path):
+                self.raise_or_log(error.PathComponentMissing("Directory '%s' is missing" % path))
             elif not os.path.isdir(path):
                 raise error.PathComponentNotDirectory("Path '%s' is not a directory" % path)
 
-    def render(self, context):
-        return ''
-
-    def apply(self, context):
+    def apply(self):
         name = self.resource.name
 
-        self.check_path(context, os.path.dirname(name), context.simulate)
-
-        contents, sensitive = self.render(context)
+        self.check_path(os.path.dirname(name))
 
         fc = EnsureFile(
             name,
-            contents,
+            self.get_file(self.resource.source),
             self.resource.owner,
             self.resource.group,
-            self.resource.mode,
-            sensitive)
-        context.change(fc)
+            self.resource.mode
+        )
+        self.change(fc)
 
         return fc.changed
 
@@ -62,12 +56,12 @@ class File(provider.Provider):
 class RemoveFile(provider.Provider):
     policies = (resources.file.FileRemovePolicy,)
 
-    def apply(self, context):
+    def apply(self):
         name = self.resource.name
         if os.path.exists(name):
             if not os.path.isfile(name):
                 raise error.InvalidProvider("%s exists and is not a file" % name)
-            context.change(ShellCommand(["rm", self.resource.name]))
+            self.change(ShellCommand(["rm", self.resource.name]))
             changed = True
         else:
             self.logger.debug("File %s missing already so not removed" % name)
@@ -78,6 +72,6 @@ class RemoveFile(provider.Provider):
 class WatchFile(provider.Provider):
     policies = (resources.file.FileWatchedPolicy, )
 
-    def apply(self, context):
+    def apply(self):
         """ Watched files don't have any policy applied to them """
-        return self.resource.hash(context) != self.resource._original_hash
+        return self.resource.hash() != self.resource._original_hash

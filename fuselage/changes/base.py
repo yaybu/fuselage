@@ -25,6 +25,6 @@ class Change(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def apply(self, ctx, renderer=None):
+    def apply(self, ctx):
         """ Apply the specified change. The supplied renderer will be
         instantiated as below. """

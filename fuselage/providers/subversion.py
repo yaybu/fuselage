@@ -38,33 +38,31 @@ class Svn(provider.Provider):
             return repository + "/tags/" + self.resource.tag
         return repository + "/" + self.resource.branch
 
-    def action_checkout(self, context):
+    def action_checkout(self):
         name = self.resource.name
         user = self.resource.user
         group = self.resource.group
 
-        context.change(EnsureDirectory(name, user, group, 0o755))
+        self.change(EnsureDirectory(name, user, group, 0o755))
 
-        self.svn(context, "co", self.url, self.resource.name)
+        self.svn("co", self.url, self.resource.name)
         return True
 
-    def apply(self, context):
+    def apply(self):
         if not os.path.exists("/usr/bin/svn"):
-            error_string = "'/usr/bin/svn' is not available; update your configuration to install subversion?"
-            if not context.simulate:
-                raise error.MissingDependency(error_string)
-            self.logger.warning(error_string)
-            self.logger.warning("This error was ignored in simulate mode")
+            self.raise_or_log(error.MissingDependency(
+                "'/usr/bin/svn' is not available; update your configuration to install subversion?"
+            ))
 
         name = self.resource.name
 
         if not os.path.exists(name):
-            return self.action_checkout(context)
+            return self.action_checkout()
 
         changed = False
 
-        info = self.info(context, self.resource.name)
-        repo_info = self.info(context, self.url)
+        info = self.info(self.resource.name)
+        repo_info = self.info(self.url)
 
         # If the 'Repository Root' is different between the checkout and the
         # repo, switch --relocated
@@ -72,7 +70,7 @@ class Svn(provider.Provider):
         new_repo_root = repo_info["Repository Root"]
         if old_repo_root != new_repo_root:
             self.changelog.info("Switching repository root from '%s' to '%s'" % (old_repo_root, new_repo_root))
-            self.svn(context, "switch", "--relocate",
+            self.svn("switch", "--relocate",
                      old_repo_root, new_repo_root, self.resource.name)
             changed = True
 
@@ -81,7 +79,7 @@ class Svn(provider.Provider):
         new_url = repo_info["URL"]
         if old_url != new_url:
             self.changelog.info("Switching branch from '%s' to '%s'" % (old_url, new_url))
-            self.svn(context, "switch", new_url, self.resource.name)
+            self.svn("switch", new_url, self.resource.name)
             changed = True
 
         # If we have changed revision, svn up
@@ -91,15 +89,15 @@ class Svn(provider.Provider):
         target_rev = repo_info["Last Changed Rev"]
         if current_rev != target_rev:
             self.changelog.info("Switching revision from %s to %s" % (current_rev, target_rev))
-            self.svn(context, "up", "-r", target_rev, self.resource.name)
+            self.svn("up", "-r", target_rev, self.resource.name)
             changed = True
 
         return changed
 
-    def action_export(self, context):
+    def action_export(self):
         if os.path.exists(self.resource.name):
             return
-        self.svn(context, "export", self.url, self.resource.name)
+        self.svn("export", self.url, self.resource.name)
 
     def get_svn_args(self, action, *args, **kwargs):
         command = ["svn"]
@@ -123,13 +121,13 @@ class Svn(provider.Provider):
 
         return command
 
-    def info(self, context, uri):
+    def info(self, uri):
         command = self.get_svn_args("info", uri)
-        returncode, stdout, stderr = context.transport.execute(command)
+        returncode, stdout, stderr = self.transport.execute(command)
         return dict(x.split(": ") for x in stdout.split("\n") if x)
 
-    def svn(self, context, action, *args, **kwargs):
+    def svn(self, action, *args, **kwargs):
         command = self.get_svn_args(action, *args, **kwargs)
         sc = ShellCommand(command, user=self.resource.user)
-        context.change(sc)
+        self.change(sc)
         return sc.returncode, sc.stdout, sc.stderr

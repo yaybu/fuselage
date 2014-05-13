@@ -22,7 +22,7 @@ class Execute(provider.Provider):
 
     policies = (resources.execute.ExecutePolicy,)
 
-    def apply(self, context):
+    def apply(self):
         creates = self.resource.creates
         if creates and os.path.exists(creates):
             self.logger.debug("%r exists, not executing" % (self.resource.creates,))
@@ -36,53 +36,45 @@ class Execute(provider.Provider):
         unless = self.resource.unless
         if unless:
             try:
-                if context.transport.execute(unless,
-                                             user=self.resource.user.as_string,
-                                             cwd=self.resource.cwd,
-                                             )[0] == 0:
+                if self.transport.execute(unless,
+                                          user=self.resource.user.as_string,
+                                          cwd=self.resource.cwd,
+                                          )[0] == 0:
                     return False
 
             except error.InvalidUser as exc:
                 # If a simulation and user missing then we can run our 'unless'
                 # guard. We bail out with True so that Yaybu treates the
                 # resource as applied.
-                if context.simulate:
-                    self.logger.warning(
-                        "User '%s' not found; assuming this recipe will create it" % self.resource.user)
-                    return True
-                raise
+                self.raise_or_log(exc)
 
             except error.InvalidGroup as exc:
                 # If a simulation and group missing then we can run our 'unless'
                 # guard. We bail out with True so that Yaybu treates the
                 # resource as applied.
-                if context.simulate:
-                    self.logger.warning(
-                        "Group '%s' not found; assuming this recipe will create it" % self.resource.group)
-                    return True
-                raise
+                self.raise_or_log(exc)
 
         command = self.resource.command
         if command:
             commands = [self.resource.command]
         else:
-            commands = list(self.resource.commands.get_iterable())
+            commands = self.resource.commands
 
         for command in commands:
             try:
-                context.change(ShellCommand(command,
-                                            cwd=self.resource.cwd or None,
-                                            env=self.resource.environment or None,
-                                            user=self.resource.user or None,
-                                            group=self.resource.group or None,
-                                            umask=self.resource.umask,
-                                            ))
+                self.change(ShellCommand(command,
+                                         cwd=self.resource.cwd or None,
+                                         env=self.resource.environment or None,
+                                         user=self.resource.user or None,
+                                         group=self.resource.group or None,
+                                         umask=self.resource.umask,
+                                         ))
             except error.SystemError as exc:
                 if exc.returncode != self.resource.returncode:
                     raise error.CommandError(
                         "%s failed with return code %d" % (self.resource, exc.returncode))
 
         if self.resource.touch:
-            context.change(ShellCommand(["touch", self.resource.touch]))
+            self.change(ShellCommand(["touch", self.resource.touch]))
 
         return True

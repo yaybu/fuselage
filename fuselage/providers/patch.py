@@ -24,30 +24,23 @@ class Patch(provider.Provider):
 
     policies = (resources.patch.PatchApplyPolicy,)
 
-    def check_path(self, ctx, directory, simulate):
+    def check_path(self, directory):
         if os.path.isdir(directory):
             return
         frags = directory.split("/")
         path = "/"
         for i in frags:
             path = os.path.join(path, i)
-            if not os.path.exists(path):  # FIXME
-                if not simulate:
-                    raise error.PathComponentMissing(path)
+            if not os.path.exists(path):
+                self.raise_or_log(error.PatchComponentMissing(path))
             elif not os.path.isdir(path):
                 raise error.PathComponentNotDirectory(path)
 
-    def get_patch(self, context):
-        patch = context.get_file(self.resource.patch)
-        data = patch.read()
-        # FIXME: Would be good to validate the patch here a bit
-        return data, "secret" in patch.labels
-
-    def apply_patch(self, context):
-        patch, sensitive = self.get_patch(context)
+    def apply_patch(self):
+        patch = self.get_file(self.resource.patch)
 
         cmd = 'patch -t --dry-run -N --silent -r - -o - %s -' % self.resource.source
-        returncode, stdout, stderr = context.transport.execute(
+        returncode, stdout, stderr = self.transport.execute(
             cmd, stdin=patch)
 
         if returncode != 0:
@@ -63,17 +56,17 @@ class Patch(provider.Provider):
 
             raise error.CommandError("Unable to apply patch")
 
-        return stdout, sensitive
+        return stdout
 
-    def apply(self, context):
+    def apply(self):
         name = self.resource.name
 
-        self.check_path(context, os.path.dirname(name), context.simulate)
+        self.check_path(os.path.dirname(name))
 
-        contents, sensitive = self.apply_patch(context)
+        contents = self.apply_patch()
 
         fc = EnsureFile(name, contents, self.resource.owner,
-                        self.resource.group, self.resource.mode, sensitive)
-        context.change(fc)
+                        self.resource.group, self.resource.mode)
+        self.change(fc)
 
         return fc.changed

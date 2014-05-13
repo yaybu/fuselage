@@ -41,8 +41,9 @@ class Provider(six.with_metaclass(ProviderType)):
     # these policies should all be for the same resource
     policies = []
 
-    def __init__(self, resource):
+    def __init__(self, resource, runner):
         self.resource = resource
+        self.runner = runner
 
         logger = logging.getLogger(self.__module__)
         self.logger = logging.LoggerAdapter(logger, {
@@ -54,6 +55,18 @@ class Provider(six.with_metaclass(ProviderType)):
             # "resource": resource.id,
             "fuselage.changelog": True,
         })
+
+    @property
+    def simulate(self):
+        return self.runner.simulate
+
+    def raise_or_log(self, exc):
+        if not self.simulate:
+            raise exc
+        self.logger.warning(exc)
+
+    def change(self, change):
+        pass
 
     @classmethod
     def isvalid(self, policy, resource):

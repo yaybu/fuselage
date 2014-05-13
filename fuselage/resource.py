@@ -199,20 +199,20 @@ class Resource(six.with_metaclass(ResourceType)):
             p = Provider(self)
             p.test(context)
 
-    def apply(self, context, output=None, policy=None):
+    def apply(self, runner, policy=None):
         """ Apply the provider for the selected policy, and then fire any
         events that are being observed. """
         if policy is None:
-            pol = self.get_default_policy(context)
+            pol = self.get_default_policy(runner)
         else:
             pol_class = self.policies[policy]
             pol = pol_class(self)
         prov_class = pol.get_provider()
-        prov = prov_class(self)
-        changed = prov.apply(context, output)
-        context.state.clear_override(self)
+        prov = prov_class(self, runner)
+        changed = prov.apply()
+        runner.state.clear_override(self)
         if changed:
-            self.fire_event(context, pol.name)
+            self.fire_event(runner, pol.name)
         return changed
 
     def fire_event(self, context, name):

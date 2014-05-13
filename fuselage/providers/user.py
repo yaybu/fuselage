@@ -27,7 +27,7 @@ class User(provider.Provider):
 
     policies = (resources.user.UserApplyPolicy,)
 
-    def get_user_info(self, context):
+    def get_user_info(self):
         fields = ("name", "passwd", "uid", "gid", "gecos", "dir", "shell")
 
         username = self.resource.name
@@ -59,8 +59,8 @@ class User(provider.Provider):
 
         return info
 
-    def apply(self, context):
-        info = self.get_user_info(context)
+    def apply(self):
+        info = self.get_user_info()
 
         if info['exists']:
             command = ['usermod']
@@ -103,11 +103,7 @@ class User(provider.Provider):
                 try:
                     gid = grp.getgrnam(group).gr_gid
                 except KeyError:
-                    if not context.simulate:
-                        raise error.InvalidGroup(
-                            "Group '%s' is not valid" % group)
-                    self.logger.warning(
-                        "Group '%s' doesn't exist; assuming recipe already created it" % group)
+                    self.raise_or_log(error.InvalidGroup('Group "%s" is not valid' % group))
                     gid = "GID_CURRENTLY_UNASSIGNED"
 
                 if gid != info["gid"]:
@@ -124,8 +120,7 @@ class User(provider.Provider):
             if append and len(desired_groups - current_groups) > 0:
                 if info["exists"]:
                     command.append("-a")
-                command.extend(
-                    ["-G", ",".join(desired_groups - current_groups)])
+                command.extend(["-G", ",".join(desired_groups - current_groups)])
                 changed = True
             elif not append and desired_groups != current_groups:
                 command.extend(["-G", ",".join(desired_groups)])
@@ -150,10 +145,9 @@ class User(provider.Provider):
 
         if changed:
             try:
-                context.change(ShellCommand(command))
+                self.change(ShellCommand(command))
             except error.SystemError as exc:
-                raise error.UserAddError(
-                    "useradd returned error code %d" % exc.returncode)
+                raise error.UserAddError("useradd returned error code %d" % exc.returncode)
         return changed
 
 
@@ -161,10 +155,9 @@ class UserRemove(provider.Provider):
 
     policies = (resources.user.UserRemovePolicy,)
 
-    def apply(self, context):
+    def apply(self):
         try:
-            grp.getpwnam(
-                self.resource.name.encode("utf-8"))
+            grp.getpwnam(self.resource.name.encode("utf-8"))
         except KeyError:
             # If we get a key errror then there is no such user. This is good.
             return False
@@ -172,9 +165,8 @@ class UserRemove(provider.Provider):
         command = ["userdel", self.resource.name]
 
         try:
-            context.change(ShellCommand(command))
+            self.change(ShellCommand(command))
         except error.SystemError as exc:
-            raise error.UserAddError(
-                "Removing user %s failed with return code %d" % (self.resource, exc.returncode))
+            raise error.UserAddError("Removing user %s failed with return code %d" % (self.resource, exc.returncode))
 
         return True

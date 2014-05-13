@@ -25,7 +25,7 @@ class Link(provider.Provider):
 
     policies = (resources.link.LinkAppliedPolicy,)
 
-    def _get_owner(self, context):
+    def _get_owner(self):
         """ Return the uid for the resource owner, or None if no owner is
         specified. """
         owner = self.resource.owner.as_string(default='')
@@ -35,7 +35,7 @@ class Link(provider.Provider):
             except KeyError:
                 raise error.InvalidUser()
 
-    def _get_group(self, context):
+    def _get_group(self):
         """ Return the gid for the resource group, or None if no group is
         specified. """
         group = self.resource.group.as_string(default='')
@@ -45,7 +45,7 @@ class Link(provider.Provider):
             except KeyError:
                 raise error.InvalidGroup()
 
-    def _stat(self, context):
+    def _stat(self):
         """ Extract stat information for the resource. """
         st = os.lstat(self.resource.name)
         uid = st.st_uid
@@ -53,7 +53,7 @@ class Link(provider.Provider):
         mode = stat.S_IMODE(st.st_mode)
         return uid, gid, mode
 
-    def apply(self, context):
+    def apply(self):
         changed = False
         name = self.resource.name
         to = self.resource.to
@@ -63,14 +63,12 @@ class Link(provider.Provider):
         isalink = False
 
         if not os.path.exists(to):
-            if not context.simulate:
-                raise error.DanglingSymlink(
-                    "Destination of symlink %r does not exist" % to)
-            self.logger.warning(
-                "Destination of sylink %r does not exist" % to)
+            self.raise_or_log(error.DanglingSymlink(
+                "Destination of symlink %r does not exist" % to
+            ))
 
-        owner = self._get_owner(context)
-        group = self._get_group(context)
+        owner = self._get_owner()
+        group = self._get_group()
 
         try:
             linkto = os.readlink(name)
@@ -80,10 +78,10 @@ class Link(provider.Provider):
 
         if not isalink or linkto != to:
             if os.lexists(name):
-                context.change(
+                self.change(
                     ShellCommand(["/bin/rm", "-rf", self.resource.name]))
 
-            context.change(
+            self.change(
                 ShellCommand(["/bin/ln", "-s", self.resource.to, self.resource.name]))
             changed = True
 
@@ -93,20 +91,20 @@ class Link(provider.Provider):
         except OSError:
             isalink = False
 
-        if not isalink and not context.simulate:
-            raise error.OperationFailed(
-                "Did not create expected symbolic link")
+        if not isalink:
+            if not self.simulate:
+                raise error.OperationFailed("Did not create expected symbolic link")
+            return
 
-        if isalink:
-            uid, gid, mode = self._stat(context)
+        uid, gid, mode = self._stat()
 
         if owner and owner != uid:
-            context.change(
+            self.change(
                 ShellCommand(["/bin/chown", "-h", self.resource.owner, self.resource.name]))
             changed = True
 
         if group and group != gid:
-            context.change(
+            self.change(
                 ShellCommand(["/bin/chgrp", "-h", self.resource.group, self.resource.name]))
             changed = True
 
@@ -117,13 +115,13 @@ class RemoveLink(provider.Provider):
 
     policies = (resources.link.LinkRemovedPolicy,)
 
-    def apply(self, context):
+    def apply(self):
         name = self.resource.name
 
         if os.lexists(name):
             if not os.islink(name):
                 raise error.InvalidProvider(
                     "%r: %s exists and is not a link" % (self, name))
-            context.change(ShellCommand(["/bin/rm", self.resource.name]))
+            self.change(ShellCommand(["/bin/rm", self.resource.name]))
             return True
         return False

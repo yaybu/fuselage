@@ -22,11 +22,10 @@ class Directory(provider.Provider):
 
     policies = (resources.directory.DirectoryAppliedPolicy,)
 
-    def check_path(self, context, directory):
+    def check_path(self, directory):
         if os.path.isdir(directory):
             return
 
-        simulate = context.simulate
         frags = directory.split("/")
         path = "/"
         for i in frags:
@@ -34,18 +33,16 @@ class Directory(provider.Provider):
             if not os.path.exists(path):
                 if self.resource.parents:
                     return
-                if simulate:
-                    return
-                raise error.PathComponentMissing(path)
+                self.raise_or_log(error.PatchComponentMissing(path))
             if not os.path.isdir(path):
                 raise error.PathComponentNotDirectory(path)
 
-    def apply(self, context):
+    def apply(self):
         name = self.resource.name
 
-        self.check_path(context, os.path.dirname(name))
+        self.check_path(os.path.dirname(name))
 
-        return context.change(EnsureDirectory(
+        return self.change(EnsureDirectory(
             name,
             self.resource.owner,
             self.resource.group,
@@ -58,14 +55,14 @@ class RemoveDirectory(provider.Provider):
 
     policies = (resources.directory.DirectoryRemovedPolicy,)
 
-    def apply(self, context):
+    def apply(self):
         name = self.resource.name
 
         if os.path.exists(name) and not os.path.isdir(name):
             raise error.InvalidProviderError(
                 "%r: %s exists and is not a directory" % (self, name))
         if os.path.exists(name):
-            context.change(ShellCommand(["/bin/rmdir", self.resource.name]))
+            self.change(ShellCommand(["/bin/rmdir", self.resource.name]))
             changed = True
         else:
             changed = False
@@ -76,14 +73,14 @@ class RemoveDirectoryRecursive(provider.Provider):
 
     policies = (resources.directory.DirectoryRemovedRecursivePolicy,)
 
-    def apply(self, context):
+    def apply(self):
         name = self.resource.name
 
         if os.path.exists(name) and not os.path.isdir(name):
             raise error.InvalidProviderError(
                 "%r: %s exists and is not a directory" % (self, name))
         if os.path.exists(name):
-            context.change(
+            self.change(
                 ShellCommand(["/bin/rm", "-rf", self.resource.name]))
             changed = True
         else:

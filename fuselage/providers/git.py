@@ -45,69 +45,68 @@ class Git(provider.Provider):
         command.extend(list(args))
         return command
 
-    def info(self, context, action, *args):
-        rc, stdout, stderr = context.transport.execute(
+    def info(self, action, *args):
+        rc, stdout, stderr = self.transport.execute(
             self.get_git_command(action, *args),
             user=self.resource.user,
             cwd=self.resource.name,
         )
         return rc, stdout, stderr
 
-    def action(self, context, action, *args):
-        context.change(ShellCommand(
+    def action(self, action, *args):
+        self.change(ShellCommand(
             self.get_git_command(action, *args),
             user=self.resource.user,
             cwd=self.resource.name,
         ))
 
-    def action_clone(self, context):
+    def action_clone(self):
         """Adds resource.repository as a remote, but unlike a
         typical clone, does not check it out
 
         """
-        context.change(EnsureDirectory(self.resource.name,
+        self.change(EnsureDirectory(self.resource.name,
                        self.resource.user, self.resource.group, 0o755))
 
         try:
-            self.action(context, "init", self.resource.name)
+            self.action("init", self.resource.name)
         except error.SystemError:
             raise error.CheckoutError("Cannot initialise local repository.")
 
-        self.action_set_remote(context)
+        self.action_set_remote()
 
-    def action_set_remote(self, context):
+    def action_set_remote(self):
         try:
-            self.action(context, "remote", "add", self.REMOTE_NAME,
+            self.action("remote", "add", self.REMOTE_NAME,
                         self.resource.repository)
         except error.SystemError:
             raise error.CheckoutError("Could not set the remote repository.")
 
-    def action_update_remote(self, context):
+    def action_update_remote(self):
         # Determine if the remote repository has changed
         remote_re = re.compile(self.REMOTE_NAME + r"\t(.*) \(.*\)\n")
-        rv, stdout, stderr = self.info(context, "remote", "-v")
+        rv, stdout, stderr = self.info("remote", "-v")
         remote = remote_re.search(stdout)
         if remote:
             if not self.resource.repository == remote.group(1):
                 log.info("The remote repository has changed.")
                 try:
-                    self.action(context, "remote", "rm", self.REMOTE_NAME)
+                    self.action("remote", "rm", self.REMOTE_NAME)
                 except error.SystemError:
                     raise error.CheckoutError(
                         "Could not delete remote '%s'" % self.REMOTE_NAME)
-                self.action_set_remote(context)
+                self.action_set_remote()
                 return True
         else:
             raise error.CheckoutError("Cannot determine repository remote.")
 
         return False
 
-    def checkout_needed(self, context):
+    def checkout_needed(self):
         # Determine which SHA is currently checked out.
         if os.path.exists(os.path.join(self.resource.name, ".git")):
             try:
-                rv, stdout, stderr = self.info(
-                    context, "rev-parse", "--verify", "HEAD")
+                rv, stdout, stderr = self.info("rev-parse", "--verify", "HEAD")
             except error.SystemError:
                 head_sha = '0' * 40
             else:
@@ -117,7 +116,7 @@ class Git(provider.Provider):
             head_sha = '0' * 40
 
         try:
-            rv, stdout, stderr = context.transport.execute(
+            rv, stdout, stderr = self.transport.execute(
                 ["git", "ls-remote", self.resource.repository], user=self.resource.user, cwd="/tmp")
         except error.SystemError:
             raise error.CheckoutError("Could not query the remote repository")
@@ -163,28 +162,28 @@ class Git(provider.Provider):
             raise error.CheckoutError(
                 "You must specify either a revision, tag or branch")
 
-    def action_checkout(self, context, newref):
+    def action_checkout(self, newref):
         try:
-            self.action(context, "fetch", self.REMOTE_NAME)
+            self.action("fetch", self.REMOTE_NAME)
         except error.SystemError:
             raise error.CheckoutError("Could not fetch '%s'" %
                                 self.resource.repository)
 
         try:
-            self.action(context, "checkout", newref)
+            self.action("checkout", newref)
         except error.SystemError:
             raise error.CheckoutError("Could not check out '%s'" % newref)
 
-    def apply(self, context):
+    def apply(self):
         # If necessary, clone the repository
         if not os.path.exists(os.path.join(self.resource.name, ".git")):
-            self.action_clone(context)
+            self.action_clone()
             changed = True
         else:
-            changed = self.action_update_remote(context)
+            changed = self.action_update_remote()
 
-        newref = self.checkout_needed(context)
+        newref = self.checkout_needed()
         if newref:
-            self.action_checkout(context, newref)
+            self.action_checkout(newref)
 
         return changed or newref

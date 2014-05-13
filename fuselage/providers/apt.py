@@ -40,8 +40,8 @@ class AptInstall(provider.Provider):
 
     policies = (resources.package.PackageInstallPolicy,)
 
-    def apply(self, context):
-        if is_installed(context, self.resource):
+    def apply(self):
+        if is_installed(self.resource):
             return False
 
         env = {
@@ -53,13 +53,13 @@ class AptInstall(provider.Provider):
         command = ["apt-get", "install", "-q", "-y", self.resource.name]
 
         try:
-            context.change(ShellCommand(command, env=env))
+            self.change(ShellCommand(command, env=env))
         except error.SystemError as exc:
             if exc.returncode == 100:
                 try:
-                    context.change(
+                    self.change(
                         ShellCommand(["apt-get", "update", "-q", "-y"], env=env))
-                    context.change(ShellCommand(command, env=env))
+                    self.change(ShellCommand(command, env=env))
                 except error.SystemError as exc:
                     raise error.AptError(
                         "%s with what looked like a recoverable error, but it wasn't (return code %d)" %
@@ -76,8 +76,9 @@ class AptUninstall(provider.Provider):
 
     policies = (resources.package.PackageUninstallPolicy,)
 
-    def apply(self, context):
-        if not is_installed(context, self.resource):
+    def apply(self):
+        if not is_installed(self.resource):
+            self.logger.debug("Package '%s' is already uninstalled, not removing." % self.resource.name)
             return False
 
         env = {
@@ -90,7 +91,7 @@ class AptUninstall(provider.Provider):
         command.append(self.resource.name)
 
         try:
-            context.change(ShellCommand(command, env=env))
+            self.change(ShellCommand(command, env=env))
         except error.SystemError as exc:
             raise error.AptError(
                 "%s failed to uninstall with return code %d" % (self.resource, exc.returncode))

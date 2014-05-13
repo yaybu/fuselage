@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import os
-import logging
 try:
     from urllib.parse import urlparse, urlunparse, quote
 except ImportError:
@@ -23,9 +22,6 @@ except ImportError:
 
 from fuselage import error, resources, provider
 from fuselage.changes import ShellCommand, EnsureFile, EnsureDirectory
-
-
-log = logging.getLogger(__name__)
 
 
 hgrc = """
@@ -131,31 +127,31 @@ class Mercurial(provider.Provider):
         command.extend(list(args))
         return command
 
-    def info(self, context, action, *args):
-        rc, stdout, stderr = context.transport.execute(
+    def info(self, action, *args):
+        rc, stdout, stderr = self.transport.execute(
             self.get_hg_command(action, *args),
             user=self.resource.user,
             cwd=self.resource.name,
         )
         return rc, stdout, stderr
 
-    def action(self, context, action, *args):
-        context.change(ShellCommand(
+    def action(self, action, *args):
+        self.change(ShellCommand(
             self.get_hg_command(action, *args),
             user=self.resource.user,
             cwd=self.resource.name,
         ))
 
-    def apply(self, context):
+    def apply(self):
         created = False
         changed = False
 
-        context.change(EnsureDirectory(self.resource.name,
+        self.change(EnsureDirectory(self.resource.name,
                        self.resource.user, self.resource.group, 0o755))
 
         if not os.path.exists(os.path.join(self.resource.name, ".hg")):
             try:
-                self.action(context, "init")
+                self.action("init")
             except error.SystemError:
                 raise error.CheckoutError("Cannot initialise local repository.")
             created = True
@@ -164,7 +160,7 @@ class Mercurial(provider.Provider):
                                   self.resource.scm_username, self.resource.scm_password)
 
         try:
-            context.change(EnsureFile(
+            self.change(EnsureFile(
                 os.path.join(self.resource.name, ".hg", "hgrc"),
                 hgrc % {"repository": url, "path":
                         self.resource.name},
@@ -177,7 +173,7 @@ class Mercurial(provider.Provider):
             raise error.CheckoutError("Could not set the remote repository.")
 
         try:
-            context.change(EnsureFile(
+            self.change(EnsureFile(
                 os.path.join(
                     self.resource.name, ".hg", "should.py"),
                 mercurial_ext,
@@ -196,15 +192,15 @@ class Mercurial(provider.Provider):
         if self.resource.tag:
             should_args.extend(["-t", self.resource.tag])
 
-        if created or self.info(context, "should-pull", *should_args)[0] != 0:
+        if created or self.info("should-pull", *should_args)[0] != 0:
             try:
-                self.action(context, "pull", "--force")
+                self.action("pull", "--force")
                 changed = True
             except error.SystemError:
                 raise error.CheckoutError(
                     "Could not fetch changes from remote repository.")
 
-        if created or self.info(context, "should-update", *should_args)[0] != 0:
+        if created or self.info("should-update", *should_args)[0] != 0:
             if self.resource.tag:
                 args = [self.resource.tag]
             elif self.resource.branch:
@@ -213,7 +209,7 @@ class Mercurial(provider.Provider):
                 args = []
 
             try:
-                self.action(context, "update", *args)
+                self.action("update", *args)
                 changed = True
             except error.SystemError:
                 raise error.CheckoutError("Could not update working copy.")

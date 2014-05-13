@@ -23,5 +23,5 @@ class TestCaseWithBundle(unittest.TestCase):
         self.bundle = bundle.ResourceBundle()
 
 
-class TestCaseWithFakeChroot(TestCaseWithBundle):
+class TestCaseWithFakechroot(TestCaseWithBundle):
     pass

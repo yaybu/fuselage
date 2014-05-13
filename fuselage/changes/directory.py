@@ -28,7 +28,7 @@ class EnsureDirectory(base.Change):
         self.mode = mode
         self.recursive = recursive
 
-    def apply(self, context, renderer):
+    def apply(self, context):
         self.changed = False
         if not os.path.exists(self.path):
             command = ["/bin/mkdir"]

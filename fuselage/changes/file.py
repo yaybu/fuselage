@@ -71,8 +71,8 @@ class EnsureFile(base.Change):
         with open(self.filename, "r") as fp:
             self.current = fp.read()
         if self.current != self.contents:
-            self.renderer.changed_file(
-                self.filename, self.current, self.contents, self.sensitive)
+            # self.renderer.changed_file(
+            #     self.filename, self.current, self.contents, self.sensitive)
             if not context.simulate:
                 with open(self.filename, "w") as fp:
                     fp.write(self.contents)
@@ -93,9 +93,8 @@ class EnsureFile(base.Change):
         else:
             self.write_new_file(context)
 
-    def apply(self, context, renderer):
+    def apply(self, context):
         """ Apply the changes necessary to the file contents. """
-        self.renderer = renderer
         if self.contents is None:
             self.empty_file(context)
         else:

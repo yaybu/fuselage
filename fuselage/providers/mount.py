@@ -22,11 +22,10 @@ class Mount(provider.Provider):
 
     policies = (resources.mount.MountPolicy,)
 
-    def check_path(self, context, directory):
+    def check_path(self, directory):
         if os.path.isdir(directory):
             return
 
-        simulate = context.simulate
         frags = directory.split("/")
         path = "/"
         for i in frags:
@@ -34,13 +33,11 @@ class Mount(provider.Provider):
             if not os.path.exists(path):
                 if self.resource.parents:
                     return
-                if simulate:
-                    return
-                raise error.PathComponentMissing(path)
+                self.raise_or_log(error.PatchComponentMissing(path))
             if not os.path.isdir(path):
                 raise error.PathComponentNotDirectory(path)
 
-    def get_all_active_mounts(self, context):
+    def get_all_active_mounts(self):
         with open("/proc/mounts", "r") as fp:
             path = fp.read()
         d = {}
@@ -59,16 +56,16 @@ class Mount(provider.Provider):
             }
         return d
 
-    def get_mount(self, context, path):
-        return self.get_all_active_mounts(context)[path]
+    def get_mount(self, path):
+        return self.get_all_active_mounts()[path]
 
-    def apply(self, context):
+    def apply(self):
         name = self.resource.name
 
-        self.check_path(context, name)
+        self.check_path(name)
 
         try:
-            self.get_mount(context, name)
+            self.get_mount(name)
             return
 
         except KeyError:
@@ -87,7 +84,7 @@ class Mount(provider.Provider):
             if options:
                 command.extend(("-o", options))
 
-            context.change(ShellCommand(
+            self.change(ShellCommand(
                 command=command,
             ))
             return True
