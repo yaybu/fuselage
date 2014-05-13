@@ -12,16 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fuselage.tests.base import TestCaseWithBundle
-from fuselage import resource
+import unittest
+
+from fuselage import error, resource
 
 
-class TestResource(TestCaseWithBundle):
+class TestResource(unittest.TestCase):
+
+    def test_redefinition(self):
+        # Two classes of resource can't have the same __resource_name__
+        raised = False
+        try:
+            class Dummy(resource.Resource):
+                __resource_name__ = "Dummy"
+            class Dummy2(resource.Resource):
+                __resource_name__ = "Dummy"
+        except error.ParseError:
+            raised = True
+        self.assertEqual(raised, True)
+
+    def test_must_have_name(self):
+        # By default a Resource must have a name
+        self.assertRaises(error.ParseError, resource.Resource)
+
+    def test_only_valid_kwargs(self):
+        self.assertRaises(error.ParseError, resource.Resource, name="/foo", frob=True)
 
     def test_repr(self):
-        r = self.bundle.add(resource.Resource(name="foo"))
+        r = resource.Resource(name="foo")
         self.assertEqual(repr(r), "Resource[foo]")
 
     def test_id(self):
-        r = self.bundle.add(resource.Resource(name="foo"))
+        r = resource.Resource(name="foo")
         self.assertEqual(r.id, "Resource[foo]")
