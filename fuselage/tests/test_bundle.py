@@ -74,13 +74,13 @@ class TestBundle(unittest.TestCase):
 
     def test_load(self):
         self.bundle.load(six.StringIO("""
-        {"resources": [{"File": {"name": "/tmp"}}]}
+        {"version": 1, "resources": [{"File": {"name": "/tmp"}}]}
         """))
         self.assertEqual(self.bundle["File[/tmp]"].name, "/tmp")
 
     def test_loads(self):
         self.bundle.loads("""
-        {"resources": [{"File": {"name": "/tmp"}}]}
+        {"version": 1, "resources": [{"File": {"name": "/tmp"}}]}
         """)
         self.assertEqual(self.bundle["File[/tmp]"].name, "/tmp")
 

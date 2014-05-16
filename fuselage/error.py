@@ -25,7 +25,8 @@ class Error(Exception):
     returncode = 253
 
     def __init__(self, msg=""):
-        self.msg = msg
+        if msg:
+            self.msg = msg
 
     def __str__(self):
         return "%s: %s" % (self.__class__.__name__, self.msg)
@@ -164,6 +165,8 @@ class SavedEventsAndNoInstruction(Error):
     """ There is a saved events file and the user has not decided what to do
     about it. Invoke with --resume or --no-resume. """
     returncode = 148
+    msg = "There is a saved events file - you need to specify --resume or --no-resume"
+
     """ returns error code 148 to the invoking environment. """
 
 

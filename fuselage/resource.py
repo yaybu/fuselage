@@ -30,12 +30,11 @@ class ResourceType(type):
     def __new__(meta, class_name, bases, new_attrs):
         cls = type.__new__(meta, class_name, bases, new_attrs)
 
-        cls.__args__ = []
-        cls.__defaults__ = {}
+        cls.__args__ = {}
 
         for b in bases:
             if hasattr(b, "__args__"):
-                cls.__args__.extend(b.__args__)
+                cls.__args__.update(b.__args__)
 
         cls.policies = AvailableResourcePolicies()
 
@@ -48,8 +47,7 @@ class ResourceType(type):
 
         for key, value in new_attrs.items():
             if isinstance(value, Argument):
-                cls.__args__.append(key)
-                cls.__defaults__[key] = value.default
+                cls.__args__[key] = value
 
         return cls
 
@@ -154,10 +152,10 @@ class Resource(six.with_metaclass(ResourceType)):
         """ Return all argument names and values in a dictionary. If an
         argument has no default and has not been set, it's value in the
         dictionary will be None. """
-
         retval = {}
-        for key in self.get_argument_names():
-            retval[key] = getattr(self, key, None)
+        for name, arg in self.__args__.items():
+            retval[name] = arg.serialize(self)
+        return retval
 
     def register_observer(self, when, resource, policy):
         self.observers[when].append((resource, policy))

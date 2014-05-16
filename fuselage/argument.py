@@ -46,6 +46,12 @@ class Argument(object):
         else:
             return self.default
 
+    def serialize(self, instance):
+        if hasattr(instance, self.arg_id):
+            return getattr(instance, self.arg_id)
+        else:
+            return self.default
+
     @abstractmethod
     def __set__(self, instance, value):
         """ Set the property. The value will be a UTF-8 encoded string read from the yaml source file. """

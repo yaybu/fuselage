@@ -119,7 +119,7 @@ class Absent(ArgumentAssertion):
         val = getattr(resource, self.name)
         if val is None:
             return True
-        if val == resource.__defaults__[self.name]:
+        if val == resource.__args__[self.name].default:
             return True
         return False
 

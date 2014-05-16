@@ -80,16 +80,17 @@ class EventState(object):
             if not os.path.exists(save_parent):
                 os.makedirs(save_parent)
 
-        if os.path.exists(self.save_file):
-            if self.resume:
-                self.loaded = False
-            elif self.no_resume:
-                if not self.simulate:
-                    os.unlink(self.save_file)
-                self.loaded = True
-            else:
-                raise error.SavedEventsAndNoInstruction(
-                    "There is a saved events file - you need to specify --resume or --no-resume")
+        if not os.path.exists(self.save_file):
+            return
+
+        if self.resume:
+            self.loaded = False
+        elif self.no_resume:
+            if not self.simulate:
+                os.unlink(self.save_file)
+            self.loaded = True
+
+        raise error.SavedEventsAndNoInstruction()
 
     def success(self):
         if not self.simulate and os.path.exists(self.save_file):

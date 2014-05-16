@@ -42,7 +42,8 @@ class Builder(object):
         return cls.write_to(open(path, "wb"))
 
     def embed_resource_bundle(self, bundle):
-        pass
+        data = bundle.writes()
+        self.zipfile.writestr("resources.json", data)
 
     def embed_fuselage_runtime(self):
         finder = modulefinder.ModuleFinder()
@@ -67,14 +68,19 @@ class Builder(object):
             # Use pkgutil to get the code - this is zipsafe so will work even if
             # running from a py2exe type binary installation.
             basename = os.path.basename(mod.__file__)
-            if "." in name:
-                parent = name.rsplit(".", 1)[0]
-                code = pkgutil.get_data(parent, basename)
-                self.zipfile.writestr(os.path.join(*list(parent.split(".")) + [basename]), code)
-            else:
-                code = pkgutil.get_data(name, basename)
-                self.zipfile.writestr(basename, code)
+            path_parts = list(name.split("."))
 
+            if basename == "__init__.py":
+                path_parts.append("__init__.py")
+            elif not "." in name:
+                path_parts = [name, name + ".py"]
+            else:
+                path_parts[-1] += ".py"
+
+            code = pkgutil.get_data(path_parts[0], os.sep.join(path_parts[1:]))
+            self.zipfile.writestr(os.path.join(*path_parts), code)
+
+        self.zipfile.writestr("__init__.py", "")
         self.zipfile.writestr("__main__.py", MAIN_PY)
 
     def close(self):
@@ -82,6 +88,8 @@ class Builder(object):
 
 
 if __name__ == "__main__":
+    from .bundle import ResourceBundle
     b = Builder.write_to_path("example.pex")
     b.embed_fuselage_runtime()
+    b.embed_resource_bundle(ResourceBundle())
     b.close()

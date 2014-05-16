@@ -29,6 +29,23 @@ class ResourceBundle(OrderedDict):
     that consists of scalars, lists and dictionaries and this class will
     instantiate the appropriate resources into the structure. """
 
+    BUNDLE_VERSION = 1
+
+    def write(self, fp):
+        obj = self._serialize_bundle()
+        json.dump(obj, fp)
+
+    def writes(self):
+        obj = self._serialize_bundle()
+        return json.dumps(obj)
+
+    def _serialize_bundle(self):
+        obj = {"version": self.BUNDLE_VERSION}
+        resources = obj['resources'] = []
+        for r in self.values():
+            resources.append(r.get_argument_values())
+        return obj
+
     def load(self, fp):
         obj = json.load(fp)
         return self._load_bundle(obj)
@@ -40,6 +57,12 @@ class ResourceBundle(OrderedDict):
     def _load_bundle(self, obj):
         if not isinstance(obj, dict):
             raise error.ParseError("Bundle is not a dictionary")
+
+        if 'version' not in obj:
+            raise error.ParseError("Bundle version is invalid")
+
+        if obj['version'] > self.BUNDLE_VERSION:
+            raise error.ParseError("Bundle version is too new")
 
         if "resources" not in obj:
             raise error.ParseError("Bundle doesn't have a resources key")
