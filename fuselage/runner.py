@@ -17,8 +17,7 @@ import sys
 import logging
 import optparse
 
-from fuselage import bundle, error, event
-from fuselage import logging as handlers
+from fuselage import bundle, error, event, log
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +27,7 @@ class Runner(object):
     state_path = "/var/run/yaybu"
 
     def __init__(self, resources, resume=False, no_resume=False, simulate=False, verbosity=logging.INFO):
-        if self.resume and self.no_resume:
+        if resume and no_resume:
             raise error.ParseError("'resume' and 'no_resume' cannot both be True")
 
         self.resources = resources
@@ -44,12 +43,12 @@ class Runner(object):
 
     @classmethod
     def setup_from_cmdline(cls, argv=sys.argv):
-        p = optparse.OptionParser
+        p = optparse.OptionParser()
         p.add_option("--simulate", action="store_true")
         p.add_option("--resume", action="store_true")
         p.add_option("--no-resume", action="store_true")
-        p.add_option("-v", "--verbose", action="count")
-        p.add_option("-q", "--quiet", action="count")
+        p.add_option("-v", "--verbose", action="count", default=0)
+        p.add_option("-q", "--quiet", action="count", default=0)
         opts, args = p.parse_args(argv)
 
         resources = bundle.ResourceBundle()
@@ -65,11 +64,11 @@ class Runner(object):
     def configure_logging(self):
         root = logging.getLogger()
         if not sys.stdout.isatty():
-            root.addHandler(handlers.JSONHandler(stream=sys.stdout))
+            root.addHandler(log.JSONHandler(stream=sys.stdout))
         else:
             handler = logging.StreamHandler(stream=sys.stdout)
             root.addHandler(handler)
-        root.addHandler(handlers.SysLogHandler())
+        root.addHandler(log.SysLogHandler())
         root.setLevel(self.verbosity)
 
     def run(self):
