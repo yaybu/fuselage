@@ -41,8 +41,11 @@ class Builder(object):
     def write_to_path(cls, path):
         return cls.write_to(open(path, "wb"))
 
+    def add_resource(self, name, payload):
+        self.zipfile.writestr(os.path.join("assets", name), payload)
+
     def embed_resource_bundle(self, bundle):
-        data = bundle.writes()
+        data = bundle.dumps(self)
         self.zipfile.writestr("resources.json", data)
 
     def embed_fuselage_runtime(self):

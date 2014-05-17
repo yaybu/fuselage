@@ -148,13 +148,13 @@ class Resource(six.with_metaclass(ResourceType)):
         for key in klass.__args__:
             yield key
 
-    def get_argument_values(self):
+    def serialize(self, builder=None):
         """ Return all argument names and values in a dictionary. If an
         argument has no default and has not been set, it's value in the
         dictionary will be None. """
         retval = {}
         for name, arg in self.__args__.items():
-            retval[name] = arg.serialize(self)
+            retval[name] = arg.serialize(self, builder=builder)
         return retval
 
     def register_observer(self, when, resource, policy):
@@ -178,7 +178,7 @@ class Resource(six.with_metaclass(ResourceType)):
         """
 
         # This will throw any error if any of our validation fails
-        self.get_argument_values()
+        [getattr(self, k) for k in self.get_argument_names()]
 
         # Error if doesn't conform to policy
         for p in self.get_potential_policies():

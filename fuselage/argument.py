@@ -46,7 +46,7 @@ class Argument(object):
         else:
             return self.default
 
-    def serialize(self, instance):
+    def serialize(self, instance, builder=None):
         if hasattr(instance, self.arg_id):
             return getattr(instance, self.arg_id)
         else:

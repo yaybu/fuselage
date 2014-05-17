@@ -31,19 +31,19 @@ class ResourceBundle(OrderedDict):
 
     BUNDLE_VERSION = 1
 
-    def write(self, fp):
-        obj = self._serialize_bundle()
+    def dump(self, builder, fp):
+        obj = self._serialize_bundle(builder)
         json.dump(obj, fp)
 
-    def writes(self):
-        obj = self._serialize_bundle()
+    def dumps(self, builder):
+        obj = self._serialize_bundle(builder)
         return json.dumps(obj)
 
-    def _serialize_bundle(self):
+    def _serialize_bundle(self, builder):
         obj = {"version": self.BUNDLE_VERSION}
         resources = obj['resources'] = []
         for r in self.values():
-            resources.append(r.get_argument_values())
+            resources.append(r.serialize(builder))
         return obj
 
     def load(self, fp):
