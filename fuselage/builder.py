@@ -34,7 +34,7 @@ class Builder(object):
 
     @classmethod
     def write_to(cls, fp):
-        fp.write("#!/usr/bin/env python")
+        fp.write(b"#!/usr/bin/env python")
         return cls(zipfile.ZipFile(fp, "w", compression=zipfile.ZIP_DEFLATED))
 
     @classmethod
