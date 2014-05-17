@@ -16,7 +16,7 @@ import six
 import unittest
 import zipfile
 
-from fuselage import builder, bundle
+from fuselage import builder, bundle, resources
 
 
 class TestBuilder(unittest.TestCase):
@@ -31,10 +31,12 @@ class TestBuilder(unittest.TestCase):
         self.assertEqual(z.getinfo("__main__.py").file_size, len(builder.MAIN_PY))
 
     def test_build_resources(self):
+        rb = bundle.ResourceBundle()
+        rb.add(resources.User(name="matt"))
         fp = six.BytesIO()
         b = builder.Builder.write_to(fp)
         b.embed_fuselage_runtime()
-        b.embed_resource_bundle(bundle.ResourceBundle())
+        b.embed_resource_bundle(rb)
         b.close()
 
         z = zipfile.ZipFile(six.BytesIO(fp.getvalue()))
