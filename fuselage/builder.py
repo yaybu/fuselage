@@ -58,7 +58,7 @@ class Builder(object):
             file_info=("", "r", modulefinder.imp.PY_SOURCE)
         )
 
-        for name, mod in finder.modules.iteritems():
+        for name, mod in finder.modules.items():
             mods = ("fuselage", "six")
             for m in mods:
                 if name.startswith(m):
