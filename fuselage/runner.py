@@ -58,7 +58,7 @@ class Runner(object):
             resume=opts.resume,
             no_resume=opts.no_resume,
             simulate=opts.simulate,
-            verbosity=logging.INFO + (10 * (opts.verbose - opts.quiet)),
+            verbosity=logging.INFO - (10 * (opts.verbose - opts.quiet)),
         )
 
     def configure_logging(self):
