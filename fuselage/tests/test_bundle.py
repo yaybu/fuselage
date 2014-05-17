@@ -89,8 +89,7 @@ class TestBundle(unittest.TestCase):
 
     def test_load_bundle__no_version(self):
         self.assertRaises(error.ParseError, self.bundle._load_bundle, {
-            "version": 1,
-            "resourcees": [],
+            "resources": [],
         })
 
     def test_load_bundle__version_too_new(self):
