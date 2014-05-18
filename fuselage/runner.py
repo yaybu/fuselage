@@ -44,9 +44,9 @@ class Runner(object):
     @classmethod
     def setup_from_cmdline(cls, argv=sys.argv):
         p = optparse.OptionParser()
-        p.add_option("--simulate", action="store_true")
-        p.add_option("--resume", action="store_true")
-        p.add_option("--no-resume", action="store_true")
+        p.add_option("-s", "--simulate", action="store_true", default=False)
+        p.add_option("--resume", action="store_true", default=False)
+        p.add_option("--no-resume", action="store_true", default=False)
         p.add_option("-v", "--verbose", action="count", default=0)
         p.add_option("-q", "--quiet", action="count", default=0)
         opts, args = p.parse_args(argv)

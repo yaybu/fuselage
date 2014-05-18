@@ -22,7 +22,8 @@ class TestRunner(unittest.TestCase):
 
     def test_init(self):
         r = runner.Runner(bundle.ResourceBundle())
-        self.assertEqual(r.state.simulate, r.simulate)
+        self.assertEqual(r.simulate, False)
+        self.assertEqual(r.state.simulate, False)
 
     def test_setup_from_cmdline__increase_verbosity(self):
         r = runner.Runner.setup_from_cmdline(["-v"])
@@ -31,6 +32,11 @@ class TestRunner(unittest.TestCase):
     def test_setup_from_cmdline__decrease_verbosity(self):
         r = runner.Runner.setup_from_cmdline(["-q"])
         self.assertEqual(r.verbosity, logging.WARNING)
+
+    def test_setup_from_cmdline__enable_simulate(self):
+        r = runner.Runner.setup_from_cmdline(["-s"])
+        self.assertEqual(r.simulate, True)
+        self.assertEqual(r.state.simulate, True)
 
     def test_resume_and_not_resume(self):
         self.assertRaises(error.ParseError, runner.Runner, [], resume=True, no_resume=True)

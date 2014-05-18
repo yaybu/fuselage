@@ -42,7 +42,7 @@ class EventState(object):
         self.simulate = simulate
         self.loaded = not load
         self.overrides = {}
-        self.simulate = False
+        self.simulate = simulate
 
     def load(self):
         if self.loaded:
