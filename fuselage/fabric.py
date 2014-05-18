@@ -47,7 +47,7 @@ class DeploymentTask(tasks.WrappedCallableTask):
         put(buffer, '~/payload.pex', mode=0755)
 
         with settings(warn_only=True):
-            result = sudo('~/payload.pex -vvvv')
+            result = sudo('~/payload.pex')
 
             if not result.return_code in (0, 254):
                 raise SystemExit("Could not apply fuselage blueprint. Aborting.")
