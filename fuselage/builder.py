@@ -20,9 +20,9 @@ import zipfile
 
 
 MAIN_PY = """
-from fuselage.runner import Runner
+from fuselage.runner import BundledRunner
 if __name__=="__main__":
-    r = Runner.setup_from_cmdline()
+    r = BundledRunner.setup_from_cmdline()
     r.run()
 """
 

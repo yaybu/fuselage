@@ -16,6 +16,7 @@ import os
 import sys
 import logging
 import optparse
+import pkgutil
 
 from fuselage import bundle, error, event, log
 
@@ -42,7 +43,11 @@ class Runner(object):
         )
 
     @classmethod
-    def setup_from_cmdline(cls, argv=sys.argv):
+    def get_resources(cls):
+        return bundle.ResourceBundle()
+
+    @classmethod
+    def setup_from_cmdline(cls, argv=sys.argv, resources=None):
         p = optparse.OptionParser()
         p.add_option("-s", "--simulate", action="store_true", default=False)
         p.add_option("--resume", action="store_true", default=False)
@@ -51,10 +56,8 @@ class Runner(object):
         p.add_option("-q", "--quiet", action="count", default=0)
         opts, args = p.parse_args(argv)
 
-        resources = bundle.ResourceBundle()
-
         return cls(
-            resources,
+            resources or cls.get_resources(),
             resume=opts.resume,
             no_resume=opts.no_resume,
             simulate=opts.simulate,
@@ -85,3 +88,17 @@ class Runner(object):
         self.state.success()
 
         return changed
+
+
+class BundledRunner(Runner):
+
+    @classmethod
+    def get_resources(self):
+        loader = pkgutil.get_loader("fuselage")
+        try:
+            resources_json = loader.get_data("resources.json")
+        except IOError:
+            raise error.ParseError("Bundle is missing resources.json")
+        b = bundle.ResourceBundle()
+        b.loads(resources_json)
+        return b
