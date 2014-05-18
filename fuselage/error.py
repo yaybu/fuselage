@@ -203,6 +203,7 @@ class NothingChanged(ExecutionError):
     """ Not really an error, but we need to know if this happens for our
     tests. This exception is never really raised, but it's useful to keep the
     error code here!"""
+    msg = "No changes have been applied"
     returncode = 254
     """ returns error code 254 to the invoking environment. """
 

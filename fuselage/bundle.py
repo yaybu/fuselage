@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import json
+import logging
 
 try:
     from collections import OrderedDict
@@ -21,6 +22,9 @@ except ImportError:
 
 from fuselage import error
 from fuselage.resource import ResourceType
+
+
+logger = logging.getLogger(__name__)
 
 
 class ResourceBundle(OrderedDict):
@@ -119,8 +123,13 @@ class ResourceBundle(OrderedDict):
                 resource._original_hash = resource.hash(runner)
 
         something_changed = False
+        mylen = len(self)
         for i, resource in enumerate(self.values(), start=1):
+            logger.debug("Started applying '%r' (%d of %d)" % (resource, i, mylen))
             if resource.apply(runner):
+                logger.debug("'%r' made changes" % (resource, ))
                 something_changed = True
+            logger.debug("Finished applying '%r'" % (resource, ))
 
-        return something_changed
+        if not something_changed:
+            raise error.NothingChanged()

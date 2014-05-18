@@ -71,6 +71,7 @@ class AttributeChanger(base.Change):
                 self.changed = True
 
         if self.mode is not None and mode is not None:
+            print "%r %r" % (mode, self.mode)
             if mode != self.mode:
                 context.change(
                     ShellCommand(["/bin/chmod", "%o" % self.mode, self.filename]))

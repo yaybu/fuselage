@@ -55,31 +55,38 @@ class EnsureFile(base.Change):
         """ Write an empty file """
         exists = os.path.exists(self.filename)
         if not exists:
+            context.logger.debug("Creating empty file %r" % self.filename)
             context.change(ShellCommand(["touch", self.filename]))
             self.changed = True
         else:
             st = os.stat(self.filename)
             if st.st_size != 0:
+                context.logger.debug("Emptying file %r" % self.filename)
                 self.renderer.empty_file(self.filename)
                 context.change(
                     ShellCommand(["cp", "/dev/null", self.filename]))
                 self.changed = True
+            else:
+                context.logger.debug("Not changing empty file %r" % self.filename)
 
     def overwrite_existing_file(self, context):
         """ Change the content of an existing file """
         with open(self.filename, "r") as fp:
             self.current = fp.read()
         if self.current != self.contents:
+            context.logger.debug("Changing existing file %r" % self.filename)
             # self.renderer.changed_file(
             #     self.filename, self.current, self.contents, self.sensitive)
             if not context.simulate:
                 with open(self.filename, "w") as fp:
                     fp.write(self.contents)
             self.changed = True
+        else:
+            context.logger.debug("Not changing content of file %r" % self.filename)
 
     def write_new_file(self, context):
         """ Write contents to a new file. """
-        self.renderer.new_file(self.filename, self.contents, self.sensitive)
+        context.logger.debug("Writing new file %r" % self.filename)
         if not context.simulate:
             with open(self.filename, "w") as fp:
                 fp.write(self.contents)

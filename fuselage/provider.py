@@ -66,7 +66,7 @@ class Provider(six.with_metaclass(ProviderType)):
         self.logger.warning(exc)
 
     def change(self, change):
-        pass
+        return change.apply(self)
 
     @classmethod
     def isvalid(self, policy, resource):

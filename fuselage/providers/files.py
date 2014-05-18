@@ -26,6 +26,7 @@ class File(provider.Provider):
 
     def check_path(self, directory):
         if os.path.isdir(directory):
+            self.logger.debug("Prereq: %r is a directory" % directory)
             return
         frags = directory.split("/")
         path = "/"

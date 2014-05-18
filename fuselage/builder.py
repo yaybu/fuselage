@@ -20,11 +20,18 @@ import zipfile
 
 
 MAIN_PY = """
-from fuselage import resources
+import logging
+import sys
+from fuselage import resources, error
 from fuselage.runner import BundledRunner
 if __name__=="__main__":
-    r = BundledRunner.setup_from_cmdline()
-    r.run()
+    logger = logging.getLogger("fuselage")
+    try:
+        r = BundledRunner.setup_from_cmdline()
+        r.run()
+    except error.Error as e:
+        logger.error(e)
+        sys.exit(e.returncode)
 """
 
 

@@ -17,6 +17,7 @@ import six
 
 from fabric import tasks
 from fabric.operations import put, sudo
+from fabric.api import settings
 
 from fuselage import bundle, builder
 
@@ -44,10 +45,15 @@ class DeploymentTask(tasks.WrappedCallableTask):
         bu.close()
 
         put(buffer, '~/payload.pex', mode=0755)
-        sudo('~/payload.pex')
+
+        with settings(warn_only=True):
+            result = sudo('~/payload.pex -vvvv')
+
+            if not result.return_code in (0, 254):
+                raise SystemExit("Could not apply fuselage blueprint. Aborting.")
 
     def __call__(self, *args, **kwargs):
-        return self.wrapped(*args, **kwargs)
+        return self.run(*args, **kwargs)
 
 
 def blueprint(*args, **kwargs):

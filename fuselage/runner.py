@@ -77,7 +77,11 @@ class Runner(object):
     def run(self):
         self.configure_logging()
 
+        logger.debug("Runner started")
+        logger.debug("Created runner with %d resources" % len(self.resources))
+
         if not self.simulate and not os.path.exists(self.state_path):
+            logger.debug("Creating state directories at %r" % self.state_path)
             os.makedirs(self.state_path)
 
         self.state.open()
