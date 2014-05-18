@@ -41,7 +41,7 @@ class EnsureFile(base.Change):
     catered for. Additionally the minimum changes required to the contents are
     applied, and logs of the changes made are recorded. """
 
-    def __init__(self, filename, contents, user, group, mode, sensitive):
+    def __init__(self, filename, contents, user, group, mode):
         self.filename = filename
         self.current = ""
         self.contents = contents
@@ -50,7 +50,6 @@ class EnsureFile(base.Change):
         self.mode = mode
         self.changed = False
         self.renderer = None
-        self.sensitive = sensitive
 
     def empty_file(self, context):
         """ Write an empty file """

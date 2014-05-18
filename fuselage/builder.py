@@ -20,6 +20,7 @@ import zipfile
 
 
 MAIN_PY = """
+from fuselage import resources
 from fuselage.runner import BundledRunner
 if __name__=="__main__":
     r = BundledRunner.setup_from_cmdline()
@@ -34,7 +35,7 @@ class Builder(object):
 
     @classmethod
     def write_to(cls, fp):
-        fp.write(b"#!/usr/bin/env python")
+        fp.write(b"#!/usr/bin/env python\n")
         return cls(zipfile.ZipFile(fp, "w", compression=zipfile.ZIP_DEFLATED))
 
     @classmethod
@@ -65,23 +66,24 @@ class Builder(object):
                     break
             else:
                 continue
+
             if name.startswith("fuselage.tests."):
                 continue
 
             # Use pkgutil to get the code - this is zipsafe so will work even if
             # running from a py2exe type binary installation.
             basename = os.path.basename(mod.__file__)
-            path_parts = list(name.split("."))
-
+            path_parts = out_parts = list(name.split("."))
             if basename == "__init__.py":
                 path_parts.append("__init__.py")
             elif not "." in name:
                 path_parts = [name, name + ".py"]
+                out_parts = [name + ".py"]
             else:
                 path_parts[-1] += ".py"
 
             code = pkgutil.get_data(path_parts[0], os.sep.join(path_parts[1:]))
-            self.zipfile.writestr(os.path.join(*path_parts), code)
+            self.zipfile.writestr(os.path.join(*out_parts), code)
 
         self.zipfile.writestr("__init__.py", "")
         self.zipfile.writestr("__main__.py", MAIN_PY)

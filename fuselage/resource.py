@@ -28,6 +28,7 @@ class ResourceType(type):
     resources = {}
 
     def __new__(meta, class_name, bases, new_attrs):
+        new_attrs.setdefault("__resource_name__", class_name)
         cls = type.__new__(meta, class_name, bases, new_attrs)
 
         cls.__args__ = {}
@@ -39,11 +40,10 @@ class ResourceType(type):
         cls.policies = AvailableResourcePolicies()
 
         if class_name != 'Resource':
-            rname = new_attrs.get("__resource_name__", class_name)
-            if rname in meta.resources:
-                raise error.ParseError("Redefinition of resource %s" % rname)
+            if cls.__resource_name__ in meta.resources:
+                raise error.ParseError("Redefinition of resource %s" % cls.__resource_name__)
             else:
-                meta.resources[rname] = cls
+                meta.resources[cls.__resource_name__] = cls
 
         for key, value in new_attrs.items():
             if isinstance(value, Argument):
@@ -154,8 +154,9 @@ class Resource(six.with_metaclass(ResourceType)):
         dictionary will be None. """
         retval = {}
         for name, arg in self.__args__.items():
-            retval[name] = arg.serialize(self, builder=builder)
-        return retval
+            if getattr(self, name) != arg.default:
+                retval[name] = arg.serialize(self, builder=builder)
+        return {self.__resource_name__: retval}
 
     def register_observer(self, when, resource, policy):
         self.observers[when].append((resource, policy))
@@ -230,8 +231,7 @@ class Resource(six.with_metaclass(ResourceType)):
         """ Return an instantiated policy for this resource. """
         selected = context.state.overridden_policy(self)
         if not selected:
-            policy = self.policy.resolve()
-            if policy:
+            if self.policy:
                 selected = policy.literal_policy(self)
             else:
                 selected = self.policies.default()
