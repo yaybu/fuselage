@@ -12,22 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
-from fuselage import bundle, runner
-
-
-class TestCaseWithBundle(unittest.TestCase):
-
-    def setUp(self):
-        self.bundle = bundle.ResourceBundle()
+from fuselage.tests.base import TestCaseWithRunner
+from fuselage.resources import File
 
 
-class TestCaseWithRunner(TestCaseWithBundle):
+class TestFile(TestCaseWithRunner):
 
-    def setUp(self):
-        self.bundle = bundle.ResourceBundle()
-
-    def apply(self, simulate=False):
-        r = runner.Runner(self.bundle, simulate=simulate)
-        return r.run()
+    def test_minimal(self):
+        self.bundle.add(File(
+            name='/tmp/my-file',
+        ))
+        self.apply(simulate=True)

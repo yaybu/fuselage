@@ -53,12 +53,13 @@ class Handle(object):
 
 class Process(subprocess.Popen):
 
-    def __init__(self, uid=None, gid=None, umask=None, **kwargs):
+    def __init__(self, command, user=None, uid=None, gid=None, group=None, umask=None, **kwargs):
         self.uid = uid
         self.gid = gid
         self.umask = umask
-        kwargs['preexec'] = self.preexec
-        super(Process, self).__init__(**kwargs)
+        self.env = kwargs.get('env', None)
+        kwargs['preexec_fn'] = self.preexec
+        super(Process, self).__init__(command, **kwargs)
 
     def preexec(self):
         if self.gid:
@@ -78,6 +79,9 @@ class Process(subprocess.Popen):
 
         os.environ.clear()
         os.environ.update(self.env)
+
+    def attach_callback(self, callback):
+        pass
 
     def communicate(self, stdin):
         if stdin:

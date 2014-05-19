@@ -35,7 +35,8 @@ class ShellCommand(base.Change):
         self.env = {
             "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
         }
-        self.env.update(env)
+        if env:
+            self.env.update(env)
 
         self.user = user
         self.group = group
@@ -93,7 +94,7 @@ class ShellCommand(base.Change):
             env=self.env,
         )
 
-        p.attach_callback(self.changelog.info)
+        p.attach_callback(ctx.changelog.info)
         self.stdout, self.stderr = p.communicate(stdin=self.stdin)
         self.returncode = p.wait()
 
