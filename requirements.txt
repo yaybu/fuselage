@@ -3,3 +3,5 @@ nose2
 coverage
 coveralls
 flake8
+mock
+fabric

@@ -18,13 +18,14 @@ import six
 from fabric import tasks
 from fabric.operations import put, sudo
 from fabric.api import settings
+from fabric import utils
 
-from fuselage import bundle, builder
+from fuselage import bundle, builder, error
 
 
 class DeploymentTask(tasks.WrappedCallableTask):
 
-    def run(self, *args, **kwargs):
+    def get_resource_bundle(self, *args, **kwargs):
         bun = bundle.ResourceBundle()
         iterator = self.wrapped(*args, **kwargs)
         while True:
@@ -35,7 +36,14 @@ class DeploymentTask(tasks.WrappedCallableTask):
             except Exception as e:
                 # Throw the exception inside the wrapped function for easier debugging
                 iterator.throw(e)
+        return bun
 
+    def run(self, *args, **kwargs):
+        try:
+            bun = self.get_resource_bundle(*args, **kwargs)
+        except error.Error as e:
+            utils.error(str(e), exception=e)
+            return
         buffer = six.BytesIO()
         buffer.name = self.name
 
