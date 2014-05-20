@@ -16,7 +16,12 @@ import unittest
 import mock
 import zipfile
 
-from fuselage import fabric, resources
+from fuselage import resources
+
+try:
+    from fuselage import fabric
+except ImportError:
+    fabric = None
 
 
 class FabricError(Exception):
@@ -27,6 +32,8 @@ class TestFabric(unittest.TestCase):
 
     def setUp(self):
         self.cleanup = []
+        if not fabric:
+            return
 
         for api in ("put", "sudo", "settings", "utils"):
             p = mock.patch("fuselage.fabric.%s" % api)
@@ -41,6 +48,8 @@ class TestFabric(unittest.TestCase):
         [x.stop() for x in self.cleanup()]
 
     def test_success(self):
+        if not fabric:
+            return
         @fabric.blueprint
         def example():
             yield resources.File(name='/tmp/hello')
@@ -53,6 +62,8 @@ class TestFabric(unittest.TestCase):
         z.getinfo("fuselage/runner.py")
 
     def test_parse_error(self):
+        if not fabric:
+            return
         @fabric.blueprint
         def example():
             yield resources.File(nam='/tmp/hello')

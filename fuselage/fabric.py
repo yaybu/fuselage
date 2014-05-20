@@ -15,10 +15,13 @@
 from __future__ import absolute_import
 import six
 
-from fabric import tasks
-from fabric.operations import put, sudo
-from fabric.api import settings
-from fabric import utils
+try:
+    from fabric import tasks
+    from fabric.operations import put, sudo
+    from fabric.api import settings
+    from fabric import utils
+except SyntaxError:
+    raise ImportError("Fabric cannot be imported due to syntax errors. Are you using a supported version of python?")
 
 from fuselage import bundle, builder, error
 
