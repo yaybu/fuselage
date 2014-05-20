@@ -36,46 +36,39 @@ class ParseError(Error):
     """ Root of exceptions that are caused by an error in input. """
 
     returncode = 128
-    """ returns error code 128 to the invoking environment. """
 
 
 class BindingError(Error):
     """ An error during policy binding. """
 
     returncode = 129
-    """ returns error code 129 to the invoking environment. """
 
 
 class ExecutionError(Error):
     """ Root of exceptions that are caused by execution failing in an unexpected way. """
     returncode = 130
-    """ returns error code 130 to the invoking environment. """
 
 
 class DpkgError(ExecutionError):
     """ dpkg returned something other than 0 or 1 """
     returncode = 131
-    """ returns error code 131 to the invoking environment. """
 
 
 class AptError(ExecutionError):
     """ An apt command failed unrecoverably. """
     returncode = 132
-    """ returns error code 132 to the invoking environment. """
 
 
 class CommandError(ExecutionError):
     """ A command from the Execute provider did not return the expected return
     code. """
     returncode = 133
-    """ returns error code 133 to the invoking environment. """
 
 
 class NoValidPolicy(ParseError):
     """ There is no valid policy for the resource. """
 
     returncode = 135
-    """ returns error code 135 to the invoking environment. """
 
 
 class NonConformingPolicy(ParseError):
@@ -84,7 +77,6 @@ class NonConformingPolicy(ParseError):
     policy. Check the documentation to ensure you have provided all required
     parameters. """
     returncode = 136
-    """ returns error code 136 to the invoking environment. """
 
 
 class NoSuitableProviders(ParseError):
@@ -92,33 +84,29 @@ class NoSuitableProviders(ParseError):
     chosen. This may be because a provider has not been written for this
     Operating System or service, or it may be that you have not specified the
     parameters correctly. """
+    msg = "There is no uitable provider for this resource/policy"
     returncode = 137
-    """ returns error code 137 to the invoking environment. """
 
 
 class TooManyProviders(ParseError):
     """ More than one provider matches the specified resource, and Yaybu is unable to choose between them. """
     returncode = 138
-    """ returns error code 138 to the invoking environment. """
 
 
 class InvalidProvider(ExecutionError):
     """ A provider is not valid. This is detected before any changes have been
     applied. """
     returncode = 139
-    """ returns error code 139 to the invoking environment. """
 
 
 class InvalidGroup(ExecutionError):
     """ The specified user group does not exist. """
     returncode = 140
-    """ returns error code 140 to the invoking environment. """
 
 
 class InvalidUser(ExecutionError):
     """ The specified user does not exist. """
     returncode = 141
-    """ returns error code 141 to the invoking environment. """
 
 
 class OperationFailed(ExecutionError):
@@ -126,39 +114,33 @@ class OperationFailed(ExecutionError):
     symlink, everything appeared to work but then a link does not exist. This
     should probably never happen. """
     returncode = 142
-    """ returns error code 142 to the invoking environment. """
 
 
 class BinaryMissing(ExecutionError):
     """ A specific error for an expected binary (ln, rm, etc.) not being
     present where expected. """
     returncode = 143
-    """ returns error code 143 to the invoking environment. """
 
 
 class DanglingSymlink(ExecutionError):
     """ The destination of a symbolic link does not exist. """
     returncode = 144
-    """ returns error code 144 to the invoking environment. """
 
 
 class UserAddError(ExecutionError):
     """ An error from the useradd command. It has a bunch of error codes of
     it's own. """
     returncode = 145
-    """ returns error code 145 to the invoking environment. """
 
 
 class PathComponentMissing(ExecutionError):
     """ A component of the path is not present """
     returncode = 146
-    """ returns error code 146 to the invoking environment. """
 
 
 class PathComponentNotDirectory(ExecutionError):
     """ A component of the path is in fact not a directory """
     returncode = 147
-    """ returns error code 147 to the invoking environment. """
 
 
 class SavedEventsAndNoInstruction(Error):
@@ -167,20 +149,16 @@ class SavedEventsAndNoInstruction(Error):
     returncode = 148
     msg = "There is a saved events file - you need to specify --resume or --no-resume"
 
-    """ returns error code 148 to the invoking environment. """
-
 
 class MissingAsset(ExecutionError):
     """ An asset referenced by a resource could not be found on the Yaybu
     search path. """
     returncode = 149
-    """ returns error code 149 to the invoking environment. """
 
 
 class CheckoutError(Error):
     """ An insurmountable problem was encountered during checkout """
     returncode = 150
-    """ returns error code 150 to the invoking environment. """
 
 
 class Incompatible(Error):
@@ -205,7 +183,6 @@ class NothingChanged(ExecutionError):
     error code here!"""
     msg = "No changes have been applied"
     returncode = 254
-    """ returns error code 254 to the invoking environment. """
 
 
 class SystemError(ExecutionError):

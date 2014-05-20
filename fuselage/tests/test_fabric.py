@@ -50,6 +50,7 @@ class TestFabric(unittest.TestCase):
     def test_success(self):
         if not fabric:
             return
+
         @fabric.blueprint
         def example():
             yield resources.File(name='/tmp/hello')
@@ -64,6 +65,7 @@ class TestFabric(unittest.TestCase):
     def test_parse_error(self):
         if not fabric:
             return
+
         @fabric.blueprint
         def example():
             yield resources.File(nam='/tmp/hello')

@@ -27,7 +27,7 @@ class TestArguments(unittest.TestCase):
         r = R_test_octal(name="test")
         r.a = "666"
         self.assertEqual(r.a, 438)
-        r.a = 666
+        r.a = 0o666
         self.assertEqual(r.a, 438)
 
     def test_string(self):

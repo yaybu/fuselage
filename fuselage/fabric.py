@@ -33,12 +33,15 @@ class DeploymentTask(tasks.WrappedCallableTask):
         iterator = self.wrapped(*args, **kwargs)
         while True:
             try:
-                bun.add(iterator.next())
+                resource = iterator.next()
             except StopIteration:
                 break
+
+            try:
+                bun.add(resource)
             except Exception as e:
-                # Throw the exception inside the wrapped function for easier debugging
                 iterator.throw(e)
+
         return bun
 
     def run(self, *args, **kwargs):
@@ -47,6 +50,7 @@ class DeploymentTask(tasks.WrappedCallableTask):
         except error.Error as e:
             utils.error(str(e), exception=e)
             return
+
         buffer = six.BytesIO()
         buffer.name = self.name
 

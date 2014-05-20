@@ -150,10 +150,7 @@ class Octal(Integer):
     """ An octal integer.  This is specifically used for file permission modes. """
 
     def __set__(self, instance, value):
-        if isinstance(value, int):
-            # we assume this is due to lame magic in yaml and rebase it
-            value = int(str(value), 8)
-        else:
+        if not isinstance(value, int):
             value = int(value, 8)
         setattr(instance, self.arg_id, value)
 

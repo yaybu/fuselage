@@ -62,7 +62,7 @@ class Execute(Resource):
     cwd = FullPath(default='/')
     """ The current working directory in which to execute the command. """
 
-    environment = Dict()
+    env = Dict()
     """
 
     The environment to provide to the command, for example::

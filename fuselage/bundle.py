@@ -98,7 +98,7 @@ class ResourceBundle(OrderedDict):
         resource = kls(**kwargs)
 
         # Create implicit File[] nodes for any watched files
-        for watched in resource.watch:
+        for watched in resource.changes:
             w = self.add("File", {
                 "name": watched,
                 "policy": "watched",

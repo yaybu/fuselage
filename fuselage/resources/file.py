@@ -21,6 +21,7 @@ from fuselage.policy import (
     Policy,
     Absent,
     Present,
+    NAND,
 )
 
 from fuselage.argument import (
@@ -79,6 +80,9 @@ class File(Resource):
     you like, but this is not required. DO NOT use yaml Octal representation
     (0o666), this will NOT work."""
 
+    contents = String()
+    """ A complete string to write into a file """
+
     source = File()
     """A file that will be applied to this resource. """
 
@@ -97,6 +101,10 @@ class FileApplyPolicy(Policy):
     default = True
     signature = (
         Present("name"),
+        NAND(
+            Present("contents"),
+            Present("source")
+        )
     )
 
 

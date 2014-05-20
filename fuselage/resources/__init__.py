@@ -17,6 +17,7 @@ from .directory import Directory
 from .execute import Execute
 from .file import File
 from .group import Group
+from .line import Line
 from .link import Link
 from .mount import Mount
 from .package import Package
@@ -32,6 +33,7 @@ __all__ = [
     "Execute",
     "File",
     "Group",
+    "Line",
     "Link",
     "Mount",
     "Package",

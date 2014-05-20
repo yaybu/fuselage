@@ -103,7 +103,9 @@ class Resource(six.with_metaclass(ResourceType)):
 
     name = String()
 
-    watch = List(default=[])
+    watches = List(default=[])
+
+    changes = List(default=[])
     """ A list of files to monitor while this resource is applied
 
     The file will be hashed before and after a resource is applied.
