@@ -92,9 +92,9 @@ class String(Argument):
     @classmethod
     def _get_unicode_glyphs(self):
         return ''.join(
-            unichr(char)
+            six.unichr(char)
             for char in range(sys.maxunicode + 1)
-            if unicodedata.category(unichr(char))[0] in ('LMNPSZ')
+            if unicodedata.category(six.unichr(char))[0] in ('LMNPSZ')
         )
 
     @classmethod

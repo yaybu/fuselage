@@ -48,8 +48,8 @@ class ShellCommand(base.Change):
         def uni(x):
             if isinstance(x, type(u"")):
                 return x
-            return unicode(x, "utf-8")
-        return map(uni, l)
+            return x.encode("utf-8")
+        return list(map(uni, l))
 
     def command_exists(self, command):
         if command[0].startswith("./"):

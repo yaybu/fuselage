@@ -67,9 +67,9 @@ class Runner(object):
     def configure_logging(self):
         root = logging.getLogger()
         if not sys.stdout.isatty():
-            root.addHandler(log.JSONHandler(stream=sys.stdout))
+            root.addHandler(log.JSONHandler(sys.stdout))
         else:
-            handler = logging.StreamHandler(stream=sys.stdout)
+            handler = logging.StreamHandler(sys.stdout)
             root.addHandler(handler)
         root.addHandler(log.SysLogHandler())
         root.setLevel(self.verbosity)

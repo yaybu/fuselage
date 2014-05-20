@@ -44,7 +44,7 @@ class DeploymentTask(tasks.WrappedCallableTask):
         bu.embed_resource_bundle(bun)
         bu.close()
 
-        put(buffer, '~/payload.pex', mode=0755)
+        put(buffer, '~/payload.pex', mode=755)
 
         with settings(warn_only=True):
             result = sudo('~/payload.pex')
