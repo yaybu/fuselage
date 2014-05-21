@@ -62,7 +62,7 @@ class ResourceFormatter(logging.Formatter):
         rl = len(header)
         if rl < 80:
             total_minuses = 77 - rl
-            minuses = floor(total_minuses / 2)
+            minuses = int(total_minuses / 2)
             leftover = total_minuses % 2
         else:
             minuses = 4
