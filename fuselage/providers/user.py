@@ -12,9 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pwd
 import grp
+import pwd
 import logging
+try:
+    import spwd
+except ImportError:
+    spwd = None
 
 from fuselage import error, resources, provider
 from fuselage.changes import ShellCommand
@@ -49,7 +53,7 @@ class User(provider.Provider):
             info[field] = info_tuple[i]
 
         try:
-            shadow = pwd.getspnam(username)
+            shadow = spwd.getspnam(username)
             info['passwd'] = shadow.sp_pwd
             if shadow.sp_pwd == "!":
                 info['disabled-login'] = True

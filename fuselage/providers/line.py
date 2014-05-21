@@ -15,7 +15,7 @@
 import os
 
 from fuselage import error, resources, provider
-from fuselage.changes import EnsureFile
+from fuselage.changes import EnsureContents
 
 
 class Line(provider.Provider):
@@ -26,12 +26,12 @@ class Line(provider.Provider):
         if not os.path.exists(self.resource.name):
             self.raise_or_log(error.PatchComponentMissing("File '%s' is missing" % self.resource.name))
 
-        fc = EnsureFile(
+        with open(self.resource.name, "r") as fp:
+            original = fp.read()
+
+        fc = EnsureContents(
             self.resource.name,
-            '',  # self.get_file(self.resource.source),
-            self.resource.owner,
-            self.resource.group,
-            self.resource.mode
+            original,
         )
         self.change(fc)
 

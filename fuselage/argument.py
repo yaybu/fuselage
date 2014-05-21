@@ -255,3 +255,15 @@ class PolicyArgument(Argument):
                     )
             coll = PolicyCollection(triggers=triggers)
         setattr(instance, self.arg_id, coll)
+
+    def serialize(self, instance, builder=None):
+        if not hasattr(instance, self.arg_id):
+            return
+        value = getattr(instance, self.arg_id)
+        if value.literal:
+            return value.literal.policy_name
+        if value.triggers:
+            policy = {}
+            for t in value.triggers:
+                policy.setdefault(t.policy, []).append({"on": t.on, "when": t.when})
+            return policy

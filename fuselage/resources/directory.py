@@ -52,7 +52,7 @@ class Directory(Resource):
     group = String(default="root")
     """ The unix group who should own this directory, by default this is 'root' """
 
-    mode = Octal(default="755")
+    mode = Octal(default=0o755)
     """ The octal mode that represents this directory's permissions, by default this is '755'. """
 
     parents = Boolean(default=False)

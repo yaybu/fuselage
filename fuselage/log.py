@@ -17,6 +17,63 @@ from __future__ import absolute_import
 import json
 import logging
 import logging.handlers
+from math import floor
+
+
+class ResourceFormatter(logging.Formatter):
+
+    """ Automatically add a header and footer to log messages about particular
+    resources """
+
+    def __init__(self, *args):
+        logging.Formatter.__init__(self, *args)
+        self.resource = None
+
+    def format(self, record):
+        next_resource = getattr(record, "fuselage.resource", None)
+
+        rv = u""
+
+        # Is the logging now about a different resource?
+        if next_resource and self.resource != next_resource:
+
+            # If there was already a resource, let us add a footer
+            if self.resource:
+                rv += self.render_resource_footer()
+
+            self.resource = next_resource
+
+            # Are we now logging for a new resource?
+            if self.resource:
+                rv += self.render_resource_header()
+
+        formatted = logging.Formatter.format(self, record)
+
+        if self.resource:
+            rv += "\r\n".join("| %s" % line for line in formatted.splitlines()) + "\r"
+        else:
+            rv += formatted
+
+        return rv
+
+    def render_resource_header(self):
+        header = self.resource
+
+        rl = len(header)
+        if rl < 80:
+            total_minuses = 77 - rl
+            minuses = floor(total_minuses / 2)
+            leftover = total_minuses % 2
+        else:
+            minuses = 4
+            leftover = 0
+
+        return u"/%s %s %s\n" % ("-" * minuses,
+                                 header,
+                                 "-" * (minuses + leftover))
+
+    def render_resource_footer(self):
+        return u"\%s\n\n" % ("-" * 79,)
 
 
 class JSONHandler(logging.StreamHandler):

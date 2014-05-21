@@ -14,12 +14,13 @@
 
 from .execute import ShellCommand
 from .attributes import AttributeChanger
-from .file import EnsureFile
+from .file import EnsureFile, EnsureContents
 from .directory import EnsureDirectory
 
 __all__ = [
-    "ShellCommand",
     "AttributeChanger",
-    "EnsureFile",
+    "EnsureContents",
     "EnsureDirectory",
+    "EnsureFile",
+    "ShellCommand",
 ]

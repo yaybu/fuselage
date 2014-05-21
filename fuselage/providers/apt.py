@@ -12,16 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fuselage import error, resources, provider
+from fuselage import error, resources, provider, shell
 from fuselage.changes import ShellCommand
 
 
-def is_installed(context, resource):
+def is_installed(resource):
     # work out if the package is already installed
     command = ["dpkg-query", "-W", "-f='${Status}'", resource.name]
 
     try:
-        rc, stdout, stderr = context.transport.execute(command)
+        stdout, stderr = shell.check_call(command)
     except error.SystemError as exc:
         if exc.returncode == 1:
             return False

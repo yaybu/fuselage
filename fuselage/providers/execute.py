@@ -64,7 +64,7 @@ class Execute(provider.Provider):
             try:
                 self.change(ShellCommand(command,
                                          cwd=self.resource.cwd or None,
-                                         env=self.resource.environment or None,
+                                         env=self.resource.env or None,
                                          user=self.resource.user or None,
                                          group=self.resource.group or None,
                                          umask=self.resource.umask,

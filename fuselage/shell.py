@@ -17,6 +17,8 @@ import subprocess
 import os
 import select
 
+from fuselage import error
+
 
 class Handle(object):
 
@@ -54,11 +56,14 @@ class Handle(object):
 class Process(subprocess.Popen):
 
     def __init__(self, command, user=None, uid=None, gid=None, group=None, umask=None, **kwargs):
+        self.callback = None
         self.uid = uid
         self.gid = gid
         self.umask = umask
         self.env = kwargs.get('env', None)
         kwargs['preexec_fn'] = self.preexec
+        if 'stdout' not in kwargs:
+            kwargs['stdout'] = subprocess.PIPE
         super(Process, self).__init__(command, **kwargs)
 
     def preexec(self):
@@ -81,16 +86,16 @@ class Process(subprocess.Popen):
         os.environ.update(self.env)
 
     def attach_callback(self, callback):
-        pass
+        self.callback = callback
 
-    def communicate(self, stdin):
+    def communicate(self, stdin=None):
         if stdin:
             self.stdin.write(stdin)
             self.stdin.flush()
             self.stdin.close()
 
-        stdout = Handle(self.stdout, None)
-        stderr = Handle(self.stderr, None)
+        stdout = Handle(self.stdout, self.callback)
+        stderr = Handle(self.stderr, self.callback)
 
         # Initial readlist is any handle that is valid
         readlist = [h for h in (stdout, stderr) if h.isready()]
@@ -123,3 +128,12 @@ class Process(subprocess.Popen):
                     readlist.remove(r)
 
         return stdout.output, stderr.output
+
+
+def check_call(command, *args, **kwargs):
+    p = Process(command, *args, **kwargs)
+    stdout, stderr = p.communicate()
+    p.wait()
+    if p.returncode != 0:
+        raise error.SystemError(p.returncode, stdout, stderr)
+    return stdout, stderr

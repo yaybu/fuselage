@@ -28,7 +28,7 @@ class Link(provider.Provider):
     def _get_owner(self):
         """ Return the uid for the resource owner, or None if no owner is
         specified. """
-        owner = self.resource.owner.as_string(default='')
+        owner = self.resource.owner
         if owner:
             try:
                 return pwd.getpwnam(owner).pw_uid
@@ -38,7 +38,7 @@ class Link(provider.Provider):
     def _get_group(self):
         """ Return the gid for the resource group, or None if no group is
         specified. """
-        group = self.resource.group.as_string(default='')
+        group = self.resource.group
         if group:
             try:
                 return grp.getgrnam(group).gr_gid
@@ -77,7 +77,7 @@ class Link(provider.Provider):
             isalink = False
 
         if not isalink or linkto != to:
-            if os.lexists(name):
+            if os.path.lexists(name):
                 self.change(
                     ShellCommand(["/bin/rm", "-rf", self.resource.name]))
 

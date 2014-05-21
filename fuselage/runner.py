@@ -70,6 +70,7 @@ class Runner(object):
             root.addHandler(log.JSONHandler(sys.stdout))
         else:
             handler = logging.StreamHandler(sys.stdout)
+            handler.setFormatter(log.ResourceFormatter())
             root.addHandler(handler)
         root.addHandler(log.SysLogHandler())
         root.setLevel(self.verbosity)

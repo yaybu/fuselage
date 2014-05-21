@@ -234,7 +234,7 @@ class Resource(six.with_metaclass(ResourceType)):
         selected = context.state.overridden_policy(self)
         if not selected:
             if self.policy:
-                selected = policy.literal_policy(self)
+                selected = self.policy.literal_policy(self)
             else:
                 selected = self.policies.default()
         return selected(self)

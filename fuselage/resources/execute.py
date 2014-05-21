@@ -87,7 +87,7 @@ class Execute(Resource):
     """ The group to execute the command as.
     """
 
-    umask = Octal(default='022')
+    umask = Octal(default=0o022)
     """ The umask to use when executing this command """
 
     unless = String(default="")

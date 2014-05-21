@@ -35,21 +35,17 @@ def binary_buffers(*buffers):
     return False
 
 
-class EnsureFile(base.Change):
+class EnsureContents(base.Change):
 
     """ Apply a content change to a file in a managed way. Simulation mode is
     catered for. Additionally the minimum changes required to the contents are
     applied, and logs of the changes made are recorded. """
 
-    def __init__(self, filename, contents, user, group, mode):
+    def __init__(self, filename, contents):
         self.filename = filename
         self.current = ""
         self.contents = contents
-        self.user = user
-        self.group = group
-        self.mode = mode
         self.changed = False
-        self.renderer = None
 
     def empty_file(self, context):
         """ Write an empty file """
@@ -100,15 +96,32 @@ class EnsureFile(base.Change):
             self.write_new_file(context)
 
     def apply(self, context):
-        """ Apply the changes necessary to the file contents. """
         if self.contents is None:
             self.empty_file(context)
         else:
             self.write_file(context)
+        return self.changed
+
+
+class EnsureFile(base.Change):
+
+    def __init__(self, filename, contents, user, group, mode):
+        self.filename = filename
+        self.contents = contents
+        self.user = user
+        self.group = group
+        self.mode = mode
+        self.changed = False
+
+    def apply(self, context):
+        """ Apply the changes necessary to the file contents. """
+        fc = EnsureContents(self.filename, self.contents)
+        context.change(fc)
 
         ac = AttributeChanger(self.filename, self.user, self.group, self.mode)
         context.change(ac)
-        self.changed = self.changed or ac.changed
+
+        self.changed = fc.changed or ac.changed
         return self
 
 

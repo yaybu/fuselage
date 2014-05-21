@@ -33,7 +33,7 @@ class Directory(provider.Provider):
             if not os.path.exists(path):
                 if self.resource.parents:
                     return
-                self.raise_or_log(error.PatchComponentMissing(path))
+                self.raise_or_log(error.PathComponentMissing(path))
             if not os.path.isdir(path):
                 raise error.PathComponentNotDirectory(path)
 
