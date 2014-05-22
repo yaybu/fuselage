@@ -44,6 +44,10 @@ class EventState(object):
         self.overrides = {}
         self.simulate = simulate
 
+        #FIXME
+        self.resume = True
+        self.no_resume = False
+
     def load(self):
         if self.loaded:
             return
@@ -79,10 +83,12 @@ class EventState(object):
 
         if self.resume:
             self.loaded = False
+            return
         elif self.no_resume:
             if not self.simulate:
                 os.unlink(self.save_file)
             self.loaded = True
+            return
 
         raise error.SavedEventsAndNoInstruction()
 

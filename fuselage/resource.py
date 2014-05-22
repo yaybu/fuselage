@@ -13,11 +13,15 @@
 # limitations under the License.
 
 import collections
+import logging
 import six
 
 from fuselage.argument import Argument, List, SubscriptionArgument, PolicyArgument, String
 from fuselage import policy
 from fuselage import error
+
+
+logger = logging.getLogger(__name__)
 
 
 class ResourceType(type):
@@ -131,7 +135,7 @@ class Resource(six.with_metaclass(ResourceType)):
 
     def __init__(self, **kwargs):
         """ Takes a reference to a Yay AST node """
-        self.observers = collections.defaultdict(list)
+        self.observers = list()
 
         try:
             setattr(self, "name", kwargs["name"])
@@ -162,13 +166,17 @@ class Resource(six.with_metaclass(ResourceType)):
         return {self.__resource_name__: retval}
 
     def register_observer(self, when, resource, policy):
-        self.observers[when].append(resource)
+        logger.debug("%r is being observed by %r for %s" % (self, resource, when))
+        self.observers.append(resource)
 
     def apply(self, runner):
         """ Apply the provider for the selected policy, and then fire any
         events that are being observed. """
 
+        log = logging.LoggerAdapter(logger, {"fuselage.resource": self.id})
+
         if self.watches and not runner.state.is_trigger_set(self):
+            log.debug("Skipping resource apply as subscribed to triggers that are not set")
             return False
 
         provider = self.policy.get_provider()(self, runner)
@@ -181,7 +189,9 @@ class Resource(six.with_metaclass(ResourceType)):
     def fire_event(self, context):
         """ Apply the appropriate policies on the resources that are observing
         this resource for the firing of a policy. """
-        for resource in self.observers[self.policy.name]:
+        logger.debug("Sending triggers from %s" % (self, ))
+        for resource in self.observers:
+            logger.debug("Sending trigger from %r to %r" % (self, resource, ))
             context.state.set_trigger(resource)
 
     def bind(self, resources):

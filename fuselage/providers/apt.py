@@ -42,6 +42,7 @@ class AptInstall(provider.Provider):
 
     def apply(self):
         if is_installed(self.resource):
+            self.logger.debug("Package already installed; nothing to do.")
             return False
 
         env = {

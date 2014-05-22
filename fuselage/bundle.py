@@ -132,11 +132,15 @@ class ResourceBundle(OrderedDict):
         something_changed = False
         mylen = len(self)
         for i, resource in enumerate(self.values(), start=1):
-            logger.debug("Started applying '%r' (%d of %d)" % (resource, i, mylen))
+            resource_log = logging.LoggerAdapter(logger, {
+                "fuselage.resource": resource.id,
+            })
+
+            resource_log.debug("Started applying '%r' (%d of %d)" % (resource, i, mylen))
             if resource.apply(runner):
-                logger.debug("'%r' made changes" % (resource, ))
+                resource_log.debug("'%r' made changes" % (resource, ))
                 something_changed = True
-            logger.debug("Finished applying '%r'" % (resource, ))
+            resource_log.debug("Finished applying '%r'" % (resource, ))
 
         if not something_changed:
             raise error.NothingChanged()
