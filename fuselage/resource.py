@@ -198,7 +198,7 @@ class Resource(six.with_metaclass(ResourceType)):
         Returns a list of the resources to which we are bound. """
         bound = []
         if self.watches:
-            for trigger in self.watches.triggers:
+            for trigger in self.watches:
                 bound.append(trigger.bind(resources, self))
         return bound
 

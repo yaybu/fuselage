@@ -185,12 +185,6 @@ class File(Argument):
         setattr(instance, self.arg_id, value)
 
 
-class StandardPolicy:
-
-    def __init__(self, policy_name):
-        self.policy_name = policy_name
-
-
 class PolicyTrigger:
 
     def __init__(self, on):
@@ -209,17 +203,6 @@ class PolicyTrigger:
         return resource
 
 
-class PolicyCollection:
-
-    """ A collection of policy structures. """
-
-    triggers = ()
-    """ A list of PolicyTrigger objects that represent optional triggered policies. """
-
-    def __init__(self, triggers=()):
-        self.triggers = triggers
-
-
 class SubscriptionArgument(Argument):
 
     """ Parses the policy: argument for resources, including triggers etc. """
@@ -228,15 +211,14 @@ class SubscriptionArgument(Argument):
         triggers = []
         for resource in value:
             triggers.append(PolicyTrigger(resource))
-        coll = PolicyCollection(triggers=triggers)
-        setattr(instance, self.arg_id, coll)
+        setattr(instance, self.arg_id, triggers)
 
     def serialize(self, instance, builder=None):
         if not hasattr(instance, self.arg_id):
             return
         value = getattr(instance, self.arg_id)
         policy = []
-        for t in value.triggers:
+        for t in value:
             policy.append(t.on)
         return policy
 
