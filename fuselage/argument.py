@@ -193,17 +193,20 @@ class StandardPolicy:
 
 class PolicyTrigger:
 
-    def __init__(self, policy, when, on):
-        self.policy = policy
-        self.when = when
+    def __init__(self, on):
         self.on = on
 
     def bind(self, resources, target):
-        if self.on in resources:
-            resources[self.on].register_observer(self.when, target, self.policy)
-        else:
-            raise error.BindingError("Cannot bind %r to missing resource named '%s'" % (target, self.on))
-        return resources[self.on]
+        try:
+            resource = resources.get_resource_by_name(self.on)
+        except:
+            try:
+                resource = resources[self.on]
+            except KeyError:
+                raise error.BindingError("Cannot bind %r to missing resource named '%s'" % (target, self.on))
+
+        resource.register_observer('*', target, '*')
+        return resource
 
 
 class PolicyCollection:
@@ -224,13 +227,7 @@ class SubscriptionArgument(Argument):
     def __set__(self, instance, value):
         triggers = []
         for resource in value:
-            triggers.append(
-                PolicyTrigger(
-                    policy='*',
-                    when='*',
-                    on=resource,
-                )
-            )
+            triggers.append(PolicyTrigger(resource))
         coll = PolicyCollection(triggers=triggers)
         setattr(instance, self.arg_id, coll)
 

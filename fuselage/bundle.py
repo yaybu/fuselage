@@ -35,6 +35,13 @@ class ResourceBundle(OrderedDict):
 
     BUNDLE_VERSION = 1
 
+    def get_resource_by_name(self, target):
+        for res in self.values():
+            if res.name == target:
+                return res
+        else:
+            raise KeyError("No such resource by name '%s'" % target)
+
     def dump(self, builder, fp):
         obj = self._serialize_bundle(builder)
         json.dump(obj, fp)
