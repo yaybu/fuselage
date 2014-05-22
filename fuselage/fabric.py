@@ -65,7 +65,8 @@ class DeploymentTask(tasks.WrappedCallableTask):
             result = sudo('~/payload.pex')
 
             if not result.return_code in (0, 254):
-                raise SystemExit("Could not apply fuselage blueprint. Aborting.")
+                utils.error("Could not apply fuselage blueprint. Aborting.")
+                return
 
     def __call__(self, *args, **kwargs):
         return self.run(*args, **kwargs)

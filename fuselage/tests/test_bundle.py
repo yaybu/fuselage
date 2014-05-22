@@ -47,21 +47,21 @@ class TestBundle(unittest.TestCase):
         self.bundle.add(resources.Execute(
             name='restart-apache',
             command='apache2ctl graceful',
-            policy={"execute": {"when": "apply", "on": "File[/etc/apache2/sites-enabled/www-example-com]"}},
+            watches=["File[/etc/apache2/sites-enabled/www-example-com]"],
         ))
 
     def test_add__bind_fails(self):
         self.assertRaises(error.BindingError, self.bundle.add, resources.Execute(
             name='restart-apache',
             command='apache2ctl graceful',
-            policy={"execute": {"when": "apply", "on": "File[/etc/apache2/sites-enabled/www-example-com]"}},
+            watches=["File[/etc/apache2/sites-enabled/www-example-com]"],
         ))
 
     def test_add__bind_to_self(self):
         self.assertRaises(error.BindingError, self.bundle.add, resources.Execute(
             name='restart-apache',
             command='apache2ctl graceful',
-            policy={"execute": {"when": "apply", "on": "Execute[restart-apache]"}},
+            watches=["Execute[restart-apache]"],
         ))
 
     def test_create(self):

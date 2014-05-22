@@ -17,7 +17,6 @@ from __future__ import absolute_import
 import json
 import logging
 import logging.handlers
-from math import floor
 
 
 class ResourceFormatter(logging.Formatter):

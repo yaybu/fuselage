@@ -232,38 +232,44 @@ class PolicyCollection:
                 yield resource.policies[pol]
 
 
-class PolicyArgument(Argument):
+class SubscriptionArgument(Argument):
 
     """ Parses the policy: argument for resources, including triggers etc. """
 
     def __set__(self, instance, value):
-        """ Set either a default policy or a set of triggers on the policy collection """
-        if isinstance(value, six.string_types):
-            coll = PolicyCollection(StandardPolicy(value))
-        else:
-            triggers = []
-            for policy, conditions in value.items():
-                if not isinstance(conditions, list):
-                    conditions = [conditions]
-                for condition in conditions:
-                    triggers.append(
-                        PolicyTrigger(
-                            policy=policy,
-                            when=condition['when'],
-                            on=condition['on'],
-                        )
-                    )
-            coll = PolicyCollection(triggers=triggers)
+        triggers = []
+        for resource in value:
+            triggers.append(
+                PolicyTrigger(
+                    policy='*',
+                    when='*',
+                    on=resource,
+                )
+            )
+        coll = PolicyCollection(triggers=triggers)
         setattr(instance, self.arg_id, coll)
 
     def serialize(self, instance, builder=None):
         if not hasattr(instance, self.arg_id):
             return
         value = getattr(instance, self.arg_id)
-        if value.literal:
-            return value.literal.policy_name
-        if value.triggers:
-            policy = {}
-            for t in value.triggers:
-                policy.setdefault(t.policy, []).append({"on": t.on, "when": t.when})
-            return policy
+        policy = []
+        for t in value.triggers:
+            policy.append({"on": t.on, "when": t.when})
+        return policy
+
+
+class PolicyArgument(Argument):
+
+    """ Parses the policy: argument for resources, including triggers etc. """
+
+    def __set__(self, instance, value):
+        """ Set either a default policy or a set of triggers on the policy collection """
+        coll = PolicyCollection(StandardPolicy(value))
+        setattr(instance, self.arg_id, coll)
+
+    def serialize(self, instance, builder=None):
+        if not hasattr(instance, self.arg_id):
+            return
+        value = getattr(instance, self.arg_id)
+        return value.literal.policy_name

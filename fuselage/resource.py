@@ -15,7 +15,7 @@
 import collections
 import six
 
-from fuselage.argument import Argument, List, PolicyArgument, String
+from fuselage.argument import Argument, List, SubscriptionArgument, PolicyArgument, String
 from fuselage import policy
 from fuselage import error
 
@@ -103,7 +103,7 @@ class Resource(six.with_metaclass(ResourceType)):
 
     name = String()
 
-    watches = List(default=[])
+    watches = SubscriptionArgument()
 
     changes = List(default=[])
     """ A list of files to monitor while this resource is applied
@@ -218,8 +218,8 @@ class Resource(six.with_metaclass(ResourceType)):
         """ Bind this resource to all the resources on which it triggers.
         Returns a list of the resources to which we are bound. """
         bound = []
-        if self.policy:
-            for trigger in self.policy.triggers:
+        if self.watches:
+            for trigger in self.watches.triggers:
                 bound.append(trigger.bind(resources, self))
         return bound
 
