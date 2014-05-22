@@ -143,7 +143,8 @@ class Resource(six.with_metaclass(ResourceType)):
                 raise error.ParseError("'%s' is not a valid option for resource %s" % (key, self))
             setattr(self, key, value)
 
-        self.validate()
+        self.policy.validate()
+        self.policy.get_provider()
 
     @classmethod
     def get_argument_names(klass):
@@ -161,54 +162,27 @@ class Resource(six.with_metaclass(ResourceType)):
         return {self.__resource_name__: retval}
 
     def register_observer(self, when, resource, policy):
-        self.observers[when].append((resource, policy))
-
-    def validate(self):
-        """ Validate that this resource is correctly specified. Will raise
-        an exception if it is invalid. Returns True if it is valid.
-
-        We only validate if:
-
-           - only known arguments are specified
-           - the chosen policies all exist, or
-           - there is at least one default policy, and
-           - the arguments provided conform with all selected policies, and
-           - the selected policies all share a single provider
-
-        If the above is all true then we can identify a provider that should
-        be able to implement the required policies.
-
-        """
-
-        # This will throw any error if any of our validation fails
-        [getattr(self, k) for k in self.get_argument_names()]
-
-        # Error if doesn't conform to policy
-        for p in self.get_potential_policies():
-            p.validate(self)
-
-            # throws an exception if there is not oneandonlyone provider
-            p.get_provider()
-
-        return True
+        self.observers[when].append(resource)
 
     def apply(self, runner):
         """ Apply the provider for the selected policy, and then fire any
         events that are being observed. """
-        pol = self.get_default_policy(runner)
-        prov_class = pol.get_provider()
-        prov = prov_class(self, runner)
-        changed = prov.apply()
+
+        if self.watches and not runner.state.overridden_policy(self):
+            return False
+
+        provider = self.policy.get_provider()(self, runner)
+        changed = provider.apply()
         runner.state.clear_override(self)
         if changed:
-            self.fire_event(runner, pol.name)
+            self.fire_event(runner)
         return changed
 
-    def fire_event(self, context, name):
+    def fire_event(self, context):
         """ Apply the appropriate policies on the resources that are observing
         this resource for the firing of a policy. """
-        for resource, policy in self.observers[name]:
-            context.state.override(resource, policy)
+        for resource in self.observers[self.policy.name]:
+            context.state.override(resource, "*")
 
     def bind(self, resources):
         """ Bind this resource to all the resources on which it triggers.
@@ -218,22 +192,6 @@ class Resource(six.with_metaclass(ResourceType)):
             for trigger in self.watches.triggers:
                 bound.append(trigger.bind(resources, self))
         return bound
-
-    def get_potential_policies(self):
-        if self.policy:
-            return [P(self) for P in self.policy.all_potential_policies(self)]
-        else:
-            return [self.policies.default()(self)]
-
-    def get_default_policy(self, context):
-        """ Return an instantiated policy for this resource. """
-        selected = context.state.overridden_policy(self)
-        if not selected:
-            if self.policy:
-                selected = self.policy.literal_policy(self)
-            else:
-                selected = self.policies.default()
-        return selected(self)
 
     @property
     def id(self):

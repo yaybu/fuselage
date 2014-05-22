@@ -54,22 +54,20 @@ class Policy(six.with_metaclass(PolicyType)):
     def __init__(self, resource):
         self.resource = resource
 
-    @classmethod
-    def conforms(self, resource):
+    def conforms(self):
         """ Test if the provided resource conforms to the signature for this
         policy. """
-        return AND(*self.signature).test(resource)
+        return AND(*self.signature).test(self.resource)
 
-    @classmethod
-    def validate(self, resource):
+    def validate(self):
         a = AND(*self.signature)
-        if a.test(resource):
+        if a.test(self.resource):
             return
 
         msg = [
             "The resource '%s' is using the policy '%s' but doesn't confirm to that policy" %
-            (resource, self.name), ""]
-        msg.extend(a.describe(resource))
+            (self.resource, self.name), ""]
+        msg.extend(a.describe(self.resource))
         raise error.NonConformingPolicy("\n".join(msg))
 
     def get_provider(self):

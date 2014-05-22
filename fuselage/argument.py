@@ -29,9 +29,10 @@ class Argument(object):
 
     metaclass = ABCMeta
     argument_id = 0
+    default = None
 
     def __init__(self, **kwargs):
-        self.default = kwargs.pop("default", None)
+        self.default = kwargs.pop("default", self.default)
         self.__doc__ = kwargs.pop("help", None)
         self.arg_id = "argument_%d" % Argument.argument_id
         Argument.argument_id += 1
@@ -43,6 +44,8 @@ class Argument(object):
             return None
         if hasattr(instance, self.arg_id):
             return getattr(instance, self.arg_id)
+        elif callable(self.default):
+            return self.default(instance)
         else:
             return self.default
 
@@ -207,29 +210,11 @@ class PolicyCollection:
 
     """ A collection of policy structures. """
 
-    literal = None
-    """ The policy that is set as the "standard" policy, not one that depends on a trigger. """
-
     triggers = ()
     """ A list of PolicyTrigger objects that represent optional triggered policies. """
 
-    def __init__(self, literal=None, triggers=()):
-        self.literal = literal
+    def __init__(self, triggers=()):
         self.triggers = triggers
-
-    def literal_policy(self, resource):
-        if self.literal is not None:
-            return resource.policies[self.literal.policy_name]
-        else:
-            import policy
-            return policy.NullPolicy
-
-    def all_potential_policies(self, resource):
-        if self.literal:
-            yield resource.policies[self.literal.policy_name]
-        else:
-            for pol in set(t.policy for t in self.triggers):
-                yield resource.policies[pol]
 
 
 class SubscriptionArgument(Argument):
@@ -255,7 +240,7 @@ class SubscriptionArgument(Argument):
         value = getattr(instance, self.arg_id)
         policy = []
         for t in value.triggers:
-            policy.append({"on": t.on, "when": t.when})
+            policy.append(t.on)
         return policy
 
 
@@ -265,11 +250,15 @@ class PolicyArgument(Argument):
 
     def __set__(self, instance, value):
         """ Set either a default policy or a set of triggers on the policy collection """
-        coll = PolicyCollection(StandardPolicy(value))
-        setattr(instance, self.arg_id, coll)
+        try:
+            setattr(instance, self.arg_id, instance.policies[value](instance))
+        except KeyError:
+            raise error.ParseError("'%s' is not a valid policy for this resource")
+
+    def default(self, instance):
+        return instance.policies.default()(instance)
 
     def serialize(self, instance, builder=None):
         if not hasattr(instance, self.arg_id):
             return
-        value = getattr(instance, self.arg_id)
-        return value.literal.policy_name
+        return getattr(instance, self.arg_id).name
