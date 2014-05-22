@@ -192,14 +192,10 @@ class Resource(six.with_metaclass(ResourceType)):
 
         return True
 
-    def apply(self, runner, policy=None):
+    def apply(self, runner):
         """ Apply the provider for the selected policy, and then fire any
         events that are being observed. """
-        if policy is None:
-            pol = self.get_default_policy(runner)
-        else:
-            pol_class = self.policies[policy]
-            pol = pol_class(self)
+        pol = self.get_default_policy(runner)
         prov_class = pol.get_provider()
         prov = prov_class(self, runner)
         changed = prov.apply()
