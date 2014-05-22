@@ -157,7 +157,7 @@ class Resource(six.with_metaclass(ResourceType)):
         dictionary will be None. """
         retval = {}
         for name, arg in self.__args__.items():
-            if getattr(self, name) != arg.default:
+            if hasattr(self, arg.arg_id):
                 retval[name] = arg.serialize(self, builder=builder)
         return {self.__resource_name__: retval}
 

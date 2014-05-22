@@ -23,6 +23,17 @@ from fuselage import bundle, error, event, log
 logger = logging.getLogger(__name__)
 
 
+def configure_logging():
+    root = logging.getLogger()
+    if not sys.stdout.isatty():
+        root.addHandler(log.JSONHandler(sys.stdout))
+    else:
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setFormatter(log.ResourceFormatter())
+        root.addHandler(handler)
+    root.addHandler(log.SysLogHandler())
+
+
 class Runner(object):
 
     state_path = "/var/run/yaybu"
@@ -64,19 +75,8 @@ class Runner(object):
             verbosity=logging.INFO - (10 * (opts.verbose - opts.quiet)),
         )
 
-    def configure_logging(self):
-        root = logging.getLogger()
-        if not sys.stdout.isatty():
-            root.addHandler(log.JSONHandler(sys.stdout))
-        else:
-            handler = logging.StreamHandler(sys.stdout)
-            handler.setFormatter(log.ResourceFormatter())
-            root.addHandler(handler)
-        root.addHandler(log.SysLogHandler())
-        root.setLevel(self.verbosity)
-
     def run(self):
-        self.configure_logging()
+        logging.getLogger().setLevel(self.verbosity)
 
         logger.debug("Runner started")
         logger.debug("Created runner with %d resources" % len(self.resources))

@@ -250,7 +250,7 @@ class PolicyArgument(Argument):
         try:
             setattr(instance, self.arg_id, instance.policies[value](instance))
         except KeyError:
-            raise error.ParseError("'%s' is not a valid policy for this resource")
+            raise error.ParseError("'%s' is not a valid policy for this %r" % (value, instance))
 
     def default(self, instance):
         return instance.policies.default()(instance)
