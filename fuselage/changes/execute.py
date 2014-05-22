@@ -80,6 +80,8 @@ class ShellCommand(base.Change):
             self.stderr = ""
             return
 
+        ctx.changelog.critical('# ' + ' '.join(logas))
+
         if ctx.simulate:
             self.returncode = 0
             self.stdout = ""
