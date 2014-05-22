@@ -52,26 +52,20 @@ class EventState(object):
                 self.overrides = json.load(fp)
         self.loaded = True
 
-    def override(self, resource, policy):
+    def set_trigger(self, resource):
         self.load()
-        self.overrides[resource.id] = policy
+        self.overrides[resource.id] = '*'
         self.save()
 
-    def clear_override(self, resource):
+    def unset_trigger(self, resource):
         self.load()
         if resource.id in self.overrides:
             del self.overrides[resource.id]
             self.save()
 
-    def overridden_policy(self, resource):
-        """ Return the policy class for this resource, or None if there is not
-        an overridden policy. """
+    def is_trigger_set(self, resource):
         self.load()
-        if resource.id in self.overrides:
-            policy_name = self.overrides[resource.id]
-            return resource.policies[policy_name]
-        else:
-            return None
+        return resource.id in self.overrides
 
     def open(self):
         if not self.simulate:

@@ -168,12 +168,12 @@ class Resource(six.with_metaclass(ResourceType)):
         """ Apply the provider for the selected policy, and then fire any
         events that are being observed. """
 
-        if self.watches and not runner.state.overridden_policy(self):
+        if self.watches and not runner.state.is_trigger_set(self):
             return False
 
         provider = self.policy.get_provider()(self, runner)
         changed = provider.apply()
-        runner.state.clear_override(self)
+        runner.state.unset_trigger(self)
         if changed:
             self.fire_event(runner)
         return changed
@@ -182,7 +182,7 @@ class Resource(six.with_metaclass(ResourceType)):
         """ Apply the appropriate policies on the resources that are observing
         this resource for the firing of a policy. """
         for resource in self.observers[self.policy.name]:
-            context.state.override(resource, "*")
+            context.state.set_trigger(resource)
 
     def bind(self, resources):
         """ Bind this resource to all the resources on which it triggers.
