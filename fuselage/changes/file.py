@@ -91,7 +91,7 @@ class EnsureContents(base.Change):
 
     def write_new_file(self, context):
         """ Write contents to a new file. """
-        self.diff(context, "Writing new file", "", self.content)
+        self.diff(context, "Writing new file", "", self.contents)
         if not context.simulate:
             with open(self.filename, "w") as fp:
                 fp.write(self.contents)
