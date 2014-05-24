@@ -5,3 +5,5 @@ coveralls
 flake8
 mock
 fabric
+
+-e .
