@@ -75,8 +75,7 @@ class Builder(object):
             else:
                 continue
 
-            if name.startswith("fuselage.tests."):
-                continue
+            assert not name.startswith("fuselage.tests.")
 
             # Use pkgutil to get the code - this is zipsafe so will work even if
             # running from a py2exe type binary installation.
@@ -98,11 +97,3 @@ class Builder(object):
 
     def close(self):
         self.zipfile.close()
-
-
-if __name__ == "__main__":
-    from .bundle import ResourceBundle
-    b = Builder.write_to_path("example.pex")
-    b.embed_fuselage_runtime()
-    b.embed_resource_bundle(ResourceBundle())
-    b.close()
