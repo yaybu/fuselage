@@ -26,6 +26,10 @@ class LoggerAdapter(logging.LoggerAdapter):
     This subclass doesnt.
     """
 
+    def log(self, level, msg, *args, **kwargs):
+        msg, kwargs = self.process(msg, kwargs)
+        self.logger.log(level, msg, *args, **kwargs)
+
     def isEnabledFor(self, level):
         # Python 3.4 breaks on adapters of adapters, which is lame.
         return self.logger.isEnabledFor(level)
