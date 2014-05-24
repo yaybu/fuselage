@@ -19,6 +19,20 @@ import logging
 import logging.handlers
 
 
+class LoggerAdapter(logging.LoggerAdapter):
+
+    """
+    The upstream LoggerAdapter stops log.info("foo", extra={}) from working.
+    This subclass doesnt.
+    """
+
+    def process(self, msg, kwargs):
+        if not 'extra' in kwargs:
+            kwargs['extra'] = {}
+        kwargs["extra"].update(self.extra)
+        return msg, kwargs
+
+
 class ResourceFormatter(logging.Formatter):
 
     """ Automatically add a header and footer to log messages about particular
@@ -47,6 +61,9 @@ class ResourceFormatter(logging.Formatter):
                 rv += self.render_resource_header()
 
         formatted = logging.Formatter.format(self, record)
+
+        if hasattr(record, "fuselage.diff"):
+            formatted = "\n".join((formatted, getattr(record, "fuselage.diff")))
 
         if self.resource:
             rv += "\r\n".join("| %s" % line for line in formatted.splitlines()) + "\r"

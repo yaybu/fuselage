@@ -44,7 +44,7 @@ class File(provider.Provider):
 
         fc = EnsureFile(
             name,
-            '',  # self.get_file(self.resource.source),
+            self.resource.contents,  # self.get_file(self.resource.source),
             self.resource.owner,
             self.resource.group,
             self.resource.mode

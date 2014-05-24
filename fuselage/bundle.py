@@ -20,7 +20,7 @@ try:
 except ImportError:
     from fuselage.ordereddict import OrderedDict
 
-from fuselage import error
+from fuselage import error, log
 from fuselage.resource import ResourceType
 
 
@@ -132,7 +132,7 @@ class ResourceBundle(OrderedDict):
         something_changed = False
         mylen = len(self)
         for i, resource in enumerate(self.values(), start=1):
-            resource_log = logging.LoggerAdapter(logger, {
+            resource_log = log.LoggerAdapter(logger, {
                 "fuselage.resource": resource.id,
             })
 

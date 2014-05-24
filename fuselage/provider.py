@@ -18,7 +18,7 @@ import six
 from abc import ABCMeta, abstractmethod
 import logging
 
-from fuselage import policy
+from fuselage import policy, log
 
 
 class ProviderType(ABCMeta):
@@ -46,12 +46,12 @@ class Provider(six.with_metaclass(ProviderType)):
         self.runner = runner
 
         logger = logging.getLogger(self.__module__)
-        self.logger = logging.LoggerAdapter(logger, {
+        self.logger = log.LoggerAdapter(logger, {
             "fuselage.resource": resource.id,
         })
 
         # logger = logging.getLogger("fuselage.audit")
-        self.changelog = logging.LoggerAdapter(self.logger, {
+        self.changelog = log.LoggerAdapter(self.logger, {
             # "resource": resource.id,
             "fuselage.changelog": True,
         })

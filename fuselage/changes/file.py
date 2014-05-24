@@ -46,21 +46,32 @@ class EnsureContents(base.Change):
         self.current = ""
         self.contents = contents
         self.changed = False
+        self.sensitive = False
+
+    def diff(self, context, note, previous, replacement):
+        extra = {}
+        if self.sensitive:
+            extra['fuselage.diff'] = 'No diff; sensitive file contents'
+        elif not binary_buffers(previous, replacement):
+            diff = "".join(difflib.unified_diff(previous.splitlines(1), replacement.splitlines(1)))
+            extra['fuselage.diff'] = diff
+        else:
+            extra['fuselage.diff'] = 'No diff; binary files'
+        context.changelog.critical(note, extra=extra)
 
     def empty_file(self, context):
         """ Write an empty file """
         exists = os.path.exists(self.filename)
         if not exists:
-            context.logger.debug("Creating empty file %r" % self.filename)
+            context.changelog.debug("Creating empty file %r" % self.filename)
             context.change(ShellCommand(["touch", self.filename]))
             self.changed = True
         else:
             st = os.stat(self.filename)
             if st.st_size != 0:
-                context.logger.debug("Emptying file %r" % self.filename)
-                self.renderer.empty_file(self.filename)
-                context.change(
-                    ShellCommand(["cp", "/dev/null", self.filename]))
+                with open(self.filename, "r") as fp:
+                    self.diff(context, "Emptying file", fp.read(), "")
+                context.change(ShellCommand(["cp", "/dev/null", self.filename]))
                 self.changed = True
             else:
                 context.logger.debug("Not changing empty file %r" % self.filename)
@@ -70,9 +81,7 @@ class EnsureContents(base.Change):
         with open(self.filename, "r") as fp:
             self.current = fp.read()
         if self.current != self.contents:
-            context.logger.debug("Changing existing file %r" % self.filename)
-            # self.renderer.changed_file(
-            #     self.filename, self.current, self.contents, self.sensitive)
+            self.diff(context, "Changing existing file", self.current, self.contents)
             if not context.simulate:
                 with open(self.filename, "w") as fp:
                     fp.write(self.contents)
@@ -82,7 +91,7 @@ class EnsureContents(base.Change):
 
     def write_new_file(self, context):
         """ Write contents to a new file. """
-        context.logger.debug("Writing new file %r" % self.filename)
+        self.diff(context, "Writing new file", "", self.content)
         if not context.simulate:
             with open(self.filename, "w") as fp:
                 fp.write(self.contents)
@@ -123,29 +132,3 @@ class EnsureFile(base.Change):
 
         self.changed = fc.changed or ac.changed
         return self
-
-
-class FileChangeTextRenderer(object):
-    renderer_for = EnsureFile
-
-    def empty_file(self, filename):
-        self.logger.notice("Emptied file %s" % filename)
-
-    def new_file(self, filename, contents, sensitive):
-        self.logger.notice("Writing new file '%s'" % filename)
-        if not sensitive:
-            self.diff("", contents)
-
-    def changed_file(self, filename, previous, replacement, sensitive):
-        self.logger.notice("Changed file %s" % filename)
-        if not sensitive:
-            self.diff(previous, replacement)
-
-    def diff(self, previous, replacement):
-        if not binary_buffers(previous, replacement):
-            diff = "".join(difflib.unified_diff(
-                previous.splitlines(1), replacement.splitlines(1)))
-            for l in diff.splitlines():
-                self.logger.info("    %s" % l)
-        else:
-            self.logger.notice("Binary contents; not showing delta")

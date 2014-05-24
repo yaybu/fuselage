@@ -16,8 +16,7 @@ import logging
 import six
 
 from fuselage.argument import Argument, List, SubscriptionArgument, PolicyArgument, String
-from fuselage import policy
-from fuselage import error
+from fuselage import policy, error, log
 
 
 logger = logging.getLogger(__name__)
@@ -172,10 +171,10 @@ class Resource(six.with_metaclass(ResourceType)):
         """ Apply the provider for the selected policy, and then fire any
         events that are being observed. """
 
-        log = logging.LoggerAdapter(logger, {"fuselage.resource": self.id})
+        l = log.LoggerAdapter(logger, {"fuselage.resource": self.id})
 
         if self.watches and not runner.state.is_trigger_set(self):
-            log.debug("Skipping resource apply as subscribed to triggers that are not set")
+            l.debug("Skipping resource apply as subscribed to triggers that are not set")
             return False
 
         provider = self.policy.get_provider()(self, runner)
