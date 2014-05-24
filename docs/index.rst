@@ -9,6 +9,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   defining_configuration
    resources
    fabric
 
@@ -18,4 +19,3 @@ Contributing
 To contribute to Fuselage send us pull requests on GitHub!
 
 If you have any questions we are in ``#yaybu`` on ``irc.oftc.net``.
-

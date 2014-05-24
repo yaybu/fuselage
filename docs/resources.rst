@@ -6,6 +6,8 @@ Resources
 
 This section describes the core resources you can use to describe your server configuration.
 
+.. highlight:: python
+
 File
 ====
 
@@ -47,7 +49,7 @@ The available parameters are:
 
 
 Directory
----------
+=========
 
 A directory on disk. Directories have limited metadata, so this resource is
 quite limited.
@@ -78,7 +80,7 @@ The available parameters are:
 
 
 Link
-----
+====
 
 A resource representing a symbolic link. The link will be from `name` to `to`.
 If you specify owner, group and/or mode then these settings will be applied to
@@ -111,7 +113,7 @@ The available parameters are:
 
 
 Execute
--------
+=======
 
 Execute a command. This command *is* executed in a shell subprocess.
 
@@ -181,7 +183,7 @@ The available parameters are:
 
 
 Checkout
---------
+========
 
 This represents a "working copy" from a Source Code Management system.
 This could be provided by, for example, Subversion or Git remote
@@ -232,7 +234,7 @@ The available parameters are:
 
 
 Package
--------
+=======
 
 Represents an operating system package, installed and managed via the
 OS package management system. For example, to ensure these three packages
@@ -260,7 +262,7 @@ update`` and retry before giving up.
 
 
 User
-----
+====
 
 A resource representing a UNIX user in the password database. The underlying
 implementation currently uses the "useradd" and "usermod" commands to implement
@@ -317,7 +319,7 @@ The available parameters are:
 
 
 Group
------
+=====
 
 A resource representing a unix group stored in the /etc/group file.
 ``groupadd`` and ``groupmod`` are used to actually make modifications.
@@ -344,7 +346,7 @@ The available parameters are:
 
 
 Service
--------
+=======
 
 This represents service startup and shutdown via an init daemon.
 
@@ -379,83 +381,3 @@ The available parameters are:
 ``pidfile``
     Where the service creates its pid file. This can be provided instead of
     ``running``  as an alternative way of checking if a service is running or not.
-
-
-Dependencies between resources
-==============================
-
-Resources are always applied in the order they are listed in the resources property. You can rely on this to build repeatble and reliable processes. However this might not be enough. There are a couple of other ways to express relationships between resources.
-
-One example is when you want to run a script only if you have deployed a new version of your code::
-
-    resources:
-      - Checkout:
-          name: /usr/local/src/mycheckout
-          repository: git://github.com/example/example_project
-
-      - Execute:
-          name: install-requirements
-          command: /var/sites/myapp/bin/pip install -r /usr/local/src/mycheckout/requirements.txt
-          policy:
-              execute:
-                  when: sync
-                  on: Checkout[/usr/local/src/mycheckout]
-
-When the ``Checkout`` step pulls in a change from a repository, the ``Execute`` resource will apply its ``execute`` policy.
-
-You can do the same for monitoring file changes too::
-
-    resources:
-      - File:
-          name: /etc/apache2/security.conf
-          static: apache2/security.conf
-
-      - Execute:
-          name: restart-apache
-          commands:
-            - apache2ctl configtest
-            - apache2ctl graceful
-          policy:
-              execute:
-                  when: apply
-                  on: File[/etc/apache2/security.conf]
-
-Sometimes you can't use ``File`` (perhaps ``buildout`` or ``maven`` or similar generates a config file for you), but you still want to trigger a command when a file changes during deployment::
-
-    resources:
-      - Execute:
-          name: buildout
-          command: buildout -c production.cfg
-          watches:
-            - /var/sites/mybuildout/parts/apache.cfg
-
-      - Execute:
-          name: restart-apache
-          commands:
-            - apache2ctl configtest
-            - apache2ctl graceful
-          policy:
-              execute:
-                  when: watched
-                  on: File[/var/sites/mybuildout/parts/apache.cfg]
-
-This declares that the ``buildout`` step might change a ``File`` (the ``apache.cfg``). Subsequent step can then subscribe to ``File[/var/sites/mybuildout/parts/apache.cfg]`` as though it was an ordinary file.
-
-All of these examples use a trigger system. When a trigger has been set fuselage will remember it between invocations. Consider the following example::
-
-    resources:
-      - File:
-          name: /etc/apache2/sites-enabled/mydemosite
-
-      - Directory:
-          name: /var/local/tmp/this/paths/parent/dont/exist
-
-      - Execute:
-          name: restart-apache2
-          command: /etc/init.d/apache2 restart
-          policy:
-              execute:
-                  when: apply
-                  on: File[/etc/apache2/sites-enabled/mydemosite]
-
-When it is run it will create a file in the ``/etc/apache2/sites-enabled`` folder. Fuselage knows that the ``Execute[restart-apache2]`` step must be run later. It will record a trigger for the ``Execute`` statement in ``/var/run/yaybu/``. If the ``Directory[]`` step fails and fuselage terminates then the next time fuselage is execute it will instruct you to use the ``--resume`` or ``--no-resume`` command line option. If you ``--resume`` it will remember that it needs to restart apache2. If you choose ``--no-resume`` it will not remember, and apache will not be restarted.
