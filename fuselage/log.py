@@ -26,6 +26,10 @@ class LoggerAdapter(logging.LoggerAdapter):
     This subclass doesnt.
     """
 
+    def isEnabledFor(self, level):
+        # Python 3.4 breaks on adapters of adapters, which is lame.
+        return self.logger.isEnabledFor(level)
+
     def process(self, msg, kwargs):
         if not 'extra' in kwargs:
             kwargs['extra'] = {}
