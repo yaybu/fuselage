@@ -19,7 +19,7 @@ import zipfile
 from fuselage import resources
 
 try:
-    from fuselage import fabric
+    from fuselage.contrib import fabric
 except ImportError:
     fabric = None
 
@@ -36,7 +36,7 @@ class TestFabric(unittest.TestCase):
             return
 
         for api in ("put", "sudo", "settings", "utils"):
-            p = mock.patch("fuselage.fabric.%s" % api)
+            p = mock.patch("fuselage.contrib.fabric.%s" % api)
             setattr(self, api, p.start())
             self.cleanup.append(p)
 

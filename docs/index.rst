@@ -11,7 +11,7 @@ Contents:
 
    defining_configuration
    resources
-   fabric
+   contrib
 
 Contributing
 ============
