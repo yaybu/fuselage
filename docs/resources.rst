@@ -6,7 +6,28 @@ Resources
 
 This section describes the core resources you can use to describe your server configuration.
 
-.. highlight:: python
+Line
+====
+
+Ensure that a line is present or missing from a file.
+
+For example, this will ensure that selinux is disabled::
+
+    Line(
+        name="/etc/selinux/config",
+        match=r"^SELINUX",
+        replace="SELINUX=disabled",
+    )
+
+The available parameters are:
+
+``name``
+    The full path to the file to perform an operation on.
+``match``
+    The python regular expression to match the line to be updated.
+``replace``
+    The text to insert at the point the expression matches (otherwise at the end of the file).
+
 
 File
 ====
@@ -56,12 +77,12 @@ quite limited.
 
 For example::
 
-    extend resources:
-      - Directory:
-          name: /var/local/data
-          owner: root
-          group: root
-          mode: 0755
+    Directory(
+        name="/var/local/data",
+        owner="root",
+        group="root",
+        mode=0o755,
+    )
 
 The available parameters are:
 
@@ -88,12 +109,12 @@ the link itself, not to the object linked to.
 
 For example::
 
-    extend resources:
-      - Link:
-          name: /etc/init.d/exampled
-          to: /usr/local/example/sbin/exampled
-          owner: root
-          group: root
+    Link(
+        name="/etc/init.d/exampled",
+        to="/usr/local/example/sbin/exampled",
+        owner="root",
+        group="root",
+    )
 
 The available parameters are:
 
@@ -119,25 +140,10 @@ Execute a command. This command *is* executed in a shell subprocess.
 
 For example::
 
-    extend resources:
-      - Execute:
-          name: core_packages_apt_key
-          command: apt-key adv --keyserver keyserver.ubuntu.com --recv-keys {{source.key}}
-
-A much more complex example. This shows executing a command if a checkout
-synchronises::
-
-    extend resources:
-      for bi in flavour.base_images:
-        - Execute:
-            name: base-image-{{bi}}
-            policy:
-              execute:
-                  when: sync
-                  on: /var/local/checkouts/ci
-            command: ./vmbuilder-{{bi}}
-            cwd: /var/local/checkouts/ci
-            user: root
+    Execute(
+        name="add-apt-key",
+        command="apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0x000000"
+    )
 
 The available parameters are:
 
@@ -153,13 +159,11 @@ The available parameters are:
 ``environment``
     The environment to provide to the command, for example::
 
-        extend resources:
-          - Execute:
-              name: example
-              command: echo $FOO
-              environment:
-                  FOO: bar
-
+        Execute(
+            name="example",
+            command="echo $FOO",
+            environment={"FOO": "bar"},
+        )
 ``returncode``
     The expected return code from the command, defaulting to 0. If the
     command does not return this return code then the resource is considered
@@ -196,11 +200,11 @@ commands (such as ``svn switch``) to take the resource to the desired state.
 
 For example::
 
-    extend resources:
-      - Checkout:
-          name: /usr/src/myapp
-          repository: https://github.com/myusername/myapp
-          scm: git
+    Checkout(
+        name="/usr/src/myapp",
+        repository="https://github.com/myusername/myapp",
+        scm="git",
+    )
 
 The available parameters are:
 
@@ -240,9 +244,9 @@ Represents an operating system package, installed and managed via the
 OS package management system. For example, to ensure these three packages
 are installed::
 
-    extend resources:
-      - Package:
-          name: apache2
+    Package(
+        name="apache2",
+    )
 
 The available parameters are:
 
@@ -272,13 +276,13 @@ This resource can be used to create, change or delete UNIX users.
 
 For example::
 
-    extend resources:
-      - User:
-          name: django
-          fullname: Django Software Owner
-          home: /var/local/django
-          system: true
-          disabled-password: true
+    User(
+        name="django",
+        fullname="Django Software Owner",
+        home="/var/local/django",
+        system=True,
+        disabled_password=True,
+    )
 
 The available parameters are:
 
@@ -326,10 +330,10 @@ A resource representing a unix group stored in the /etc/group file.
 
 For example::
 
-    extend resources:
-      - Group:
-          name: zope
-          system: true
+    Group(
+        name="zope",
+        system=True,
+    )
 
 The available parameters are:
 

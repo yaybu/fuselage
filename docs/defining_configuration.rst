@@ -48,26 +48,36 @@ Sometimes you can't use ``File`` (perhaps ``buildout`` or ``maven`` or similar g
     bundle.add(Execute(
         name="restart-apache",
         command="apache2ctl graceful",
-        watches=['/etc/apache2/security.conf'],
+        watches=['/var/sites/mybuildout/parts/apache.cfg'],
     ))
 
-This declares that the ``buildout`` step might change a ``File`` (the ``apache.cfg``). Subsequent step can then subscribe to ``File[/var/sites/mybuildout/parts/apache.cfg]`` as though it was an ordinary file.
+This declares that the ``buildout`` step might change ``/var/sites/mybuildout/parts/apache.cfg``). Subsequent steps can then subscribe to this file as though it was an ordinary ``File`` resource.
 
 All of these examples use a trigger system. When a trigger has been set fuselage will remember it between invocations. Consider the following example::
 
-    resources:
-      - File:
-          name: /etc/apache2/sites-enabled/mydemosite
+    bundle.add(File(
+        name="/etc/apache2/sites-enabled/mydemosite",
+    ))
 
-      - Directory:
-          name: /var/local/tmp/this/paths/parent/dont/exist
+    bundle.add(File(
+        name="/var/local/tmp/this/paths/parent/dont/exist",
+    ))
 
-      - Execute:
-          name: restart-apache2
-          command: /etc/init.d/apache2 restart
-          policy:
-              execute:
-                  when: apply
-                  on: File[/etc/apache2/sites-enabled/mydemosite]
+    bundle.add(Execute(
+        name="restart-apache2",
+        command="/etc/init.d/apache2 restart",
+        watches=['/etc/apache2/sites-enabled/mydemosite'],
+    ))
 
-When it is run it will create a file in the ``/etc/apache2/sites-enabled`` folder. Fuselage knows that the ``Execute[restart-apache2]`` step must be run later. It will record a trigger for the ``Execute`` statement in ``/var/run/yaybu/``. If the ``Directory[]`` step fails and fuselage terminates then the next time fuselage is execute it will instruct you to use the ``--resume`` or ``--no-resume`` command line option. If you ``--resume`` it will remember that it needs to restart apache2. If you choose ``--no-resume`` it will not remember, and apache will not be restarted.
+By inspection we can tell the 2nd step will fail, so will fuselage restart apache when we've fixed the bug? Yes:
+
+ * On the first run, fuselage will create the file and because a change occurred it will set a trigger for any resources that have a ``watches`` against it. This will be persisted in ``/var/lib/yaybu/event.json`` immediately.
+ * It will fail to create a Directory and stop processing changes.
+ * A human will correct the configuration and re-run it
+ * On the 2nd run it will check the file exists with the correct permissions and make no changes
+ * It will create the directory.
+ * Before running the restart it will check ``event.json`` to see if it is triggered or not.
+ * It will run the restart
+ * The trigger will be immediately removed from ``event.json``.
+
+This means that the restart step will always execute when the file changes, even if an intermediate step fails and the process has to be repeated. If the restart fails then fuselage will try again the next time it is run.
