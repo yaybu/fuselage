@@ -2,6 +2,29 @@
 Defining configuration
 ======================
 
+Resource bundles
+================
+
+A fuselage bundle is a list of resources to manage and the configuration to apply to them. You use the ``add`` method to build a bundle::
+
+    from fuselage.bundle import ResourceBundle
+    from fuselage.resources import *
+
+    bundle = ResourceBundle()
+    bundle.add(Package(name="apache2"))
+
+You can assemble a bundle into a compressed archive using a builder object::
+
+    from fuselage.builder import Builder
+
+    builder = Builder.write_to_path('/tmp/example_payload')
+    builder.embed_fuselage_runtime()
+    builder.embed_resource_bundle(bundle)
+
+The output is a zipfile that can be executed by python. On linux and OSX it can even be executed directly::
+
+    /tmp/example_payload
+
 
 Dependencies between resources
 ==============================

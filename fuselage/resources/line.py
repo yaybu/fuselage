@@ -30,11 +30,26 @@ from fuselage.argument import (
 
 class Line(Resource):
 
+    """
+    Ensure that a line is present or missing from a file.
+
+    For example, this will ensure that selinux is disabled::
+
+        Line(
+            name="/etc/selinux/config",
+            match=r"^SELINUX",
+            replace="SELINUX=disabled",
+        )
+    """
+
     name = FullPath()
+    """ The full path to the file to perform an operation on. """
 
     line = String(default="")
+    """ The text to insert at the point the expression matches (otherwise at the end of the file). """
 
     match = String(default="")
+    """ The python regular expression to match the line to be updated. """
 
 
 class LineApplyPolicy(Policy):

@@ -41,7 +41,7 @@ class Argument(object):
         if instance is None:
             # sphinx complains?
             #raise AttributeError
-            return None
+            return self
         if hasattr(instance, self.arg_id):
             return getattr(instance, self.arg_id)
         elif callable(self.default):
