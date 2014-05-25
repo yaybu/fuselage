@@ -41,7 +41,7 @@ local file::
     File(
         name="/etc/hosts",
         owner="root",
-        group="root"
+        group="root",
         mode=0o644,
         source="my_hosts_file",
     )
