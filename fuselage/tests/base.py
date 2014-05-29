@@ -13,6 +13,8 @@
 # limitations under the License.
 
 import unittest
+import mock
+from fakechroot import FakeChroot
 
 from fuselage import bundle, runner
 
@@ -26,7 +28,56 @@ class TestCaseWithBundle(unittest.TestCase):
 class TestCaseWithRunner(TestCaseWithBundle):
 
     def setUp(self):
+        self.chroot = FakeChroot.create_in_tempdir(self.location)
+        self.chroot.build()
+
+        self.patches = []
+
+        def patch(odn, fn):
+            p = mock.patch("os.path.exists", spec=True)
+            self.patches.append(p)
+            p.start()
+            return p
+
+        patch("fuselage.platform.isfile").side_effect = \
+            lambda path: os.path.isfile(self.chroot._enpathinate(path))
+        patch("fuselage.platform.islink").side_effect = \
+            lambda path: os.path.islink(self.chroot._enpathinate(path))
+        patch("fuselage.platform.lexists").side_effect = \
+            lambda path: os.path.lexists(self.chroot._enpathinate(path))
+        patch("fuselage.platform.lstat").side_effect = \
+            lambda path: os.lstat(self.chroot._enpathinate(path))
+        patch("fuselage.platform.get").side_effect = \
+            lambda path: self.chroot.open(path).read()
+        patch("fuselage.platform.put").side_effect = \
+            lambda path, contents, chmod: self.chroot.open(path, 'w').write(contents)
+        patch("fuselage.platform.makedirs").side_effect = \
+            lambda path: os.makedirs(self.chroot._enpathinate(path))
+        patch("fuselage.platform.unlink").side_effect = \
+            lambda path: os.unlink(self.chroot._enpathinate(path))
+
+        patch("fuselage.platform.exists").side_effect = self.chroot.exists
+        patch("fuselage.platform.isdir").side_effect = self.chroot.isdir
+        patch("fuselage.platform.stat").side_effect = self.chroot.stat
+        patch("fuselage.platform.readline").side_effect = self.chroot.readlink
+
+        p = mock.patch.dict("fuselage.platform.ENVIRON_OVERRIDE", self.chroot.get_env())
+        p.start()
+        self.patches.append(p)
+
         self.bundle = bundle.ResourceBundle()
+
+    def cleanUp(self):
+        [p.stop() for p in self.patches]
+        self.chroot.destroy()
+
+    def failUnlessExists(self, path):
+        if not self.chroot.exists(path):
+            self.fail("Path '%s' does not exist" % path)
+
+    def failIfExists(self, path):
+        if self.chroot.exists(path):
+            self.fail("Path '%s' exists" % path)
 
     def apply(self, simulate=False):
         r = runner.Runner(self.bundle, simulate=simulate)

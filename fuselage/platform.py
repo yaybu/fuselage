@@ -17,7 +17,24 @@ import subprocess
 import os
 import select
 
+try:
+    import pwd
+except ImportError:  # pragma: no cover
+    pwd = None
+try:
+    import grp
+except ImportError:  # pragma: no cover
+    grp = None
+try:
+    import spwd
+except ImportError:  # pragma: no cover
+    spwd = None
+
+
 from fuselage import error
+
+
+ENVIRON_OVERRIDE = {}
 
 
 class Handle(object):
@@ -84,6 +101,7 @@ class Process(subprocess.Popen):
 
         os.environ.clear()
         os.environ.update(self.env)
+        os.environ.update(ENVIRON_OVERRIDE)
 
     def attach_callback(self, callback):
         self.callback = callback
@@ -137,3 +155,75 @@ def check_call(command, *args, **kwargs):
     if p.returncode != 0:
         raise error.SystemError(p.returncode, stdout, stderr)
     return stdout, stderr
+
+
+def exists(path):
+    return os.path.exists(path)
+
+def isfile(path):
+    return os.path.isfile(path)
+
+def isdir(path):
+    return os.path.isdir(path)
+
+def islink(path):
+    return os.path.islink(path)
+
+def stat(path):
+    return os.stat(path)
+
+def lexists(path):
+    return os.path.lexists(path)
+
+def readlink(path):
+    return os.readlink(path)
+
+def lstat(path):
+    return os.lstat(path)
+
+def get(path):
+    return open(path).read()
+
+def put(path, contents, chmod=0o644):
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_SYNC, chmod)
+    os.write(fd, contents)
+    os.close(fd)
+
+def makedirs(path):
+    os.makedirs(path)
+
+def unlink(path):
+    os.unlink(path)
+
+def gr_supported():
+    return grp != None
+
+def getgrall():
+    return list(grp.getgrall())
+
+def getgrnam(name):
+    return grp.getgrnam(name)
+
+def getgrgid(gid):
+    return grp.getgrgid(gid)
+
+def pwd_supported():
+    return pwd != None
+
+def getpwall():
+    return list(pwd.getpwall())
+
+def getpwnam(name):
+    return pwd.getpwnam(name)
+
+def getpwuid(uid):
+    return pwd.getpwuid(uid)
+
+def spwd_supported():
+    return spwd != None
+
+def getspall():
+    return list(spwd.getspall())
+
+def getspnam(name):
+    return spwd.getspnam(name)
