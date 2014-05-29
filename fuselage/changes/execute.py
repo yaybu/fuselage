@@ -16,7 +16,7 @@ import six
 import os
 import shlex
 
-from fuselage import error, shell
+from fuselage import error, platform
 from fuselage.changes import base
 
 
@@ -88,7 +88,7 @@ class ShellCommand(base.Change):
             self.stderr = ""
             return
 
-        p = shell.Process(
+        p = platform.Process(
             command=command,
             user=self.user,
             group=self.group,

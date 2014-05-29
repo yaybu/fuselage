@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fuselage import error, resources, provider, shell
+from fuselage import error, resources, provider, platform
 from fuselage.changes import ShellCommand
 
 
@@ -21,7 +21,7 @@ def is_installed(resource):
     command = ["dpkg-query", "-W", "-f='${Status}'", resource.name]
 
     try:
-        stdout, stderr = shell.check_call(command)
+        stdout, stderr = platform.check_call(command)
     except error.SystemError as exc:
         if exc.returncode == 1:
             return False
