@@ -22,4 +22,4 @@ class TestFile(TestCaseWithRunner):
         self.bundle.add(File(
             name='/tmp/my-file',
         ))
-        self.apply(simulate=True)
+        self.check_apply()

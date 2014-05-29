@@ -96,6 +96,6 @@ class TestCaseWithRunner(TestCaseWithBundle):
         try:
             self.apply(simulate=False)
         except error.NothingChanged:
-            pass
+            return
         else:
             self.fail("After 2nd apply() their were still pending changes")
