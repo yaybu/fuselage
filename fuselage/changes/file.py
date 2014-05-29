@@ -69,8 +69,7 @@ class EnsureContents(base.Change):
         else:
             st = platform.stat(self.filename)
             if st.st_size != 0:
-                with open(self.filename, "r") as fp:
-                    self.diff(context, "Emptying file", fp.read(), "")
+                self.diff(context, "Emptying file", platform.get(self.filename), "")
                 context.change(ShellCommand(["cp", "/dev/null", self.filename]))
                 self.changed = True
             else:
@@ -78,13 +77,11 @@ class EnsureContents(base.Change):
 
     def overwrite_existing_file(self, context):
         """ Change the content of an existing file """
-        with open(self.filename, "r") as fp:
-            self.current = fp.read()
+        self.current = platform.get(self.filename)
         if self.current != self.contents:
             self.diff(context, "Changing existing file", self.current, self.contents)
             if not context.simulate:
-                with open(self.filename, "w") as fp:
-                    fp.write(self.contents)
+                platform.put(self.filename, self.contents)
             self.changed = True
         else:
             context.logger.debug("Not changing content of file %r" % self.filename)
@@ -93,8 +90,7 @@ class EnsureContents(base.Change):
         """ Write contents to a new file. """
         self.diff(context, "Writing new file", "", self.contents)
         if not context.simulate:
-            with open(self.filename, "w") as fp:
-                fp.write(self.contents)
+            platform.put(self.filename, self.contents)
         self.changed = True
 
     def write_file(self, context):

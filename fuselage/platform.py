@@ -77,7 +77,8 @@ class Process(subprocess.Popen):
         self.uid = uid
         self.gid = gid
         self.umask = umask
-        self.env = kwargs.get('env', None)
+        if 'env' in kwargs:
+            kwargs['env'].update(ENVIRON_OVERRIDE)
         kwargs['preexec_fn'] = self.preexec
         if 'stdout' not in kwargs:
             kwargs['stdout'] = subprocess.PIPE
@@ -98,10 +99,6 @@ class Process(subprocess.Popen):
 
         if self.umask:
             os.umask(self.umask)
-
-        os.environ.clear()
-        os.environ.update(self.env)
-        os.environ.update(ENVIRON_OVERRIDE)
 
     def attach_callback(self, callback):
         self.callback = callback

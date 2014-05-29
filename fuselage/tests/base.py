@@ -36,11 +36,10 @@ class TestCaseWithRunner(TestCaseWithBundle):
 
         self.patches = []
 
-        def patch(odn, fn):
-            p = mock.patch("os.path.exists", spec=True)
+        def patch(odn):
+            p = mock.patch(odn) #  , spec=True)
             self.patches.append(p)
-            p.start()
-            return p
+            return p.start()
 
         patch("fuselage.platform.isfile").side_effect = \
             lambda path: os.path.isfile(self.chroot._enpathinate(path))
@@ -62,7 +61,7 @@ class TestCaseWithRunner(TestCaseWithBundle):
         patch("fuselage.platform.exists").side_effect = self.chroot.exists
         patch("fuselage.platform.isdir").side_effect = self.chroot.isdir
         patch("fuselage.platform.stat").side_effect = self.chroot.stat
-        patch("fuselage.platform.readline").side_effect = self.chroot.readlink
+        patch("fuselage.platform.readlink").side_effect = self.chroot.readlink
 
         p = mock.patch.dict("fuselage.platform.ENVIRON_OVERRIDE", self.chroot.get_env())
         p.start()
@@ -85,3 +84,18 @@ class TestCaseWithRunner(TestCaseWithBundle):
     def apply(self, simulate=False):
         r = runner.Runner(self.bundle, simulate=simulate)
         return r.run()
+
+    def check_apply(self):
+        self.apply(simulate=True)
+
+        try:
+            self.apply(simulate=False)
+        except error.NothingChanged:
+            self.fail("Their were no pending changes after simulate")
+
+        try:
+            self.apply(simulate=False)
+        except error.NothingChanged:
+            pass
+        else:
+            self.fail("After 2nd apply() their were still pending changes")

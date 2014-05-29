@@ -52,6 +52,7 @@ class EventState(object):
         if self.loaded:
             return
         if platform.exists(self.save_file):
+            print platform.get(self.save_file)
             self.overrides = json.loads(platform.get(self.save_file))
         self.loaded = True
 

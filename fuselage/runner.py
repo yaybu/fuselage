@@ -18,7 +18,7 @@ import logging
 import optparse
 import pkgutil
 
-from fuselage import bundle, error, event, log
+from fuselage import bundle, error, event, log, platform
 
 logger = logging.getLogger(__name__)
 
@@ -81,9 +81,9 @@ class Runner(object):
         logger.debug("Runner started")
         logger.debug("Created runner with %d resources" % len(self.resources))
 
-        if not self.simulate and not os.path.exists(self.state_path):
+        if not self.simulate and not platform.exists(self.state_path):
             logger.debug("Creating state directories at %r" % self.state_path)
-            os.makedirs(self.state_path)
+            platform.makedirs(self.state_path)
 
         self.state.open()
 
