@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-
-from fuselage import resources, provider
+from fuselage import resources, provider, platform
 from fuselage.changes import ShellCommand
 
 
@@ -28,7 +26,7 @@ class Mounted(provider.Provider):
 
     def apply(self):
         for w in self.resource.watch:
-            if os.path.exists(w):
+            if platform.exists(w):
                 self.change(ShellCommand(["touch", "-ac", w]))
 
         return True

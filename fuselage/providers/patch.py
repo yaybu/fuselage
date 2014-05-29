@@ -14,7 +14,7 @@
 
 import os
 
-from fuselage import error, resources, provider
+from fuselage import error, resources, provider, platform
 from fuselage.changes import EnsureFile
 
 
@@ -25,15 +25,15 @@ class Patch(provider.Provider):
     policies = (resources.patch.PatchApplyPolicy,)
 
     def check_path(self, directory):
-        if os.path.isdir(directory):
+        if platform.isdir(directory):
             return
         frags = directory.split("/")
         path = "/"
         for i in frags:
             path = os.path.join(path, i)
-            if not os.path.exists(path):
+            if not platform.exists(path):
                 self.raise_or_log(error.PatchComponentMissing(path))
-            elif not os.path.isdir(path):
+            elif not platform.isdir(path):
                 raise error.PathComponentNotDirectory(path)
 
     def apply_patch(self):

@@ -12,12 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import stat
-import pwd
-import grp
 
-from fuselage import error, resources, provider
+from fuselage import error, resources, provider, platform
 from fuselage.changes import ShellCommand
 
 
@@ -31,7 +28,7 @@ class Link(provider.Provider):
         owner = self.resource.owner
         if owner:
             try:
-                return pwd.getpwnam(owner).pw_uid
+                return platform.getpwnam(owner).pw_uid
             except KeyError:
                 raise error.InvalidUser()
 
@@ -41,13 +38,13 @@ class Link(provider.Provider):
         group = self.resource.group
         if group:
             try:
-                return grp.getgrnam(group).gr_gid
+                return platform.getgrnam(group).gr_gid
             except KeyError:
                 raise error.InvalidGroup()
 
     def _stat(self):
         """ Extract stat information for the resource. """
-        st = os.lstat(self.resource.name)
+        st = platform.lstat(self.resource.name)
         uid = st.st_uid
         gid = st.st_gid
         mode = stat.S_IMODE(st.st_mode)
@@ -62,7 +59,7 @@ class Link(provider.Provider):
         mode = None
         isalink = False
 
-        if not os.path.exists(to):
+        if not platform.exists(to):
             self.raise_or_log(error.DanglingSymlink(
                 "Destination of symlink %r does not exist" % to
             ))
@@ -71,13 +68,13 @@ class Link(provider.Provider):
         group = self._get_group()
 
         try:
-            linkto = os.readlink(name)
+            linkto = platform.readlink(name)
             isalink = True
         except OSError:
             isalink = False
 
         if not isalink or linkto != to:
-            if os.path.lexists(name):
+            if platform.path.lexists(name):
                 self.change(
                     ShellCommand(["/bin/rm", "-rf", self.resource.name]))
 
@@ -86,7 +83,7 @@ class Link(provider.Provider):
             changed = True
 
         try:
-            linkto = os.readlink(name)
+            linkto = platform.readlink(name)
             isalink = True
         except OSError:
             isalink = False
@@ -118,8 +115,8 @@ class RemoveLink(provider.Provider):
     def apply(self):
         name = self.resource.name
 
-        if os.lexists(name):
-            if not os.islink(name):
+        if platform.lexists(name):
+            if not platform.islink(name):
                 raise error.InvalidProvider(
                     "%r: %s exists and is not a link" % (self, name))
             self.change(ShellCommand(["/bin/rm", self.resource.name]))

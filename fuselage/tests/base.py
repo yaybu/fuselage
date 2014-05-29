@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import unittest
 import mock
 from fakechroot import FakeChroot
@@ -26,6 +27,8 @@ class TestCaseWithBundle(unittest.TestCase):
 
 
 class TestCaseWithRunner(TestCaseWithBundle):
+
+    location = os.path.join(os.path.dirname(__file__), "..", "..")
 
     def setUp(self):
         self.chroot = FakeChroot.create_in_tempdir(self.location)

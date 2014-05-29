@@ -12,12 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import stat
-import pwd
-import grp
 
-from fuselage import error
+from fuselage import error, platform
 from fuselage.changes import base
 from .execute import ShellCommand
 
@@ -40,15 +37,15 @@ class AttributeChanger(base.Change):
         gid = None
         mode = None
 
-        if os.path.exists(self.filename):
-            st = os.stat(self.filename)
+        if platform.exists(self.filename):
+            st = platform.stat(self.filename)
             uid = st.st_uid
             gid = st.st_gid
             mode = stat.S_IMODE(st.st_mode)
 
         if self.user is not None:
             try:
-                owner = pwd.getpwnam(self.user)
+                owner = platform.getpwnam(self.user)
             except KeyError:
                 context.raise_or_log(error.InvalidUser("User '%s' not found" % self.user))
                 owner = None
@@ -60,7 +57,7 @@ class AttributeChanger(base.Change):
 
         if self.group is not None:
             try:
-                group = grp.getgrnam(self.group)
+                group = platform.getgrnam(self.group)
             except KeyError:
                 context.raise_or_log(error.InvalidGroup("No such group '%s'" % self.group))
                 group = None

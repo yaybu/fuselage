@@ -14,7 +14,7 @@
 
 import os
 
-from fuselage import error, resources, provider
+from fuselage import error, resources, provider, platform
 from fuselage.changes import ShellCommand
 
 
@@ -23,18 +23,18 @@ class Mount(provider.Provider):
     policies = (resources.mount.MountPolicy,)
 
     def check_path(self, directory):
-        if os.path.isdir(directory):
+        if platform.isdir(directory):
             return
 
         frags = directory.split("/")
         path = "/"
         for i in frags:
             path = os.path.join(path, i)
-            if not os.path.exists(path):
+            if not platform.exists(path):
                 if self.resource.parents:
                     return
                 self.raise_or_log(error.PatchComponentMissing(path))
-            if not os.path.isdir(path):
+            if not platform.isdir(path):
                 raise error.PathComponentNotDirectory(path)
 
     def get_all_active_mounts(self):

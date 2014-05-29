@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-
-from fuselage import error, resources, provider
+from fuselage import error, resources, provider, platform
 from fuselage.changes import ShellCommand
 
 
@@ -24,12 +22,12 @@ class Execute(provider.Provider):
 
     def apply(self):
         creates = self.resource.creates
-        if creates and os.path.exists(creates):
+        if creates and platform.exists(creates):
             self.logger.debug("%r exists, not executing" % (self.resource.creates,))
             return False
 
         touch = self.resource.touch
-        if touch and os.path.exists(touch):
+        if touch and platform.exists(touch):
             self.logger.debug("%r exists, not executing" % (self.resource.touch,))
             return False
 

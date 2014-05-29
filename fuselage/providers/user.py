@@ -12,19 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import grp
-import pwd
-import logging
-try:
-    import spwd
-except ImportError:
-    spwd = None
-
-from fuselage import error, resources, provider
+from fuselage import error, resources, provider, platform
 from fuselage.changes import ShellCommand
-
-
-logger = logging.getLogger(__name__)
 
 
 class User(provider.Provider):
@@ -37,7 +26,7 @@ class User(provider.Provider):
         username = self.resource.name
 
         try:
-            info_tuple = pwd.getpwnam(username)
+            info_tuple = platform.getpwnam(username)
         except KeyError:
             info = dict((f, None) for f in fields)
             info["exists"] = False
@@ -53,7 +42,7 @@ class User(provider.Provider):
             info[field] = info_tuple[i]
 
         try:
-            shadow = spwd.getspnam(username)
+            shadow = platform.getspnam(username)
             info['passwd'] = shadow.sp_pwd
             if shadow.sp_pwd == "!":
                 info['disabled-login'] = True
@@ -107,7 +96,7 @@ class User(provider.Provider):
                     changed = True
             else:
                 try:
-                    gid = grp.getgrnam(group).gr_gid
+                    gid = platform.getgrnam(group).gr_gid
                 except KeyError:
                     self.raise_or_log(error.InvalidGroup('Group "%s" is not valid' % group))
                     gid = "GID_CURRENTLY_UNASSIGNED"
@@ -120,7 +109,7 @@ class User(provider.Provider):
         if groups:
             desired_groups = set(groups)
             current_groups = set(
-                g.gr_name for g in grp.getgrall() if name in g.gr_mem)
+                g.gr_name for g in platform.getgrall() if name in g.gr_mem)
 
             append = self.resource.append
             if append and len(desired_groups - current_groups) > 0:
@@ -163,7 +152,7 @@ class UserRemove(provider.Provider):
 
     def apply(self):
         try:
-            grp.getpwnam(self.resource.name.encode("utf-8"))
+            platform.getpwnam(self.resource.name.encode("utf-8"))
         except KeyError:
             # If we get a key errror then there is no such user. This is good.
             return False

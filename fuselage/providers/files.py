@@ -14,7 +14,7 @@
 
 import os
 
-from fuselage import error, resources, provider
+from fuselage import error, resources, provider, platform
 from fuselage.changes import ShellCommand, EnsureFile
 
 
@@ -25,16 +25,16 @@ class File(provider.Provider):
     policies = (resources.file.FileApplyPolicy,)
 
     def check_path(self, directory):
-        if os.path.isdir(directory):
+        if platform.isdir(directory):
             self.logger.debug("Prereq: %r is a directory" % directory)
             return
         frags = directory.split("/")
         path = "/"
         for i in frags:
             path = os.path.join(path, i)
-            if not os.path.exists(path):
+            if not platform.exists(path):
                 self.raise_or_log(error.PathComponentMissing("Directory '%s' is missing" % path))
-            elif not os.path.isdir(path):
+            elif not platform.isdir(path):
                 raise error.PathComponentNotDirectory("Path '%s' is not a directory" % path)
 
     def apply(self):
@@ -59,8 +59,8 @@ class RemoveFile(provider.Provider):
 
     def apply(self):
         name = self.resource.name
-        if os.path.exists(name):
-            if not os.path.isfile(name):
+        if platform.exists(name):
+            if not platform.isfile(name):
                 raise error.InvalidProvider("%s exists and is not a file" % name)
             self.change(ShellCommand(["rm", self.resource.name]))
             changed = True

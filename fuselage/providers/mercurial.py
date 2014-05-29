@@ -20,7 +20,7 @@ except ImportError:
     from urllib import quote
 
 
-from fuselage import error, resources, provider
+from fuselage import error, resources, provider, platform
 from fuselage.changes import ShellCommand, EnsureFile, EnsureDirectory
 
 
@@ -149,7 +149,7 @@ class Mercurial(provider.Provider):
         self.change(EnsureDirectory(self.resource.name,
                        self.resource.user, self.resource.group, 0o755))
 
-        if not os.path.exists(os.path.join(self.resource.name, ".hg")):
+        if not platform.exists(os.path.join(self.resource.name, ".hg")):
             try:
                 self.action("init")
             except error.SystemError:

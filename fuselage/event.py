@@ -15,7 +15,7 @@
 import os
 import json
 
-from fuselage import error
+from fuselage import error, platform
 
 
 class EventState(object):
@@ -51,9 +51,8 @@ class EventState(object):
     def load(self):
         if self.loaded:
             return
-        if os.path.exists(self.save_file):
-            with open(self.save_file, "r") as fp:
-                self.overrides = json.load(fp)
+        if platform.exists(self.save_file):
+            self.overrides = json.loads(platform.get(self.save_file))
         self.loaded = True
 
     def set_trigger(self, resource):
@@ -75,10 +74,10 @@ class EventState(object):
         if not self.simulate:
             save_parent = os.path.realpath(
                 os.path.join(self.save_file, os.path.pardir))
-            if not os.path.exists(save_parent):
-                os.makedirs(save_parent)
+            if not platform.exists(save_parent):
+                platform.makedirs(save_parent)
 
-        if not os.path.exists(self.save_file):
+        if not platform.exists(self.save_file):
             return
 
         if self.resume:
@@ -86,17 +85,16 @@ class EventState(object):
             return
         elif self.no_resume:
             if not self.simulate:
-                os.unlink(self.save_file)
+                platform.unlink(self.save_file)
             self.loaded = True
             return
 
         raise error.SavedEventsAndNoInstruction()
 
     def success(self):
-        if not self.simulate and os.path.exists(self.save_file):
-            os.unlink(self.save_file)
+        if not self.simulate and platform.exists(self.save_file):
+            platform.unlink(self.save_file)
 
     def save(self):
         if not self.simulate:
-            with open(self.save_file, "w") as fp:
-                json.dump(self.overrides, fp)
+            platform.put(self.save_file, json.dumps(self.overrides))

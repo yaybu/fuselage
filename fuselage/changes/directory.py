@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 
+from fuselage import platform
 from fuselage.changes import base
 from .execute import ShellCommand
 from .attributes import AttributeChanger
@@ -30,7 +30,7 @@ class EnsureDirectory(base.Change):
 
     def apply(self, context):
         self.changed = False
-        if not os.path.exists(self.path):
+        if not platform.exists(self.path):
             command = ["/bin/mkdir"]
             if self.recursive:
                 command.append("-p")

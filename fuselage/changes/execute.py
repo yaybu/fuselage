@@ -55,13 +55,13 @@ class ShellCommand(base.Change):
         if command[0].startswith("./"):
             if len(command[0]) <= 2:
                 return False
-            return os.path.exists(os.path.join(self.cwd, command[0][2:]))
+            return platform.exists(os.path.join(self.cwd, command[0][2:]))
 
         elif command[0].startswith("/"):
-            return os.path.exists(command[0])
+            return platform.exists(command[0])
 
         for path in self.env["PATH"].split(os.pathsep):
-            if os.path.exists(os.path.join(path, command[0])):
+            if platform.exists(os.path.join(path, command[0])):
                 return True
 
     def apply(self, ctx):

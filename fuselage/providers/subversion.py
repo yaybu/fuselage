@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-
-from fuselage import error, resources, provider
+from fuselage import error, resources, provider, platform
 from fuselage.changes import ShellCommand, EnsureDirectory
 
 
@@ -49,14 +47,14 @@ class Svn(provider.Provider):
         return True
 
     def apply(self):
-        if not os.path.exists("/usr/bin/svn"):
+        if not platform.exists("/usr/bin/svn"):
             self.raise_or_log(error.MissingDependency(
                 "'/usr/bin/svn' is not available; update your configuration to install subversion?"
             ))
 
         name = self.resource.name
 
-        if not os.path.exists(name):
+        if not platform.exists(name):
             return self.action_checkout()
 
         changed = False
@@ -95,7 +93,7 @@ class Svn(provider.Provider):
         return changed
 
     def action_export(self):
-        if os.path.exists(self.resource.name):
+        if platform.exists(self.resource.name):
             return
         self.svn("export", self.url, self.resource.name)
 

@@ -16,7 +16,7 @@ import os
 import logging
 import re
 
-from fuselage import error, resources, provider
+from fuselage import error, resources, provider, platform
 from fuselage.changes import ShellCommand, EnsureDirectory
 
 
@@ -104,7 +104,7 @@ class Git(provider.Provider):
 
     def checkout_needed(self):
         # Determine which SHA is currently checked out.
-        if os.path.exists(os.path.join(self.resource.name, ".git")):
+        if platform.exists(os.path.join(self.resource.name, ".git")):
             try:
                 rv, stdout, stderr = self.info("rev-parse", "--verify", "HEAD")
             except error.SystemError:
@@ -176,7 +176,7 @@ class Git(provider.Provider):
 
     def apply(self):
         # If necessary, clone the repository
-        if not os.path.exists(os.path.join(self.resource.name, ".git")):
+        if not platform.exists(os.path.join(self.resource.name, ".git")):
             self.action_clone()
             changed = True
         else:

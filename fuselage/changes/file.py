@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import difflib
 import string
 
+from fuselage import platform
 from fuselage.changes import base
 from .execute import ShellCommand
 from .attributes import AttributeChanger
@@ -61,13 +61,13 @@ class EnsureContents(base.Change):
 
     def empty_file(self, context):
         """ Write an empty file """
-        exists = os.path.exists(self.filename)
+        exists = platform.exists(self.filename)
         if not exists:
             context.changelog.debug("Creating empty file %r" % self.filename)
             context.change(ShellCommand(["touch", self.filename]))
             self.changed = True
         else:
-            st = os.stat(self.filename)
+            st = platform.stat(self.filename)
             if st.st_size != 0:
                 with open(self.filename, "r") as fp:
                     self.diff(context, "Emptying file", fp.read(), "")
@@ -99,7 +99,7 @@ class EnsureContents(base.Change):
 
     def write_file(self, context):
         """ Write to either an existing or new file """
-        if os.path.exists(self.filename):
+        if platform.exists(self.filename):
             self.overwrite_existing_file(context)
         else:
             self.write_new_file(context)

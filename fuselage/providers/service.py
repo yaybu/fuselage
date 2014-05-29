@@ -15,9 +15,7 @@
 import os
 import shlex
 
-from fuselage import provider
-from fuselage import error
-from fuselage import resources
+from fuselage import provider, error, resources, platform
 from fuselage.changes import ShellCommand
 
 
@@ -35,16 +33,15 @@ class _ServiceMixin(object):
         if not self.resource.pidfile:
             return "unknown"
 
-        if not os.path.exists(self.resource.pidfile):
+        if not platform.exists(self.resource.pidfile):
             return "not-running"
 
-        with open(self.resource.pidfile, "r") as fp:
-            try:
-                pid = int(fp.read().strip())
-            except:
-                return "unknown"
+        try:
+            pid = int(platform.get(self.resource.pidfile))
+        except:
+            return "unknown"
 
-        # if os.path.exists("/proc/%s" % pid):
+        # if platform.exists("/proc/%s" % pid):
         #     return "running"
 
         try:

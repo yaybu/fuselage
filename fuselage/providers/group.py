@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import grp
-
-from fuselage import error, resources, provider
+from fuselage import error, resources, provider, platform
 from fuselage.changes import ShellCommand
 
 
@@ -26,7 +24,7 @@ class Group(provider.Provider):
         fields = ("name", "passwd", "gid", "members",)
 
         try:
-            info_tuple = grp.getgrnam(
+            info_tuple = platform.getgrnam(
                 self.resource.name.encode("utf-8"))
         except KeyError:
             info = dict((f, None) for f in fields)
@@ -73,7 +71,7 @@ class GroupRemove(provider.Provider):
 
     def apply(self):
         try:
-            grp.getgrnam(
+            platform.getgrnam(
                 self.resource.name.encode("utf-8"))
         except KeyError:
             # If we get a key errror then there is no such group. This is good.

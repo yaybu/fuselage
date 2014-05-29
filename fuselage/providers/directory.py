@@ -14,7 +14,7 @@
 
 import os
 
-from fuselage import error, resources, provider
+from fuselage import error, resources, provider, platform
 from fuselage.changes import EnsureDirectory, ShellCommand
 
 
@@ -30,11 +30,11 @@ class Directory(provider.Provider):
         path = "/"
         for i in frags:
             path = os.path.join(path, i)
-            if not os.path.exists(path):
+            if not platform.exists(path):
                 if self.resource.parents:
                     return
                 self.raise_or_log(error.PathComponentMissing(path))
-            if not os.path.isdir(path):
+            if not platform.isdir(path):
                 raise error.PathComponentNotDirectory(path)
 
     def apply(self):
@@ -58,10 +58,10 @@ class RemoveDirectory(provider.Provider):
     def apply(self):
         name = self.resource.name
 
-        if os.path.exists(name) and not os.path.isdir(name):
+        if platform.exists(name) and not platform.isdir(name):
             raise error.InvalidProviderError(
                 "%r: %s exists and is not a directory" % (self, name))
-        if os.path.exists(name):
+        if platform.exists(name):
             self.change(ShellCommand(["/bin/rmdir", self.resource.name]))
             changed = True
         else:
@@ -76,10 +76,10 @@ class RemoveDirectoryRecursive(provider.Provider):
     def apply(self):
         name = self.resource.name
 
-        if os.path.exists(name) and not os.path.isdir(name):
+        if platform.exists(name) and not platform.isdir(name):
             raise error.InvalidProviderError(
                 "%r: %s exists and is not a directory" % (self, name))
-        if os.path.exists(name):
+        if platform.exists(name):
             self.change(
                 ShellCommand(["/bin/rm", "-rf", self.resource.name]))
             changed = True
