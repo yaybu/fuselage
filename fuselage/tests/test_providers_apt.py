@@ -51,4 +51,4 @@ class TestPackageRemoval(TestCaseWithRunner):
     def test_installed(self):
         self.bundle.add(Package(name="python", policy="uninstall"))
         self.check_apply()
-        self.failIfExists("/usr/bin/python")
+        self.failIfExists("/usr/share/doc/python/copyright")

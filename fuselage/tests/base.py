@@ -17,7 +17,7 @@ import unittest
 import mock
 from fakechroot import FakeChroot
 
-from fuselage import bundle, runner
+from fuselage import bundle, runner, error
 
 
 class TestCaseWithBundle(unittest.TestCase):

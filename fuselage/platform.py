@@ -77,8 +77,9 @@ class Process(subprocess.Popen):
         self.uid = uid
         self.gid = gid
         self.umask = umask
-        if 'env' in kwargs:
-            kwargs['env'].update(ENVIRON_OVERRIDE)
+        if not 'env' in kwargs:
+            kwargs['env'] = os.environ.copy()
+        kwargs['env'].update(ENVIRON_OVERRIDE)
         kwargs['preexec_fn'] = self.preexec
         if 'stdout' not in kwargs:
             kwargs['stdout'] = subprocess.PIPE
