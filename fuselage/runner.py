@@ -23,9 +23,11 @@ from fuselage import bundle, error, event, log, platform
 logger = logging.getLogger(__name__)
 
 
-def configure_logging():
+def configure_logging(json=False):
     root = logging.getLogger()
-    if not sys.stdout.isatty():
+    #if len(root.handlers) != 0:
+    #    return
+    if json:
         root.addHandler(log.JSONHandler(sys.stdout))
     else:
         handler = logging.StreamHandler(sys.stdout)
@@ -38,7 +40,7 @@ class Runner(object):
 
     state_path = "/var/run/yaybu"
 
-    def __init__(self, resources, resume=False, no_resume=False, simulate=False, verbosity=logging.INFO):
+    def __init__(self, resources, resume=False, no_resume=False, simulate=False, verbosity=None):
         if resume and no_resume:
             raise error.ParseError("'resume' and 'no_resume' cannot both be True")
 
@@ -76,7 +78,8 @@ class Runner(object):
         )
 
     def run(self):
-        logging.getLogger().setLevel(self.verbosity)
+        if self.verbosity is not None:
+            logging.getLogger().setLevel(self.verbosity)
 
         logger.debug("Runner started")
         logger.debug("Created runner with %d resources" % len(self.resources))

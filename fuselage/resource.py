@@ -203,8 +203,12 @@ class Resource(six.with_metaclass(ResourceType)):
 
     @property
     def id(self):
+        if isinstance(self.name, str):
+            name = self.name
+        elif isinstance(self.name, six.text_type):
+            name = self.name.encode('utf-8')
         classname = getattr(self, '__resource_name__', self.__class__.__name__)
-        return "%s[%s]" % (classname, self.name)
+        return "%s[%s]" % (classname, name)
 
     def __repr__(self):
         return self.id

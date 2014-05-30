@@ -51,22 +51,14 @@ class ResourceFormatter(logging.Formatter):
         self.resource = None
 
     def format(self, record):
+        #record_type = getattr(record, "fuselage.type", None)
         next_resource = getattr(record, "fuselage.resource", None)
 
         rv = u""
 
-        # Is the logging now about a different resource?
-        if next_resource and self.resource != next_resource:
-
-            # If there was already a resource, let us add a footer
-            if self.resource:
-                rv += self.render_resource_footer()
-
-            self.resource = next_resource
-
-            # Are we now logging for a new resource?
-            if self.resource:
-                rv += self.render_resource_header()
+        #if record_type == "resource-start":
+        #    self.resource = next_resource
+        #    rv += self.render_resource_header()
 
         formatted = logging.Formatter.format(self, record)
 
@@ -78,10 +70,17 @@ class ResourceFormatter(logging.Formatter):
         else:
             rv += formatted
 
+        #if record_type == "resource-finish":
+        #    rv += self.render_resource_footer()
+        #    self.resource = None
+
         return rv
 
     def render_resource_header(self):
-        header = self.resource
+        if isinstance(self.resource, str):
+            header = self.resource
+        else:
+            header = self.resource.encode("utf-8")
 
         rl = len(header)
         if rl < 80:

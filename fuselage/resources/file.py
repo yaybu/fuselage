@@ -120,9 +120,6 @@ class FileRemovePolicy(Policy):
                  Absent("owner"),
                  Absent("group"),
                  Absent("mode"),
-                 Absent("static"),
-                 Absent("template"),
-                 Absent("template_args"),
                  )
 
 

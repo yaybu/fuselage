@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8 :
 # Copyright 2014 Isotoma Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,8 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import stat
+
 from fuselage.tests.base import TestCaseWithRunner
 from fuselage.resources import File
+from fuselage import error, platform
 
 
 class TestFile(TestCaseWithRunner):
@@ -21,11 +25,11 @@ class TestFile(TestCaseWithRunner):
     def test_not_directory(self):
         self.bundle.add(File(name="/etc/missing"))
         self.bundle.add(File(name="/etc/missing/filename"))
-        self.assertRaises(error.PatchComponentNotDirectory, self.apply)
+        self.assertRaises(error.PathComponentNotDirectory, self.apply)
 
     def test_create_missing_component(self):
-        self.bundle.add(File(name="/etc/missing/filename"))
-        self.assertRaises(error.PatchComponentNotDirectory, self.apply)
+        self.bundle.add(File(name="/etc/create_missing_component/filename"))
+        self.assertRaises(error.PathComponentMissing, self.apply)
 
     def test_create_missing_component_simulate(self):
         """
@@ -55,7 +59,7 @@ class TestFile(TestCaseWithRunner):
         self.check_apply()
         self.failUnlessExists("/etc/somefile")
 
-        st = platform.stat("/etc/somefile2")
+        st = platform.stat("/etc/somefile")
         self.assertEqual(platform.getpwuid(st.st_uid)[0], 'nobody')
         self.assertEqual(platform.getgrgid(st.st_gid)[0], 'nogroup')
         mode = stat.S_IMODE(st.st_mode)
@@ -67,7 +71,7 @@ class TestFile(TestCaseWithRunner):
             contents="test contents",
         ))
         self.check_apply()
-        self.asssertEqual(platform.get("/etc/somefile"), "test contents")
+        self.assertEqual(platform.get("/etc/somefile"), "test contents")
 
     def test_modify_file(self):
         platform.put("/etc/test_modify_file", "foo\nbar\baz")
@@ -77,7 +81,7 @@ class TestFile(TestCaseWithRunner):
             contents="test contents",
         ))
         self.check_apply()
-        self.asssertEqual(platform.get("/etc/test_modify_file"), "test contents")
+        self.assertEqual(platform.get("/etc/test_modify_file"), "test contents")
 
     def test_empty_file(self):
         platform.put("/etc/test_empty_file", "foo\nbar\baz")
@@ -87,7 +91,7 @@ class TestFile(TestCaseWithRunner):
             contents="",
         ))
         self.check_apply()
-        self.asssertEqual(platform.get("/etc/test_empty_file"), "")
+        self.assertEqual(platform.get("/etc/test_empty_file"), "")
 
 
 class TestFileRemove(TestCaseWithRunner):

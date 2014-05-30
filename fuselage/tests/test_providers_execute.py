@@ -14,6 +14,7 @@
 
 from fuselage.tests.base import TestCaseWithRunner
 from fuselage.resources import Execute
+from fuselage import platform
 
 
 test_execute_on_path = """
@@ -23,11 +24,6 @@ touch /etc/test_execute_on_path
 
 
 class TestExecute(TestCaseWithRunner):
-
-    def test_not_directory(self):
-        self.bundle.add(File(name="/etc/missing"))
-        self.bundle.add(File(name="/etc/missing/filename"))
-        self.assertRaises(error.PatchComponentNotDirectory, self.apply)
 
     def test_execute_on_path(self):
         platform.put(
@@ -47,7 +43,7 @@ class TestExecute(TestCaseWithRunner):
         self.bundle.add(Execute(
             name="test_execute_touches",
             command="echo HELLO",
-            touches="/etc/test_execute_touches",
+            touch="/etc/test_execute_touches",
         ))
         self.check_apply()
         self.failUnlessExists("/etc/test_execute_touches")
@@ -87,7 +83,7 @@ class TestExecute(TestCaseWithRunner):
     def test_environment(self):
         self.bundle.add(Execute(
             name="test_environment",
-            command="sh -c 'touch $FOO'"",
+            command="sh -c 'touch $FOO'",
             env={
                 "FOO": "/etc/test_environment"
             },

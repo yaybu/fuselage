@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8 :
 # Copyright 2014 Isotoma Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +18,7 @@ import stat
 
 from fuselage.tests.base import TestCaseWithRunner
 from fuselage.resources import Directory
+from fuselage import platform
 
 
 class TestDirectory(TestCaseWithRunner):
@@ -49,7 +51,7 @@ class TestDirectory(TestCaseWithRunner):
 
     def test_remove_directory_recursive(self):
         platform.makedirs("/etc/somedir")
-        platform.put("/etc/somedir/child, "")
+        platform.put("/etc/somedir/child", "")
         self.bundle.add(Directory(
             name="/etc/somedir",
             policy="remove-recursive",
@@ -68,14 +70,14 @@ class TestDirectory(TestCaseWithRunner):
 
     def test_attributes(self):
         self.bundle.add(Directory(
-            name="/etc/☃",
+            name="/etc/somedir",
             owner="nobody",
             group="nogroup",
             mode=0o777,
         ))
         self.check_apply()
-        self.failUnlessExists("/etc/somedir2")
-        st = playform.stat("/etc/somedir2")
+        self.failUnlessExists("/etc/somedir")
+        st = playform.stat("/etc/somedir")
         self.assertEqual(platform.getpwuid(st.st_uid)[0], 'nobody')
         self.assertEqual(platform.getgrgid(st.st_gid)[0], 'nogroup')
         mode = stat.S_IMODE(st.st_mode)
