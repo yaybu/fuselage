@@ -43,7 +43,7 @@ class TestDirectory(TestCaseWithRunner):
     def test_remove_directory(self):
         platform.makedirs("/etc/somedir")
         self.bundle.add(Directory(
-            name="/etc/foo/bar/baz",
+            name="/etc/somedir",
             policy="remove",
         ))
         self.check_apply()
@@ -77,7 +77,7 @@ class TestDirectory(TestCaseWithRunner):
         ))
         self.check_apply()
         self.failUnlessExists("/etc/somedir")
-        st = playform.stat("/etc/somedir")
+        st = platform.stat("/etc/somedir")
         self.assertEqual(platform.getpwuid(st.st_uid)[0], 'nobody')
         self.assertEqual(platform.getgrgid(st.st_gid)[0], 'nogroup')
         mode = stat.S_IMODE(st.st_mode)

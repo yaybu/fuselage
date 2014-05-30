@@ -94,6 +94,7 @@ class ShellCommand(base.Change):
             group=self.group,
             umask=self.umask,
             env=self.env,
+            cwd=self.cwd,
         )
 
         p.attach_callback(ctx.changelog.info)

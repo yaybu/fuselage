@@ -80,6 +80,11 @@ class Process(subprocess.Popen):
         if not 'env' in kwargs:
             kwargs['env'] = os.environ.copy()
         kwargs['env'].update(ENVIRON_OVERRIDE)
+
+        if "FAKECHROOT_BASE" in kwargs['env']:
+            if kwargs.get('cwd', None):
+                kwargs['cwd'] = os.path.join(kwargs['env']['FAKECHROOT_BASE'], kwargs['cwd'].lstrip("/"))
+
         kwargs['preexec_fn'] = self.preexec
         if 'stdout' not in kwargs:
             kwargs['stdout'] = subprocess.PIPE
