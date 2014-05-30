@@ -12,22 +12,57 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+import re
+
 from fuselage import error, resources, provider, platform
 from fuselage.changes import EnsureContents
 
 
-class Line(provider.Provider):
-
-    policies = (resources.line.LineApplyPolicy,)
+class _LineMixin(object):
 
     def apply(self):
         if not platform.exists(self.resource.name):
             self.raise_or_log(error.PatchComponentMissing("File '%s' is missing" % self.resource.name))
 
+        lines = platform.get(self.resource.name).splitlines()
+        contents = os.linesep.join(
+            line.decode("utf-8") for line in self.filter_lines(lines)
+        ).encode("utf-8")
+
         fc = EnsureContents(
             self.resource.name,
-            platform.get(self.resource.name),
+            contents,
         )
         self.change(fc)
 
         return fc.changed
+
+
+class LineApply(_LineMixin, provider.Provider):
+
+    policies = (resources.line.LineApplyPolicy,)
+
+    def filter_lines(self, lines):
+        regexp = re.compile(self.resource.match)
+        matched = False
+        for line in lines:
+            if not matched and regexp.search(line):
+                yield self.resource.line
+                matched = True
+            else:
+                yield line
+
+        if not matched:
+            yield self.resource.line
+
+
+class LineRemove(_LineMixin, provider.Provider):
+
+    policies = (resources.line.LineRemovePolicy,)
+
+    def filter_lines(self, lines):
+        regexp = re.compile(self.resource.match)
+        for line in lines:
+            if not regexp.search(line):
+                yield line

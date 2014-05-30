@@ -69,3 +69,17 @@ class LineApplyPolicy(Policy):
         Present("line"),
         Present("match"),
     )
+
+
+class LineRemovePolicy(Policy):
+
+    """
+    Ensure lines matching the regular expression are removed from the file.
+    """
+
+    resource = Line
+    name = "remove"
+    signature = (
+        Present("name"),
+        Present("match"),
+    )
