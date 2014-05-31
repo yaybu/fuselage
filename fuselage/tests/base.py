@@ -19,8 +19,9 @@ import mock
 import collections
 import subprocess
 import fakechroot
+import functools
 
-from fuselage import bundle, runner, error
+from fuselage import bundle, runner, error, platform
 
 
 stat_result = collections.namedtuple("stat_result",
@@ -119,18 +120,31 @@ class TestCaseWithRunner(TestCaseWithBundle):
         self.patches = []
 
         def patch(odn, fn):
-            p = mock.patch(odn) #  , spec=True)
+            p = mock.patch(odn, spec=True)
+            orig = p.get_original()
             self.patches.append(p)
             patch = p.start()
             patch.side_effect = fn
-            return patch
+            return p
 
         for meth in ("isfile", "islink", "lexists", "get", "put", "makedirs", "unlink", "exists", "isdir", "readlink", "stat", "lstat"):
             patch("fuselage.platform.%s" % meth, getattr(self.chroot, meth))
 
-        p = mock.patch.dict("fuselage.platform.ENVIRON_OVERRIDE", self.chroot.get_env())
-        p.start()
-        self.patches.append(p)
+        orig_check_call = platform.check_call
+
+        def check_call(*args, **kwargs):
+            env = kwargs.pop('env', {})
+            env.update(self.chroot.get_env())
+            kwargs['env'] = env
+
+            cwd = kwargs.get('cwd', None)
+            kwargs['cwd'] = os.path.join(self.chroot.chroot_path, cwd.lstrip("/")) if cwd else self.chroot.chroot_path
+
+            print args, kwargs
+
+            return orig_check_call(*args, **kwargs)
+
+        patch("fuselage.platform.check_call", check_call)
 
         logger.debug("Patched platform layer with fakechroot monkeypatches")
 
