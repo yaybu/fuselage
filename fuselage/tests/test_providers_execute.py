@@ -17,23 +17,15 @@ from fuselage.resources import Execute
 from fuselage import platform
 
 
-test_execute_on_path = """
-#!/bin/sh
-touch /etc/test_execute_on_path
-""".strip()
-
-
 class TestExecute(TestCaseWithRunner):
 
     def test_execute_on_path(self):
-        platform.put(
-            "/usr/bin/test_execute_on_path.sh", test_execute_on_path)
-        platform.check_call(
-            ["chmod", "0755", "/usr/bin/test_execute_on_path.sh"])
-
+        # Annoying fakechroot limitation
+        # subprocess.Popen doesnt respect the PATH because execvp is *before* we are fakechrooted
+        # So 'touch' is actually invoked from outside the fakechroot, but given an environment inside the fakechroot
         self.bundle.add(Execute(
             name="test_execute_on_path",
-            command="test_execute_on_path.sh",
+            command="touch /etc/test_execute_on_path",
             creates="/etc/test_execute_on_path",
         ))
         self.check_apply()
