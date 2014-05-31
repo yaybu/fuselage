@@ -118,13 +118,15 @@ class TestCaseWithRunner(TestCaseWithBundle):
 
         self.patches = []
 
-        def patch(odn):
+        def patch(odn, fn):
             p = mock.patch(odn) #  , spec=True)
             self.patches.append(p)
-            return p.start()
+            patch = p.start()
+            patch.side_effect = fn
+            return patch
 
         for meth in ("isfile", "islink", "lexists", "get", "put", "makedirs", "unlink", "exists", "isdir", "readlink", "stat", "lstat"):
-            patch("fuselage.platform.%s" % meth).side_effect = getattr(self.chroot, meth)
+            patch("fuselage.platform.%s" % meth, getattr(self.chroot, meth))
 
         p = mock.patch.dict("fuselage.platform.ENVIRON_OVERRIDE", self.chroot.get_env())
         p.start()
