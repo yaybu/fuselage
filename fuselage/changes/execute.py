@@ -88,7 +88,7 @@ class ShellCommand(base.Change):
             self.stderr = ""
             return
 
-        self.stdout, self.stderr = platform.check_output(
+        self.stdout, self.stderr = platform.check_call(
             command=command,
             user=self.user,
             group=self.group,

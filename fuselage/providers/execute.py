@@ -36,7 +36,7 @@ class Execute(provider.Provider):
                 platform.check_call(
                     command=self.resource.unless,
                     user=self.resource.user,
-                    self.resourced.cwd
+                    cwd=self.resource.cwd,
                 )
 
             except error.InvalidUser as exc:
