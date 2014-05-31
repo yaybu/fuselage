@@ -88,71 +88,13 @@ class ShellCommand(base.Change):
             self.stderr = ""
             return
 
-        p = platform.Process(
+        self.stdout, self.stderr = platform.check_output(
             command=command,
             user=self.user,
             group=self.group,
             umask=self.umask,
             env=self.env,
             cwd=self.cwd,
+            expected=self.expected or 0,
+            logger=ctx.changelog,
         )
-
-        p.attach_callback(ctx.changelog.info)
-        self.stdout, self.stderr = p.communicate(stdin=self.stdin)
-        self.returncode = p.wait()
-
-        if self.expected is not None and self.returncode != self.expected:
-            raise error.SystemError(self.returncode, self.stdout, self.stderr)
-
-
-def _handle_slash_r(line):
-    line = line.rstrip("\r")
-    if "\r" in line:
-        line = line.rsplit("\r", 1)[1]
-    return line
-
-
-class ShellTextRenderer(object):
-
-    """ Render a ShellCommand. """
-
-    renderer_for = ShellCommand
-
-    stdout_buffer = ""
-    stderr_buffer = ""
-
-    def command(self, command):
-        self.logger.notice(u"# " + u" ".join(command))
-
-    def output(self, returncode):
-        if self.verbose >= 1 and returncode != 0 and not self.inert:
-            self.logger.notice("returned %s", returncode)
-
-    def stdout(self, data):
-        if self.verbose >= 2:
-            data = self.stdout_buffer + data
-            if "\n" not in data:
-                self.stdout_buffer = data
-                return
-            data, self.stdout_buffer = data.rsplit("\n", 1)
-            for line in data.split("\n"):
-                self.logger.info(_handle_slash_r(line))
-
-    def stderr(self, data):
-        if self.verbose >= 1:
-            data = self.stderr_buffer + data
-            if "\n" not in data:
-                self.stdout_buffer = data
-                return
-            data, self.stderr_buffer = data.rsplit("\n", 1)
-            for line in data.split("\n"):
-                self.logger.info(_handle_slash_r(line))
-
-    def flush(self):
-        if self.stdout_buffer:
-            self.logger.info(_handle_slash_r(self.stdout_buffer))
-        if self.stderr_buffer:
-            self.logger.info(_handle_slash_r(self.stderr_buffer))
-
-    def exception(self, exception):
-        self.logger.notice("Exception: %r" % exception)

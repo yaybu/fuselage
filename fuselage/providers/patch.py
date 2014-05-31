@@ -39,11 +39,15 @@ class Patch(provider.Provider):
     def apply_patch(self):
         patch = self.get_file(self.resource.patch)
 
-        cmd = 'patch -t --dry-run -N --silent -r - -o - %s -' % self.resource.source
-        returncode, stdout, stderr = self.transport.execute(
-            cmd, stdin=patch)
-
-        if returncode != 0:
+        try:
+            stdout, stderr = platform.check_call(
+                command=[
+                    'patch', '-t', '--dry-run', '-N', '--silent',
+                    '-r', '-', '-o', '-', self.resource.source, '-'
+                ],
+                stdin=patch,
+            )
+        except error.SystemError as e:
             self.logger.error("Patch does not apply cleanly")
             self.logger.error(
                 "Patch file used was %s" % self.resource.patch)
@@ -52,7 +56,7 @@ class Patch(provider.Provider):
 
             self.logger.error("")
             self.logger.error("Reported error was:")
-            map(self.logger.error, stderr.split("\n"))
+            map(self.logger.error, e.stderr.split("\n"))
 
             raise error.CommandError("Unable to apply patch")
 

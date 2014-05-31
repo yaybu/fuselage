@@ -128,12 +128,29 @@ class Mercurial(provider.Provider):
         return command
 
     def info(self, action, *args):
-        rc, stdout, stderr = self.transport.execute(
-            self.get_hg_command(action, *args),
+        return platform.check_call(
+            command=self.get_hg_command(action, *args),
             user=self.resource.user,
             cwd=self.resource.name,
         )
-        return rc, stdout, stderr
+
+    def should_update(self, *args):
+        try:
+            self.info("should-update", *args)
+        except error.SystemError as e:
+            self.logger.debug("'should-update' test has failed")
+            self.logger.debug(e.stdout)
+            return True
+        return False
+
+    def should_pull(self, *args):
+        try:
+            self.info("should-pull", *args)
+        except error.SystemError as e:
+            self.logger.debug("'should-pull' test has failed")
+            self.logger.debug(e.stdout)
+            return True
+        return False
 
     def action(self, action, *args):
         self.change(ShellCommand(
@@ -192,15 +209,16 @@ class Mercurial(provider.Provider):
         if self.resource.tag:
             should_args.extend(["-t", self.resource.tag])
 
-        if created or self.info("should-pull", *should_args)[0] != 0:
+        if created or self.should_pull(*should_args):
             try:
                 self.action("pull", "--force")
                 changed = True
             except error.SystemError:
                 raise error.CheckoutError(
-                    "Could not fetch changes from remote repository.")
+                    "Could not fetch changes from remote repository."
+                )
 
-        if created or self.info("should-update", *should_args)[0] != 0:
+        if created or self.should_update(*should_args):
             if self.resource.tag:
                 args = [self.resource.tag]
             elif self.resource.branch:
@@ -212,6 +230,8 @@ class Mercurial(provider.Provider):
                 self.action("update", *args)
                 changed = True
             except error.SystemError:
-                raise error.CheckoutError("Could not update working copy.")
+                raise error.CheckoutError(
+                    "Could not update working copy."
+                )
 
         return created or changed

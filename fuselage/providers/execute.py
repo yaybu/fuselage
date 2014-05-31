@@ -31,46 +31,42 @@ class Execute(provider.Provider):
             self.logger.debug("%r exists, not executing" % (self.resource.touch,))
             return False
 
-        unless = self.resource.unless
-        if unless:
+        if self.resource.unless:
             try:
-                if self.transport.execute(unless,
-                                          user=self.resource.user.as_string,
-                                          cwd=self.resource.cwd,
-                                          )[0] == 0:
-                    return False
+                platform.check_call(
+                    command=self.resource.unless,
+                    user=self.resource.user,
+                    self.resourced.cwd
+                )
 
             except error.InvalidUser as exc:
-                # If a simulation and user missing then we can run our 'unless'
-                # guard. We bail out with True so that Yaybu treates the
-                # resource as applied.
                 self.raise_or_log(exc)
 
             except error.InvalidGroup as exc:
-                # If a simulation and group missing then we can run our 'unless'
-                # guard. We bail out with True so that Yaybu treates the
-                # resource as applied.
                 self.raise_or_log(exc)
 
-        command = self.resource.command
-        if command:
+            except error.SystemError as exc:
+                pass
+
+            else:
+                self.logger.debug("%r passes, not executing" % (self.resource.unless, ))
+                return False
+
+        if self.resource.command:
             commands = [self.resource.command]
         else:
             commands = self.resource.commands
 
         for command in commands:
-            try:
-                self.change(ShellCommand(command,
-                                         cwd=self.resource.cwd or None,
-                                         env=self.resource.env or None,
-                                         user=self.resource.user or None,
-                                         group=self.resource.group or None,
-                                         umask=self.resource.umask,
-                                         ))
-            except error.SystemError as exc:
-                if exc.returncode != self.resource.returncode:
-                    raise error.CommandError(
-                        "%s failed with return code %d" % (self.resource, exc.returncode))
+            self.change(ShellCommand(
+                command=command,
+                cwd=self.resource.cwd or None,
+                env=self.resource.env or None,
+                user=self.resource.user or None,
+                group=self.resource.group or None,
+                umask=self.resource.umask,
+                expected=self.resource.returncode,
+            ))
 
         if self.resource.touch:
             self.change(ShellCommand(["touch", self.resource.touch]))

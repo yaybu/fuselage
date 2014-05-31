@@ -24,7 +24,7 @@ class _ServiceMixin(object):
 
     def status(self):
         if self.resource.running:
-            rc, stdout, stderr = self.transport.execute(self.resource.running)
+            rc, stdout, stderr = platform.check_call(self.resource.running)
             if rc == 0:
                 return "running"
             else:

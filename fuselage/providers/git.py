@@ -46,12 +46,16 @@ class Git(provider.Provider):
         return command
 
     def info(self, action, *args):
-        rc, stdout, stderr = self.transport.execute(
-            self.get_git_command(action, *args),
-            user=self.resource.user,
-            cwd=self.resource.name,
-        )
-        return rc, stdout, stderr
+        try:
+            stdout, stderr = platform.check_command(
+                self.get_git_command(action, *args),
+                user=self.resource.user,
+                cwd=self.resource.name,
+            )
+        except error.SystemError as e:
+            return e.returncode, e.stdout, e.stderr
+
+        return 0, stdout, stderr
 
     def action(self, action, *args):
         self.change(ShellCommand(
@@ -116,8 +120,11 @@ class Git(provider.Provider):
             head_sha = '0' * 40
 
         try:
-            rv, stdout, stderr = self.transport.execute(
-                ["git", "ls-remote", self.resource.repository], user=self.resource.user, cwd="/tmp")
+            stdout, stderr = platform.check_call(
+                command=["git", "ls-remote", self.resource.repository],
+                user=self.resource.user,
+                cwd="/tmp"
+            )
         except error.SystemError:
             raise error.CheckoutError("Could not query the remote repository")
 
