@@ -79,9 +79,6 @@ class ShellCommand(base.Change):
         elif isinstance(self.command, six.string_types):
             logas = command = shlex_split(self.command)
 
-        command = self._tounicode(command)
-        logas = self._tounicode(logas)
-
         if not self.command_exists(command):
             ctx.raise_or_log(error.BinaryMissing("Command '%s' not found" % command[0]))
             self.returncode = 0
