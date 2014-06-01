@@ -94,7 +94,7 @@ class Player(object):
         name = os.path.splitext(os.path.basename(path))[0]
         payload = pkgutil.get_data("fuselage.tests", "%s.json" % (name, ))
         if payload:
-            results.update(json.loads(payload))
+            results.update(json.loads(payload.decode()))
 
         self.results = results.get(id, [])
         logger.debug("Loaded %d results from cassette %r" % (len(self.results), id))
