@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import inspect
 import os
 import unittest
 import logging
@@ -19,9 +20,9 @@ import mock
 import collections
 import subprocess
 import fakechroot
-import functools
 
 from fuselage import bundle, runner, error, platform
+from .recorder import Player, Recorder
 
 
 stat_result = collections.namedtuple("stat_result",
@@ -73,34 +74,34 @@ class FakeChroot(fakechroot.FakeChroot):
             raise OSError
         data = stdout.split(" ")
         return stat_result(
-            int(data[3], 16), # st_mode
-            int(data[8]), # st_ino
-            int(data[7], 16), # st_dev
-            int(data[9]), # st_nlink
-            int(data[4]), # st_uid
-            int(data[5]), # st_gid
-            int(data[1]), # st_size
-            int(data[11]), # st_atime
-            int(data[12]), # st_mtime
-            int(data[13]), # st_ctime
+            int(data[3], 16),  # st_mode
+            int(data[8]),  # st_ino
+            int(data[7], 16),  # st_dev
+            int(data[9]),  # st_nlink
+            int(data[4]),  # st_uid
+            int(data[5]),  # st_gid
+            int(data[1]),  # st_size
+            int(data[11]),  # st_atime
+            int(data[12]),  # st_mtime
+            int(data[13]),  # st_ctime
         )
 
-    def lstat(path):
+    def lstat(self, path):
         returncode, stdout, stderr = self.check_call(["stat", "-t", path])
         if returncode != 0:
             raise OSError
         data = stdout.split(" ")
         return stat_result(
-            int(data[3], 16), # st_mode
-            int(data[8]), # st_ino
-            int(data[7], 16), # st_dev
-            int(data[9]), # st_nlink
-            int(data[4]), # st_uid
-            int(data[5]), # st_gid
-            int(data[1]), # st_size
-            int(data[11]), # st_atime
-            int(data[12]), # st_mtime
-            int(data[13]), # st_ctime
+            int(data[3], 16),  # st_mode
+            int(data[8]),  # st_ino
+            int(data[7], 16),  # st_dev
+            int(data[9]),  # st_nlink
+            int(data[4]),  # st_uid
+            int(data[5]),  # st_gid
+            int(data[1]),  # st_size
+            int(data[11]),  # st_atime
+            int(data[12]),  # st_mtime
+            int(data[13]),  # st_ctime
         )
 
 
@@ -113,18 +114,27 @@ class TestCaseWithRunner(TestCaseWithBundle):
 
         self.logger = logging.getLogger(__name__)
 
-        self.chroot = FakeChroot.create_in_tempdir(self.location)
-        self.chroot.build()
-        logger.debug("Created fakechroot @ %s" % self.chroot.chroot_path)
+        path = inspect.getfile(self.__class__).rsplit(".", 1)[0] + ".json"
+        id = self.id()
+
+        if os.environ.get("FUSELAGE_RECORD", None):
+            self.chroot = FakeChroot.create_in_tempdir(self.location)
+            self.chroot.build()
+            self.cassette = Recorder(path, id)
+            logger.debug("Created fakechroot @ %s" % self.chroot.chroot_path)
+        else:
+            self.chroot = []
+            self.cassette = Player(path, id)
 
         self.patches = []
 
-        def patch(odn, fn):
-            p = mock.patch(odn, spec=True)
-            orig = p.get_original()
+        def patch(name, fn):
+            self.cassette.register(name, fn)
+
+            p = mock.patch("fuselage.platform.%s" % name, spec=True)
             self.patches.append(p)
             patch = p.start()
-            patch.side_effect = fn
+            patch.side_effect = getattr(self.cassette, name)
             return p
 
         for meth in ("isfile", "islink", "lexists", "get", "put", "makedirs", "unlink", "exists", "isdir", "readlink", "stat", "lstat"):
@@ -153,8 +163,12 @@ class TestCaseWithRunner(TestCaseWithBundle):
     def tearDown(self):
         [p.stop() for p in self.patches]
         logger.debug("Monkey patches reverted")
-        self.chroot.destroy()
-        logger.debug("Fakechroot destroyed")
+
+        if self.chroot:
+            self.chroot.destroy()
+            logger.debug("Fakechroot destroyed")
+
+        self.cassette.save()
 
     def failUnlessExists(self, path):
         if not self.chroot.exists(path):

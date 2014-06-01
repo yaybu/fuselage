@@ -14,7 +14,6 @@
 
 from fuselage.tests.base import TestCaseWithRunner
 from fuselage.resources import Execute
-from fuselage import platform
 
 
 class TestExecute(TestCaseWithRunner):

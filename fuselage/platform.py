@@ -152,7 +152,7 @@ def check_call(command, *args, **kwargs):
         p.attach_callback(logger.info)
     stdout, stderr = p.communicate()
     p.wait()
-    if expected != None and p.returncode != expected:
+    if expected is not None and p.returncode != expected:
         raise error.SystemError(p.returncode, stdout, stderr)
     return stdout, stderr
 
