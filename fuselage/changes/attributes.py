@@ -61,6 +61,9 @@ class AttributeChanger(base.Change):
             except KeyError:
                 context.raise_or_log(error.InvalidGroup("No such group '%s'" % self.group))
                 group = None
+            except TypeError as e:
+                context.logger.critical("TypeError as group %r (%s) isn't a str" % (self.group, type(self.group)))
+                raise e
 
             if not group or group.gr_gid != gid:
                 context.change(
