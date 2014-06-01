@@ -88,8 +88,11 @@ class String(Argument):
     def __set__(self, instance, value):
         if value is None:
             pass
-        elif not isinstance(value, (self.UNICODE_TYPE,)):
-            value = self.UNICODE_TYPE(value, 'utf-8')
+        if not isinstance(value, str):
+            if isinstance(value, six.binary_type):
+                value = value.decode("utf-8")
+            elif isinstance(value, six.text_type):
+                value = value.encode("utf-8")
         setattr(instance, self.arg_id, value)
 
     @classmethod
