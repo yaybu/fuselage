@@ -38,10 +38,6 @@ class TestArguments(unittest.TestCase):
         self.assertEqual(r.a, "foo")
         r.a = u"foo"
         self.assertEqual(r.a, "foo")
-        r.a = u"£40"
-        self.assertEqual(r.a, u"£40")
-        r.a = u"£40".encode("utf-8")
-        self.assertEqual(r.a, u"£40")
 
     def test_integer(self):
         class R_test_integer(resource.Resource):
