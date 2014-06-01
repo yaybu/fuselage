@@ -123,7 +123,7 @@ class TestCaseWithRunner(TestCaseWithBundle):
             self.cassette = Recorder(path, id)
             logger.debug("Created fakechroot @ %s" % self.chroot.chroot_path)
         else:
-            self.chroot = []
+            self.chroot = mock.Mock()
             self.cassette = Player(path, id)
 
         self.patches = []
@@ -138,7 +138,7 @@ class TestCaseWithRunner(TestCaseWithBundle):
             return p
 
         for meth in ("isfile", "islink", "lexists", "get", "put", "makedirs", "unlink", "exists", "isdir", "readlink", "stat", "lstat"):
-            patch("fuselage.platform.%s" % meth, getattr(self.chroot, meth))
+            patch(meth, getattr(self.chroot, meth))
 
         orig_check_call = platform.check_call
 
@@ -150,11 +150,9 @@ class TestCaseWithRunner(TestCaseWithBundle):
             cwd = kwargs.get('cwd', None)
             kwargs['cwd'] = os.path.join(self.chroot.chroot_path, cwd.lstrip("/")) if cwd else self.chroot.chroot_path
 
-            print args, kwargs
-
             return orig_check_call(*args, **kwargs)
 
-        patch("fuselage.platform.check_call", check_call)
+        patch("check_call", check_call)
 
         logger.debug("Patched platform layer with fakechroot monkeypatches")
 
@@ -171,11 +169,11 @@ class TestCaseWithRunner(TestCaseWithBundle):
         self.cassette.save()
 
     def failUnlessExists(self, path):
-        if not self.chroot.exists(path):
+        if not platform.exists(path):
             self.fail("Path '%s' does not exist" % path)
 
     def failIfExists(self, path):
-        if self.chroot.exists(path):
+        if platform.exists(path):
             self.fail("Path '%s' exists" % path)
 
     def apply(self, simulate=False):

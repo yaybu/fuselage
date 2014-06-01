@@ -16,7 +16,7 @@ import collections
 import os
 import json
 import pkgutil
-import urlparse
+import logging
 
 
 stat_result = collections.namedtuple("stat_result",
@@ -34,6 +34,7 @@ struct_spwd = collections.namedtuple("struct_spwd",
                                      ("sp_nam", "sp_pwd", "sp_lastchg", "sp_min", "sp_max", "sp_warn",
                                       "sp_inact", "sp_expire", "sp_flag", ))
 
+logger = logging.getLogger(__name__)
 
 
 class Recorder(object):
@@ -54,6 +55,8 @@ class Recorder(object):
             raise AttributeError(function_name)
 
         def _(*args, **kwargs):
+            logger.debug("fuselage.platform.%s(*%r, **%r)" % (function_name, args, kwargs))
+
             e = None
             try:
                 results = attr(*args, **kwargs)
@@ -88,7 +91,8 @@ class Player(object):
         if payload:
             results.update(json.loads(payload))
 
-        self.results.extend(results.get(self.id, []))
+        self.results = results.get(id, [])
+        logger.debug("Loaded %d results from cassette %r" % (len(self.results), id))
 
     def register(self, function_name, fn):
         pass
@@ -96,7 +100,9 @@ class Player(object):
     def __getattr__(self, function_name):
         def _(*args, **kwargs):
             f, results, exception = self.results.pop(0)
-            assert function_name == f, "'%s' != '%s'" % (function_name, f)
+            assert function_name == f, "'%s' != '%s', args=%r, kwargs=%r" % (function_name, f, args, kwargs)
+
+            logger.debug("fuselage.platform.%s(*%r, **%r)" % (function_name, args, kwargs))
 
             if exception:
                 raise {

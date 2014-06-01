@@ -137,10 +137,12 @@ class ResourceBundle(OrderedDict):
             })
 
             resource_log.debug("Started applying '%r' (%d of %d)" % (resource, i, mylen), extra={"fuselage.type": "resource-start"})
-            if resource.apply(runner):
-                resource_log.debug("'%r' made changes" % (resource, ))
-                something_changed = True
-            resource_log.debug("Finished applying '%r'" % (resource, ), extra={"fuselage.type": "resource-finish"})
+            try:
+                if resource.apply(runner):
+                    resource_log.debug("'%r' made changes" % (resource, ))
+                    something_changed = True
+            finally:
+                resource_log.debug("Finished applying '%r'" % (resource, ), extra={"fuselage.type": "resource-finish"})
 
         if not something_changed:
             raise error.NothingChanged()
