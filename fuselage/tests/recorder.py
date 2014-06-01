@@ -18,6 +18,8 @@ import json
 import pkgutil
 import logging
 
+from fuselage import error
+
 
 stat_result = collections.namedtuple("stat_result",
                                      ("st_mode", "st_ino", "st_dev", "st_nlink", "st_uid", "st_gid",
@@ -62,11 +64,14 @@ class Recorder(object):
                 results = attr(*args, **kwargs)
                 exception = None
             except KeyError as e:
-                results = None
+                results = []
                 exception = "KeyError"
             except OSError as e:
-                results = None
+                results = []
                 exception = "OSError"
+            except error.SystemError as e:
+                results = [e.returncode]
+                exception = "SystemError"
             self.results.append((function_name, results, exception))
             if e:
                 raise e
@@ -108,7 +113,8 @@ class Player(object):
                 raise {
                     "KeyError": KeyError,
                     "OSError": OSError,
-                }[exception]()
+                    "SystemError": error.SystemError,
+                }[exception](*results)
             return {
                 "stat": lambda x: stat_result(*x),
                 "lstat": lambda x: stat_result(*x),
