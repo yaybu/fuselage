@@ -39,6 +39,15 @@ class TestExecute(TestCaseWithRunner):
         self.check_apply()
         self.failUnlessExists("/etc/test_execute_touches")
 
+    def test_touch_present(self):
+        platform.put("/touched-file", "")
+        self.bundle.add(Execute(
+            name="test_touch_present",
+            command="touch /checkpoint",
+            touch="/touched-file",
+        ))
+        self.assertRaises(error.NothingChanged, self.apply)
+
     def test_creates(self):
         self.bundle.add(Execute(
             name="test_creates",
@@ -92,3 +101,86 @@ class TestExecute(TestCaseWithRunner):
         ))
         self.check_apply()
         self.failUnlessExists("/etc/test_returncode")
+
+    def test_user(self):
+        self.bundle.add(Execute(
+            name="test_user",
+            command='python -c "import os; open('/foo','w').write(str(os.getuid())+'\\n'+str(os.geteuid()))"',
+            user="nobody",
+            creates="/foo",
+        ))
+        self.check_apply()
+        check_file = platform.get("/foo").split()
+        self.failUnlessEqual(["65534"] * 2, check_file)
+
+    def test_group(self):
+        self.bundle.add(Execute(
+            name="test_user",
+            command='python -c "import os; open('/foo','w').write(str(os.getgid())+'\\n'+str(os.getegid()))"',
+            group="nobody",
+            creates="/foo",
+        ))
+        self.check_apply()
+        check_file = platform.get("/foo").split()
+        self.failUnlessEqual(["65534"] * 2, check_file)
+
+    def test_user_and_group(self):
+        self.bundle.add(Execute(
+            name="test_user",
+            command='python -c "import os; open('/foo','w').write('\\n'.join(str(x) for x in (os.getuid(),os.geteuid(),os.getgid(),os.getegid())))"',
+            user="nobody",
+            group="nogroup",
+            creates="/foo",
+        ))
+        self.check_apply()
+        check_file = platform.get("/foo").split()
+        self.failUnlessEqual(["65534"] * 4, check_file)
+
+    def test_unless_true(self):
+        self.bundle.add(Execute(
+            name="test",
+            command="touch /test_unless_true",
+            unless="/bin/true",
+        ))
+        self.assertRaises(error.NothingChanged, self.apply)
+
+    def test_unless_false(self):
+        self.bundle.add(Execute(
+            name="test",
+            command="touch /test_unless_true",
+            unless="/bin/false",
+            creates="/test_unless_false",
+        ))
+        self.check_apply()
+        self.failUnlessExists("/test_unless_false")
+
+    def test_umask_022(self):
+        self.bundle.add(Execute(
+            name="touch",
+            command="touch /test_umask_022",
+            umask=0o022,
+            creates="/test_umask_022",
+        ))
+        self.failUnlessExists("/test_umask_022")
+
+        mode = stat.S_IMODE(platform.stat("/test_umask_022").st_mode)
+        self.failUnlessEqual(mode, 0o644)
+
+    def test_umask_002(self):
+        self.bundle.add(Execute(
+            name="touch",
+            command="touch /test_umask_002",
+            umask=0o022,
+            creates="/test_umask_002",
+        ))
+        self.failUnlessExists("/test_umask_002")
+
+        mode = stat.S_IMODE(platform.stat("/test_umask_002").st_mode)
+        self.failUnlessEqual(mode, 0o664)
+
+    def test_missing_binary_absolute(self):
+        self.bundle.add(Execute(
+            name="test_missing_binary",
+            command="/this_binary_definitely_doesnt_exist",
+        ))
+        self.assertRaises(error.BinaryMissing, self.apply)
