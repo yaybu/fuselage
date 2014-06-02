@@ -146,7 +146,7 @@ class Process(subprocess.Popen):
 
 def check_call(command, *args, **kwargs):
     logger = kwargs.pop('logger', None)
-    expected = kwargs.pop('expected', None)
+    expected = kwargs.pop('expected', 0)
     p = Process(command, *args, **kwargs)
     if logger:
         p.attach_callback(logger.info)

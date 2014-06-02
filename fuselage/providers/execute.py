@@ -20,6 +20,26 @@ class Execute(provider.Provider):
 
     policies = (resources.execute.ExecutePolicy,)
 
+    def check_unless(self):
+        try:
+            platform.check_call(
+                command=self.resource.unless,
+                user=self.resource.user,
+                cwd=self.resource.cwd,
+            )
+
+        except error.InvalidUser as exc:
+            self.raise_or_log(exc)
+
+        except error.InvalidGroup as exc:
+            self.raise_or_log(exc)
+
+        except error.SystemError as exc:
+            return True
+
+        return False
+
+
     def apply(self):
         creates = self.resource.creates
         if creates and platform.exists(creates):
@@ -31,26 +51,9 @@ class Execute(provider.Provider):
             self.logger.debug("%r exists, not executing" % (self.resource.touch,))
             return False
 
-        if self.resource.unless:
-            try:
-                platform.check_call(
-                    command=self.resource.unless,
-                    user=self.resource.user,
-                    cwd=self.resource.cwd,
-                )
-
-            except error.InvalidUser as exc:
-                self.raise_or_log(exc)
-
-            except error.InvalidGroup as exc:
-                self.raise_or_log(exc)
-
-            except error.SystemError as exc:
-                pass
-
-            else:
-                self.logger.debug("%r passes, not executing" % (self.resource.unless, ))
-                return False
+        if self.resource.unless and not self.check_unless():
+            self.logger.debug("%r passes, not executing" % (self.resource.unless, ))
+            return False
 
         if self.resource.command:
             commands = [self.resource.command]

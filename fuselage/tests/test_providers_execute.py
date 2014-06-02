@@ -12,8 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import stat
+
 from fuselage.tests.base import TestCaseWithRunner
 from fuselage.resources import Execute
+from fuselage import error, platform
 
 
 class TestExecute(TestCaseWithRunner):
@@ -105,7 +108,7 @@ class TestExecute(TestCaseWithRunner):
     def test_user(self):
         self.bundle.add(Execute(
             name="test_user",
-            command='python -c "import os; open('/foo','w').write(str(os.getuid())+'\\n'+str(os.geteuid()))"',
+            command="python -c \"import os; open('/foo','w').write(str(os.getuid())+'\\n'+str(os.geteuid()))\"",
             user="nobody",
             creates="/foo",
         ))
@@ -116,7 +119,7 @@ class TestExecute(TestCaseWithRunner):
     def test_group(self):
         self.bundle.add(Execute(
             name="test_user",
-            command='python -c "import os; open('/foo','w').write(str(os.getgid())+'\\n'+str(os.getegid()))"',
+            command="python -c \"import os; open('/foo','w').write(str(os.getgid())+'\\n'+str(os.getegid()))\"",
             group="nobody",
             creates="/foo",
         ))
@@ -127,7 +130,7 @@ class TestExecute(TestCaseWithRunner):
     def test_user_and_group(self):
         self.bundle.add(Execute(
             name="test_user",
-            command='python -c "import os; open('/foo','w').write('\\n'.join(str(x) for x in (os.getuid(),os.geteuid(),os.getgid(),os.getegid())))"',
+            command="python -c \"import os; open('/foo','w').write('\\n'.join(str(x) for x in (os.getuid(),os.geteuid(),os.getgid(),os.getegid())))\"",
             user="nobody",
             group="nogroup",
             creates="/foo",
@@ -147,7 +150,7 @@ class TestExecute(TestCaseWithRunner):
     def test_unless_false(self):
         self.bundle.add(Execute(
             name="test",
-            command="touch /test_unless_true",
+            command="touch /test_unless_false",
             unless="/bin/false",
             creates="/test_unless_false",
         ))
@@ -161,6 +164,7 @@ class TestExecute(TestCaseWithRunner):
             umask=0o022,
             creates="/test_umask_022",
         ))
+        self.check_apply()
         self.failUnlessExists("/test_umask_022")
 
         mode = stat.S_IMODE(platform.stat("/test_umask_022").st_mode)
@@ -170,9 +174,10 @@ class TestExecute(TestCaseWithRunner):
         self.bundle.add(Execute(
             name="touch",
             command="touch /test_umask_002",
-            umask=0o022,
+            umask=0o002,
             creates="/test_umask_002",
         ))
+        self.check_apply()
         self.failUnlessExists("/test_umask_002")
 
         mode = stat.S_IMODE(platform.stat("/test_umask_002").st_mode)
