@@ -74,7 +74,7 @@ class Link(provider.Provider):
             isalink = False
 
         if not isalink or linkto != to:
-            if platform.path.lexists(name):
+            if platform.lexists(name):
                 self.change(
                     ShellCommand(["/bin/rm", "-rf", self.resource.name]))
 
@@ -91,7 +91,7 @@ class Link(provider.Provider):
         if not isalink:
             if not self.simulate:
                 raise error.OperationFailed("Did not create expected symbolic link")
-            return
+            return changed
 
         uid, gid, mode = self._stat()
 

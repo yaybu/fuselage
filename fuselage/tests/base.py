@@ -18,7 +18,6 @@ import unittest
 import logging
 import mock
 import collections
-import subprocess
 import fakechroot
 
 from fuselage import bundle, runner, error, platform
