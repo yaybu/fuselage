@@ -34,9 +34,6 @@ except ImportError:  # pragma: no cover
 from fuselage import error
 
 
-ENVIRON_OVERRIDE = {}
-
-
 class Handle(object):
 
     def __init__(self, handle, callback=None):
@@ -76,6 +73,10 @@ class Process(subprocess.Popen):
         self.callback = None
         self.uid = uid
         self.gid = gid
+        if user and pwd:
+            self.uid = pwd.getpwnam(user).pw_uid
+        if group and grp:
+            self.gid = grp.getgrnam(group).gr_gid
         self.umask = umask
 
         kwargs['preexec_fn'] = self.preexec

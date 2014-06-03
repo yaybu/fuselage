@@ -79,14 +79,27 @@ class ShellCommand(base.Change):
         elif isinstance(self.command, six.string_types):
             logas = command = shlex_split(self.command)
 
+        ctx.changelog.critical('# ' + ' '.join(logas))
+
         if not self.command_exists(command):
             ctx.raise_or_log(error.BinaryMissing("Command '%s' not found" % command[0]))
-            self.returncode = 0
-            self.stdout = ""
-            self.stderr = ""
-            return
 
-        ctx.changelog.critical('# ' + ' '.join(logas))
+        if self.user:
+            try:
+                platform.getpwnam(self.user)
+            except KeyError:
+                ctx.raise_or_log(error.InvalidUser("User '%s' not found" % self.user))
+
+        if self.group:
+            try:
+                platform.getgrnam(self.group)
+            except KeyError:
+                ctx.raise_or_log(error.InvalidGroup("User '%s' not found" % self.group))
+
+        if self.cwd:
+            if not os.path.isdir(self.cwd):
+                ctx.raise_or_log(error.PathComponentNotDirectory("%r not a directory" % self.cwd))
+
 
         if ctx.simulate:
             self.returncode = 0
