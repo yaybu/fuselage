@@ -24,10 +24,6 @@ from fuselage import bundle, runner, error, platform
 from .recorder import Player, Recorder
 
 
-stat_result = collections.namedtuple("stat_result",
-                                     ("st_mode", "st_ino", "st_dev", "st_nlink", "st_uid", "st_gid",
-                                      "st_size", "st_atime", "st_mtime", "st_ctime"))
-
 logger = logging.getLogger()
 
 
@@ -69,7 +65,7 @@ class TestCaseWithRunner(TestCaseWithBundle):
             patch.side_effect = getattr(self.cassette, name)
             return p
 
-        for meth in ("isfile", "islink", "lexists", "get", "put", "makedirs", "unlink", "exists", "isdir", "readlink", "stat", "lstat"):
+        for meth in ("isfile", "islink", "lexists", "get", "put", "makedirs", "unlink", "exists", "isdir", "readlink", "stat", "lstat", "getgrall", "getgrnam", "getgrgid", "getpwall", "getpwnam", "getpwuid", "getspall", "getspnam"):
             patch(meth, getattr(self.chroot, meth))
 
         orig_check_call = platform.check_call
@@ -82,7 +78,7 @@ class TestCaseWithRunner(TestCaseWithBundle):
             gid = kwargs.pop('gid', None)
             group = kwargs.pop('group', None)
             if group:
-                gid = platform.getgrnam(group).gr_gid
+                gid = self.chroot.getgrnam(group).gr_gid
             if gid:
                 env['FAKEROOTGID']  = env['FAKEROOTEGID'] = str(gid)
                 env['FAKEROOTSGID'] = env['FAKEROOTFGID'] = str(gid)
@@ -90,7 +86,7 @@ class TestCaseWithRunner(TestCaseWithBundle):
             uid = kwargs.pop('uid', None)
             user = kwargs.pop('user', None)
             if user:
-                uid = platform.getpwnam(user).pw_uid
+                uid = self.chroot.getpwnam(user).pw_uid
             if uid:
                 env['FAKEROOTUID']  = env['FAKEROOTEUID'] = str(uid)
                 env['FAKEROOTSUID'] = env['FAKEROOTFUID'] = str(uid)

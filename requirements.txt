@@ -5,6 +5,6 @@ coveralls
 flake8
 mock
 fabric
-fakechroot>=0.2.0
+fakechroot>=0.2.1
 
 -e .

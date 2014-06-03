@@ -77,13 +77,12 @@ class User(provider.Provider):
         home = self.resource.home
         if home and info["dir"] != home:
             command.extend(["--home", self.resource.home])
-            if info['exists']:
-                command.append("-m")
+            command.append("-m")
             changed = True
 
         uid = self.resource.uid
         if uid and info["uid"] != int(uid):
-            command.extend(["--uid", self.resource.uid])
+            command.extend(["--uid", str(self.resource.uid)])
             changed = True
 
         gid = self.resource.gid
@@ -92,7 +91,7 @@ class User(provider.Provider):
             if gid:
                 gid = int(gid)
                 if gid != info["gid"]:
-                    command.extend(["--gid", self.resource.gid])
+                    command.extend(["--gid", str(self.resource.gid)])
                     changed = True
             else:
                 try:

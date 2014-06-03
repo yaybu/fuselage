@@ -49,7 +49,7 @@ class Group(provider.Provider):
 
         gid = self.resource.gid
         if gid and info["gid"] != gid:
-            command.extend(["--gid", self.resource.gid])
+            command.extend(["--gid", str(self.resource.gid)])
 
         command.extend([self.resource.name])
 

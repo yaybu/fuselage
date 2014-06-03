@@ -15,11 +15,6 @@
 import json
 import logging
 
-try:
-    from collections import OrderedDict
-except ImportError:
-    from fuselage.ordereddict import OrderedDict
-
 from fuselage import error, log
 from fuselage.resource import ResourceType
 

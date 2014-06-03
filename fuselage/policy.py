@@ -101,25 +101,19 @@ class Present(ArgumentAssertion):
     def test(self, resource):
         """ Test that the argument this asserts for is present in the
         resource. """
-        if getattr(resource, self.name) is not None:
-            return True
+        return resource.__args__[self.name].present(resource)
 
     def describe(self, resource):
         yield "'%s' must be present (%s)" % (self.name, self.test(resource))
 
 
-class Absent(ArgumentAssertion):
+class Absent(Present):
 
     """ The argument has not been specified by the user and has no default
     value. An argument with a default value is always defined. """
 
     def test(self, resource):
-        val = getattr(resource, self.name)
-        if val is None:
-            return True
-        if val == resource.__args__[self.name].default:
-            return True
-        return False
+        return not super(Absent, self).test(resource)
 
     def describe(self, resource):
         yield "'%s' must be absent (%s)" % (self.name, self.test(resource))

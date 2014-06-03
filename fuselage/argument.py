@@ -39,15 +39,16 @@ class Argument(object):
 
     def __get__(self, instance, owner):
         if instance is None:
-            # sphinx complains?
-            #raise AttributeError
             return self
-        if hasattr(instance, self.arg_id):
+        elif self.present(instance):
             return getattr(instance, self.arg_id)
         elif callable(self.default):
             return self.default(instance)
         else:
             return self.default
+
+    def present(self, instance):
+        return hasattr(instance, self.arg_id)
 
     def serialize(self, instance, builder=None):
         if hasattr(instance, self.arg_id):
