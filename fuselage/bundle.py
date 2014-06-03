@@ -27,7 +27,7 @@ from fuselage.resource import ResourceType
 logger = logging.getLogger(__name__)
 
 
-class ResourceBundle(OrderedDict):
+class ResourceBundle(object):
 
     """ An ordered, indexed collection of resources. Pass in a specification
     that consists of scalars, lists and dictionaries and this class will
@@ -35,8 +35,18 @@ class ResourceBundle(OrderedDict):
 
     BUNDLE_VERSION = 1
 
+    def __init__(self):
+        self.resources = []
+        self._index_by_id = {}
+
+    def __len__(self):
+        return len(self.resources)
+
+    def __getitem__(self, key):
+        return self._index_by_id[key]
+
     def get_resource_by_name(self, target):
-        for res in self.values():
+        for res in self.resources:
             if res.name == target:
                 return res
         else:
@@ -53,7 +63,7 @@ class ResourceBundle(OrderedDict):
     def _serialize_bundle(self, builder):
         obj = {"version": self.BUNDLE_VERSION}
         resources = obj['resources'] = []
-        for r in self.values():
+        for r in self.resources:
             resources.append(r.serialize(builder))
         return obj
 
@@ -115,23 +125,24 @@ class ResourceBundle(OrderedDict):
         return self.add(resource)
 
     def add(self, resource):
-        if resource.id in self:
+        if resource.id in self._index_by_id:
             raise error.ParseError("Resources cannot be defined multiple times")
 
         resource.bind(self)
-        self[resource.id] = resource
+        self.resources.append(resource)
+        self._index_by_id[resource.id] = resource
         return resource
 
     def apply(self, runner):
         """ Apply the resources to the system, using the provided context and
         overall configuration. """
-        for resource in self.values():
+        for resource in self.resources:
             if hasattr(resource, "_original_hash"):
                 resource._original_hash = resource.hash(runner)
 
         something_changed = False
-        mylen = len(self)
-        for i, resource in enumerate(self.values(), start=1):
+        mylen = len(self.resources)
+        for i, resource in enumerate(self.resources, start=1):
             resource_log = log.LoggerAdapter(logger, {
                 "fuselage.resource": resource.id,
             })
