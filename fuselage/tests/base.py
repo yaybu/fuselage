@@ -79,6 +79,22 @@ class TestCaseWithRunner(TestCaseWithBundle):
             env.update(self.chroot.get_env())
             kwargs['env'] = env
 
+            gid = kwargs.pop('gid', None)
+            group = kwargs.pop('group', None)
+            if group:
+                gid = platform.getgrnam(group).gr_gid
+            if gid:
+                env['FAKEROOTGID']  = env['FAKEROOTEGID'] = str(gid)
+                env['FAKEROOTSGID'] = env['FAKEROOTFGID'] = str(gid)
+
+            uid = kwargs.pop('uid', None)
+            user = kwargs.pop('user', None)
+            if user:
+                uid = platform.getpwnam(user).pw_uid
+            if uid:
+                env['FAKEROOTUID']  = env['FAKEROOTEUID'] = str(uid)
+                env['FAKEROOTSUID'] = env['FAKEROOTFUID'] = str(uid)
+
             cwd = kwargs.get('cwd', None)
             kwargs['cwd'] = os.path.join(self.chroot.chroot_path, cwd.lstrip("/")) if cwd else self.chroot.chroot_path
 

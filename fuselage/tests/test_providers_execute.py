@@ -120,7 +120,7 @@ class TestExecute(TestCaseWithRunner):
         self.bundle.add(Execute(
             name="test_user",
             command="python -c \"import os; open('/foo','w').write(str(os.getgid())+'\\n'+str(os.getegid()))\"",
-            group="nobody",
+            group="nogroup",
             creates="/foo",
         ))
         self.check_apply()
