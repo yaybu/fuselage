@@ -79,24 +79,22 @@ The libcloud compute API exposes simple deployment functionality via the ``deplo
 Vagrant
 =======
 
-The easiest way to use fuselage with vagrant is via the `vagrant-fabric<https://github.com/wutali/vagrant-fabric>_`.
+The easiest way to use fuselage with vagrant is via the `vagrant-carpet <https://github.com/mover-io/vagrant-carpet>_`.
 
-You will need to install Virtualbox and Vagrant. Then you can install the ``vagrant-fabric`` plugin::
+You will need to install Virtualbox and Vagrant. Then you can install the ``vagrant-carpet`` plugin::
 
-    vagrant-plugin install vagrant-fabric
+    $ vagrant-plugin install vagrant-carpet
+    Installing the 'vagrant-carpet' plugin. This can take a few minutes...
+    Installed the plugin 'vagrant-carpet (0.3.0)'!
 
 You can set up a ``Vagrantfile`` in your project that looks like this::
 
-    # -*- mode: ruby -*-
     # vi: set ft=ruby :
 
-    #Vagrant.require_plugin "vagrant-fabric"
-
-    # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
     VAGRANTFILE_API_VERSION = "2"
 
     Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-        config.vm.box = "precise64"
+        config.vm.box = "hashicorp/precise64"
         config.vm.provision :fabric do |fabric|
             fabric.fabfile_path = "./fabfile.py"
             fabric.tasks = ["deploy", ]
