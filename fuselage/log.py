@@ -17,6 +17,7 @@ from __future__ import absolute_import
 import json
 import logging
 import logging.handlers
+import sys
 
 
 class LoggerAdapter(logging.LoggerAdapter):
@@ -46,41 +47,33 @@ class ResourceFormatter(logging.Formatter):
     """ Automatically add a header and footer to log messages about particular
     resources """
 
-    def __init__(self, *args):
-        logging.Formatter.__init__(self, *args)
-        self.resource = None
-
     def format(self, record):
-        #record_type = getattr(record, "fuselage.type", None)
-        next_resource = getattr(record, "fuselage.resource", None)
-
-        rv = u""
-
-        #if record_type == "resource-start":
-        #    self.resource = next_resource
-        #    rv += self.render_resource_header()
-
         formatted = logging.Formatter.format(self, record)
-
         if hasattr(record, "fuselage.diff"):
             formatted = "\n".join((formatted, getattr(record, "fuselage.diff")))
+        return formatted
 
-        if self.resource:
-            rv += "\r\n".join("| %s" % line for line in formatted.splitlines()) + "\r"
+
+class ConsoleHandler(logging.StreamHandler):
+
+    def __init__(self, stream=sys.stdout, level=logging.INFO):
+        super(ConsoleHandler, self).__init__(stream)
+        self._level = level
+        self._resource = None
+        self._needs_footer = False
+        self._needs_header = False
+
+    def format(self, record):
+        formatted = super(ConsoleHandler, self).format(record)
+        if self._resource:
+            return "| " + formatted
+        return formatted
+
+    def _render_resource_header(self):
+        if isinstance(self._resource, str):
+            header = self._resource
         else:
-            rv += formatted
-
-        #if record_type == "resource-finish":
-        #    rv += self.render_resource_footer()
-        #    self.resource = None
-
-        return rv
-
-    def render_resource_header(self):
-        if isinstance(self.resource, str):
-            header = self.resource
-        else:
-            header = self.resource.encode("utf-8")
+            header = self._resource.encode("utf-8")
 
         rl = len(header)
         if rl < 80:
@@ -91,12 +84,34 @@ class ResourceFormatter(logging.Formatter):
             minuses = 4
             leftover = 0
 
-        return u"/%s %s %s\n" % ("-" * minuses,
+        self.stream.write("/%s %s %s\n" % ("-" * minuses,
                                  header,
-                                 "-" * (minuses + leftover))
+                                 "-" * (minuses + leftover)))
 
-    def render_resource_footer(self):
-        return u"\%s\n\n" % ("-" * 79,)
+        self._needs_header = False
+        self._needs_footer = True
+
+    def _render_resource_footer(self):
+        self.stream.write("\%s\n\n" % ("-" * 79, ))
+        self._needs_footer = False
+
+    def handle(self, record):
+        record_type = getattr(record, "fuselage.type", None)
+        next_resource = getattr(record, "fuselage.resource", None)
+
+        if record_type == "resource-start":
+            self._resource = next_resource
+            self._needs_header = True
+
+        if record.levelno >= self._level:
+            if self._resource and self._needs_header:
+                self._render_resource_header()
+            super(ConsoleHandler, self).handle(record)
+
+        if record_type == "resource-finish":
+            if self._needs_footer:
+                self._render_resource_footer()
+            self._resource = None
 
 
 class JSONHandler(logging.StreamHandler):
@@ -122,3 +137,19 @@ class SysLogHandler(logging.handlers.SysLogHandler):
         if "fuselage.change" not in record.__dict__:
             return 0
         return 1
+
+
+def configure(json=False):
+    root = logging.getLogger()
+    root.setLevel(logging.DEBUG)
+
+    #if len(root.handlers) != 0:
+    #    return
+    if json:
+        root.addHandler(JSONHandler(sys.stdout))
+    else:
+        handler = ConsoleHandler(sys.stdout)
+        handler.setFormatter(ResourceFormatter())
+        root.addHandler(handler)
+
+    #root.addHandler(SysLogHandler())

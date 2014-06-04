@@ -22,10 +22,10 @@ import zipfile
 MAIN_PY = """
 import logging
 import sys
-from fuselage import resources, error
-from fuselage.runner import configure_logging, BundledRunner
+from fuselage import resources, error, log
+from fuselage.runner import BundledRunner
 if __name__=="__main__":
-    configure_logging()
+    log.configure()
     logger = logging.getLogger("fuselage")
     try:
         r = BundledRunner.setup_from_cmdline()
