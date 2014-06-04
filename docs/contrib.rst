@@ -16,7 +16,7 @@ For example in your ``fabfile.py`` you might write::
     from fuselage.resources import *
 
     @blueprint
-    def app_server():
+    def deploy():
         """ Deploy configuration to app server cluster """
         yield File(
             name='/tmp/some-thing'
@@ -28,7 +28,7 @@ This task will show up in your fabric task list like any other::
     # fab -l
     Available commands:
 
-        app_server  Deploy configuration to app server cluster
+        deploy  Deploy configuration to app server cluster
 
 
 You can run this against multiple computers::
@@ -74,3 +74,34 @@ The libcloud compute API exposes simple deployment functionality via the ``deplo
         size=sizes[0],
         deploy=step
     )
+
+
+Vagrant
+=======
+
+The easiest way to use fuselage with vagrant is via the `vagrant-fabric`<https://github.com/wutali/vagrant-fabric>_.
+
+You will need to install Virtualbox and Vagrant. Then you can install the ``vagrant-fabric`` plugin::
+
+    vagrant-plugin install vagrant-fabric
+
+You can set up a ``Vagrantfile`` in your project that looks like this::
+
+    # -*- mode: ruby -*-
+    # vi: set ft=ruby :
+
+    #Vagrant.require_plugin "vagrant-fabric"
+
+    # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+    VAGRANTFILE_API_VERSION = "2"
+
+    Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+        config.vm.box = "precise64"
+        config.vm.provision :fabric do |fabric|
+            fabric.fabfile_path = "./fabfile.py"
+            fabric.tasks = ["deploy", ]
+        end
+    end
+
+You can then run ``vagrant up`` to spin up a new Ubuntu Precise VM and run your
+fuselage enabled ``deploy`` task.
