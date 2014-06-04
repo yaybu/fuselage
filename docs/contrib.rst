@@ -79,7 +79,7 @@ The libcloud compute API exposes simple deployment functionality via the ``deplo
 Vagrant
 =======
 
-The easiest way to use fuselage with vagrant is via the `vagrant-fabric`<https://github.com/wutali/vagrant-fabric>_.
+The easiest way to use fuselage with vagrant is via the `vagrant-fabric<https://github.com/wutali/vagrant-fabric>_`.
 
 You will need to install Virtualbox and Vagrant. Then you can install the ``vagrant-fabric`` plugin::
 
