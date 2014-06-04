@@ -195,9 +195,11 @@ def get(path):
 
 
 def put(path, contents, chmod=0o644):
-    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_SYNC, chmod)
-    os.write(fd, contents)
-    os.close(fd)
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC | os.O_SYNC, chmod)
+    try:
+        os.write(fd, contents)
+    finally:
+        os.close(fd)
 
 
 def makedirs(path):
