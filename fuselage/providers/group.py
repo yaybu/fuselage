@@ -71,8 +71,7 @@ class GroupRemove(provider.Provider):
 
     def apply(self):
         try:
-            platform.getgrnam(
-                self.resource.name.encode("utf-8"))
+            platform.getgrnam(self.resource.name)
         except KeyError:
             # If we get a key errror then there is no such group. This is good.
             return False
