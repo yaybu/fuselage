@@ -54,7 +54,7 @@ class Handle(object):
 
         if self.callback:
             for l in data.splitlines():
-                self.callback(l + "\r")
+                self.callback(l)
 
         return True
 

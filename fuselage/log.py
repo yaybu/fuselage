@@ -64,10 +64,9 @@ class ConsoleHandler(logging.StreamHandler):
         self._needs_header = False
 
     def format(self, record):
+        prefix = "| " if self._resource else ""
         formatted = super(ConsoleHandler, self).format(record)
-        if self._resource:
-            return "| " + formatted
-        return formatted
+        return "\n".join(prefix + line for line in formatted.splitlines())
 
     def _render_resource_header(self):
         if isinstance(self._resource, str):
