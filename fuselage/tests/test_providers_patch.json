@@ -1,0 +1,1 @@
+{"fuselage.tests.test_providers_patch.TestPatch.test_path_missing_component": [["exists", false, null], ["makedirs", null, null], ["exists", false, null], ["makedirs", null, null], ["exists", false, null], ["isdir", false, null], ["exists", true, null], ["isdir", true, null], ["exists", true, null], ["isdir", true, null], ["exists", false, null]]}

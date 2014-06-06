@@ -32,7 +32,7 @@ class Patch(provider.Provider):
         for i in frags:
             path = os.path.join(path, i)
             if not platform.exists(path):
-                self.raise_or_log(error.PatchComponentMissing(path))
+                self.raise_or_log(error.PathComponentMissing(path))
             elif not platform.isdir(path):
                 raise error.PathComponentNotDirectory(path)
 
