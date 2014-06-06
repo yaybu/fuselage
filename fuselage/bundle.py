@@ -31,14 +31,17 @@ class ResourceBundle(object):
     BUNDLE_VERSION = 1
 
     def __init__(self):
-        self.resources = []
-        self._index_by_id = {}
+        self.clear()
 
     def __len__(self):
         return len(self.resources)
 
     def __getitem__(self, key):
         return self._index_by_id[key]
+
+    def clear(self):
+        self.resources = []
+        self._index_by_id = {}
 
     def get_resource_by_name(self, target):
         for res in self.resources:

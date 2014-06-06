@@ -128,4 +128,3 @@ class Svn(provider.Provider):
         command = self.get_svn_args(action, *args, **kwargs)
         sc = ShellCommand(command, user=self.resource.user)
         self.change(sc)
-        return sc.returncode, sc.stdout, sc.stderr
