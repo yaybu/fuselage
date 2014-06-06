@@ -69,7 +69,7 @@ class TestCaseWithRunner(TestCaseWithBundle):
 
         orig_check_call = platform.check_call
 
-        def check_call(*args, **kwargs):
+        def check_call(command, *args, **kwargs):
             env = kwargs.pop('env', {})
             env.update(self.chroot.get_env())
             kwargs['env'] = env
@@ -93,7 +93,16 @@ class TestCaseWithRunner(TestCaseWithBundle):
             cwd = kwargs.get('cwd', None)
             kwargs['cwd'] = os.path.join(self.chroot.chroot_path, cwd.lstrip("/")) if cwd else self.chroot.chroot_path
 
-            return orig_check_call(*args, **kwargs)
+            paths = [self.chroot.overlay_dir]
+            if "PATH" in env:
+                paths.extend(os.path.join(env["FAKECHROOT_BASE"], p.lstrip("/")) for p in env["PATH"].split(":"))
+                for p in paths:
+                    path = os.path.join(p, command[0])
+                    if os.path.exists(path):
+                        command[0] = path
+                        break
+
+            return orig_check_call(command, *args, **kwargs)
 
         patch("check_call", check_call)
 
