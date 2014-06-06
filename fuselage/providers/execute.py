@@ -39,7 +39,6 @@ class Execute(provider.Provider):
 
         return False
 
-
     def apply(self):
         creates = self.resource.creates
         if creates and platform.exists(creates):

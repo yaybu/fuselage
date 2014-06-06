@@ -70,7 +70,7 @@ class Recorder(object):
                 results = []
                 exception = "OSError"
             except error.SystemError as e:
-                results = [e.returncode]
+                results = [e.returncode, e.stdout, e.stderr]
                 exception = "SystemError"
             self.results.append((function_name, results, exception))
             if e:

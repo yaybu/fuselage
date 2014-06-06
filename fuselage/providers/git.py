@@ -47,7 +47,7 @@ class Git(provider.Provider):
 
     def info(self, action, *args):
         try:
-            stdout, stderr = platform.check_command(
+            stdout, stderr = platform.check_call(
                 self.get_git_command(action, *args),
                 user=self.resource.user,
                 cwd=self.resource.name,
@@ -182,6 +182,12 @@ class Git(provider.Provider):
             raise error.CheckoutError("Could not check out '%s'" % newref)
 
     def apply(self):
+        if not platform.exists("/usr/bin/git"):
+            self.raise_or_log(error.MissingDependency(
+                "'/usr/bin/git' is not available; update your configuration to install git?"
+            ))
+            return
+
         # If necessary, clone the repository
         if not platform.exists(os.path.join(self.resource.name, ".git")):
             self.action_clone()

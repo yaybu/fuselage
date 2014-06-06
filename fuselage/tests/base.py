@@ -17,7 +17,6 @@ import os
 import unittest
 import logging
 import mock
-import collections
 import fakechroot
 
 from fuselage import bundle, runner, error, platform
@@ -80,7 +79,7 @@ class TestCaseWithRunner(TestCaseWithBundle):
             if group:
                 gid = self.chroot.getgrnam(group).gr_gid
             if gid:
-                env['FAKEROOTGID']  = env['FAKEROOTEGID'] = str(gid)
+                env['FAKEROOTGID'] = env['FAKEROOTEGID'] = str(gid)
                 env['FAKEROOTSGID'] = env['FAKEROOTFGID'] = str(gid)
 
             uid = kwargs.pop('uid', None)
@@ -88,7 +87,7 @@ class TestCaseWithRunner(TestCaseWithBundle):
             if user:
                 uid = self.chroot.getpwnam(user).pw_uid
             if uid:
-                env['FAKEROOTUID']  = env['FAKEROOTEUID'] = str(uid)
+                env['FAKEROOTUID'] = env['FAKEROOTEUID'] = str(uid)
                 env['FAKEROOTSUID'] = env['FAKEROOTFUID'] = str(uid)
 
             cwd = kwargs.get('cwd', None)

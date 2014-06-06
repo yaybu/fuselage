@@ -18,7 +18,7 @@ import logging
 import optparse
 import pkgutil
 
-from fuselage import bundle, error, event, log, platform
+from fuselage import bundle, error, event, platform
 
 logger = logging.getLogger(__name__)
 

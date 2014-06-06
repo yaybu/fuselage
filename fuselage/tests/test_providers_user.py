@@ -27,7 +27,7 @@ class TestUser(TestCaseWithRunner):
     def test_disabled_login(self):
         self.bundle.add(User(name="test", disabled_login=True))
         self.check_apply()
-        user = platform.getpwnam("test")
+        platform.getpwnam("test")
 
     def test_user_with_home(self):
         self.bundle.add(User(name="test", home="/home/foo"))

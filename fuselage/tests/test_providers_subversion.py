@@ -14,7 +14,7 @@
 
 from fuselage.tests.base import TestCaseWithRunner
 from fuselage.resources import Package, Checkout
-from fuselage import error, platform
+from fuselage import error
 
 
 class TestSubversion(TestCaseWithRunner):

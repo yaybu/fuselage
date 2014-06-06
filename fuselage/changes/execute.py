@@ -23,7 +23,7 @@ from fuselage.changes import base
 def shlex_split(command):
     if not isinstance(command, str):
         if isinstance(command, six.text_type):
-            command = command.encode('utf-8')    
+            command = command.encode('utf-8')
         elif isinstance(command, six.byte_type):
             command = command.decode('utf-8')
     return shlex.split(command)
@@ -97,9 +97,8 @@ class ShellCommand(base.Change):
                 ctx.raise_or_log(error.InvalidGroup("User '%s' not found" % self.group))
 
         if self.cwd:
-            if not os.path.isdir(self.cwd):
+            if not platform.isdir(self.cwd):
                 ctx.raise_or_log(error.PathComponentNotDirectory("%r not a directory" % self.cwd))
-
 
         if ctx.simulate:
             self.returncode = 0
