@@ -38,8 +38,7 @@ class Mount(provider.Provider):
                 raise error.PathComponentNotDirectory(path)
 
     def get_all_active_mounts(self):
-        with open("/proc/mounts", "r") as fp:
-            path = fp.read()
+        path = platform.get("/proc/mounts")
         d = {}
         for line in path.split("\n"):
             if not line.strip():
