@@ -75,7 +75,7 @@ class _ServiceMixin(object):
         pass
 
     def get_command(self, action):
-        return shlex.split(getattr(self.resource, action).encode("utf-8"))
+        return shlex.split(getattr(self.resource, action))
 
 
 class Start(_ServiceMixin, provider.Provider):
