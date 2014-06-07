@@ -24,30 +24,41 @@ class _ServiceMixin(object):
 
     def status(self):
         if self.resource.running:
-            rc, stdout, stderr = platform.check_call(self.resource.running)
-            if rc == 0:
-                return "running"
-            else:
+            self.logger.debug("Running %r to determine if already running" % self.resource.running)
+            try:
+                platform.check_call(shlex.split(self.resource.running))
+            except error.SystemError as e:
+                self.logger.debug("Got exit code %d. Assuming not running." % (e.returncode, ))
                 return "not-running"
+            else:
+                self.logger.debug("Got exit code 0. Assuming running.")
+                return "running"
 
         if not self.resource.pidfile:
+            self.logger.debug("Neither 'pidfile' nor 'running' option is set. Cannot determine service state.")
             return "unknown"
 
+        self.logger.debug("Using pidfile %r to determine service state" % (self.resource.pidfile, ))
+
         if not platform.exists(self.resource.pidfile):
+            self.logger.debug("The pidfile does not exist, service not running")
             return "not-running"
 
         try:
-            pid = int(platform.get(self.resource.pidfile))
+            pid = int(platform.get(self.resource.pidfile).strip())
         except:
+            self.logger.debug("The pidfile could not be understood (should just contain a single int). Cannot determine service state.")
             return "unknown"
 
         # if platform.exists("/proc/%s" % pid):
         #     return "running"
 
         try:
-            os.kill(0, pid)
+            platform.check_call(["kill", "-n", "0", str(pid)])
+            self.logger.debug("Service is running.")
             return "running"
-        except OSError:
+        except error.SystemError:
+            self.logger.debug("Unable to kill(0) pid %d - service is not running." % pid)
             return "not-running"
 
     def do(self, action):
@@ -71,7 +82,7 @@ class Start(_ServiceMixin, provider.Provider):
 
     policies = (resources.service.ServiceStartPolicy,)
 
-    def apply(self, output):
+    def apply(self):
         changed = self.ensure_enabled()
 
         if self.status() == "running":
@@ -86,7 +97,7 @@ class Stop(_ServiceMixin, provider.Provider):
 
     policies = (resources.service.ServiceStopPolicy,)
 
-    def apply(self, output):
+    def apply(self):
         changed = self.ensure_disabled()
 
         if self.status() == "not-running":
@@ -101,7 +112,7 @@ class Restart(_ServiceMixin, provider.Provider):
 
     policies = (resources.service.ServiceRestartPolicy,)
 
-    def apply(self, output):
+    def apply(self):
         self.ensure_enabled()
 
         if self.status() == "not-running":
