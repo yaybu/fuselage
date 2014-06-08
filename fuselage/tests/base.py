@@ -93,6 +93,7 @@ class TestCaseWithRunner(TestCaseWithBundle):
             cwd = kwargs.get('cwd', None)
             kwargs['cwd'] = os.path.join(self.chroot.chroot_path, cwd.lstrip("/")) if cwd else self.chroot.chroot_path
 
+            command = list(command)
             paths = [self.chroot.overlay_dir]
             if "PATH" in env:
                 paths.extend(os.path.join(env["FAKECHROOT_BASE"], p.lstrip("/")) for p in env["PATH"].split(":"))

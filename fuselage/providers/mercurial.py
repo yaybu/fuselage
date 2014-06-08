@@ -160,6 +160,12 @@ class Mercurial(provider.Provider):
         ))
 
     def apply(self):
+        if not platform.exists("/usr/bin/hg"):
+            self.raise_or_log(error.MissingDependency(
+                "'/usr/bin/hg' is not available; update your configuration to install mercurial?"
+            ))
+            return
+
         created = False
         changed = False
 
@@ -184,7 +190,7 @@ class Mercurial(provider.Provider):
                 self.resource.user,
                 self.resource.group,
                 0o600,
-                True))
+                ))
             # changed = changed or f.changed
         except error.SystemError:
             raise error.CheckoutError("Could not set the remote repository.")
@@ -197,7 +203,7 @@ class Mercurial(provider.Provider):
                 self.resource.user,
                 self.resource.group,
                 0o600,
-                True))
+                ))
             # changed = changed or f.changed
         except error.SystemError:
             raise error.CheckoutError(
