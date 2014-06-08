@@ -16,6 +16,7 @@ import errno
 import subprocess
 import os
 import select
+import six
 
 try:
     import pwd
@@ -46,9 +47,15 @@ class Handle(object):
 
     def read(self):
         data = os.read(self.fileno(), 1024)
-        if data == "":
+        if not data:
             self.handle.close()
             return False
+
+        if not isinstance(data, str):
+            if isinstance(data, six.text_type):
+                data = data.encode("utf-8")
+            elif isinstance(data, six.binary_type):
+                data = data.decode("utf-8")
 
         self._output.append(data)
 
@@ -197,7 +204,7 @@ def get(path):
 def put(path, contents, chmod=0o644):
     fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC | os.O_SYNC, chmod)
     try:
-        os.write(fd, contents)
+        os.write(fd, contents.encode("utf-8"))
     finally:
         os.close(fd)
 
