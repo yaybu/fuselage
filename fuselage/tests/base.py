@@ -19,7 +19,7 @@ import logging
 import mock
 import fakechroot
 
-from fuselage import bundle, runner, error, platform
+from fuselage import bundle, runner, error, platform, log
 from .recorder import Player, Recorder
 
 
@@ -37,7 +37,7 @@ class TestCaseWithRunner(TestCaseWithBundle):
     location = os.path.join(os.path.dirname(__file__), "..", "..")
 
     def setUp(self):
-        logging.getLogger().setLevel(logging.DEBUG)
+        log.configure(verbosity=logging.DEBUG, force=True)
 
         self.logger = logging.getLogger(__name__)
 

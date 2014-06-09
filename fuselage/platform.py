@@ -16,7 +16,6 @@ import errno
 import subprocess
 import os
 import select
-import six
 
 try:
     import pwd

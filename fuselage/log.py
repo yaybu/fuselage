@@ -138,16 +138,19 @@ class SysLogHandler(logging.handlers.SysLogHandler):
         return 1
 
 
-def configure(json=False):
+def configure(verbosity=logging.INFO, json=False, force=False):
     root = logging.getLogger()
     root.setLevel(logging.DEBUG)
 
-    #if len(root.handlers) != 0:
-    #    return
+    if len(root.handlers) != 0:
+        if not force:
+            return
+        root.handlers[:] = []
+
     if json:
         root.addHandler(JSONHandler(sys.stdout))
     else:
-        handler = ConsoleHandler(sys.stdout)
+        handler = ConsoleHandler(sys.stdout, level=verbosity)
         handler.setFormatter(ResourceFormatter())
         root.addHandler(handler)
 
