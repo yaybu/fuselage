@@ -20,15 +20,6 @@ from fuselage import error, platform
 from fuselage.changes import base
 
 
-def shlex_split(command):
-    if not isinstance(command, str):
-        if isinstance(command, six.text_type):
-            command = command.encode('utf-8')
-        elif isinstance(command, six.byte_type):
-            command = command.decode('utf-8')
-    return shlex.split(command)
-
-
 class ShellCommand(base.Change):
 
     """ Execute and log a change """
@@ -77,7 +68,7 @@ class ShellCommand(base.Change):
         if isinstance(self.command, list):
             logas = command = self.command
         elif isinstance(self.command, six.string_types):
-            logas = command = shlex_split(self.command)
+            logas = command = shlex.split(self.command)
 
         ctx.changelog.critical('# ' + ' '.join(logas))
 

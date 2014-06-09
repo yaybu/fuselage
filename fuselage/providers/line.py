@@ -17,6 +17,7 @@ import re
 
 from fuselage import error, resources, provider, platform
 from fuselage.changes import EnsureContents
+from fuselage.utils import force_str
 
 
 class _LineMixin(object):
@@ -26,10 +27,8 @@ class _LineMixin(object):
             self.raise_or_log(error.PathComponentMissing("File '%s' is missing" % self.resource.name))
             return
 
-        lines = platform.get(self.resource.name).splitlines()
-        contents = os.linesep.join(
-            line.decode("utf-8") for line in self.filter_lines(lines)
-        ).encode("utf-8")
+        lines = force_str(platform.get(self.resource.name)).splitlines()
+        contents = os.linesep.join(line for line in self.filter_lines(lines))
 
         fc = EnsureContents(
             self.resource.name,

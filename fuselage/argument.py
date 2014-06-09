@@ -19,6 +19,7 @@ import unicodedata
 import random
 
 from fuselage import error
+from fuselage.utils import force_str
 
 
 class Argument(object):
@@ -67,7 +68,7 @@ class Boolean(Argument):
     to be True boolean values. Anything else is False. """
 
     def __set__(self, instance, value):
-        if isinstance(value, six.string_types):
+        if isinstance(value, six.text_type):
             if value.lower() in ("1", "yes", "on", "true"):
                 value = True
             else:
@@ -87,13 +88,8 @@ class String(Argument):
         UNICODE_TYPE = str
 
     def __set__(self, instance, value):
-        if value is None:
-            pass
-        if not isinstance(value, str):
-            if isinstance(value, six.binary_type):
-                value = value.decode("utf-8")
-            elif isinstance(value, six.text_type):
-                value = value.encode("utf-8")
+        if value is not None:
+            value = force_str(value)
         setattr(instance, self.arg_id, value)
 
     @classmethod

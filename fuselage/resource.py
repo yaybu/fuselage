@@ -17,7 +17,7 @@ import six
 
 from fuselage.argument import Argument, List, SubscriptionArgument, PolicyArgument, String
 from fuselage import policy, error, log
-
+from fuselage.utils import force_str
 
 logger = logging.getLogger(__name__)
 
@@ -203,10 +203,7 @@ class Resource(six.with_metaclass(ResourceType)):
 
     @property
     def id(self):
-        if isinstance(self.name, str):
-            name = self.name
-        elif isinstance(self.name, six.text_type):
-            name = self.name.encode('utf-8')
+        name = force_str(self.name)
         classname = getattr(self, '__resource_name__', self.__class__.__name__)
         return "%s[%s]" % (classname, name)
 

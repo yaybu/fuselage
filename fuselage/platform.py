@@ -33,6 +33,7 @@ except ImportError:  # pragma: no cover
 
 
 from fuselage import error
+from fuselage.utils import force_str
 
 
 class Handle(object):
@@ -51,11 +52,7 @@ class Handle(object):
             self.handle.close()
             return False
 
-        if not isinstance(data, str):
-            if isinstance(data, six.text_type):
-                data = data.encode("utf-8")
-            elif isinstance(data, six.binary_type):
-                data = data.decode("utf-8")
+        data = force_str(data)
 
         self._output.append(data)
 
