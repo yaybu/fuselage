@@ -23,7 +23,7 @@ class _LineMixin(object):
 
     def apply(self):
         if not platform.exists(self.resource.name):
-            self.raise_or_log(error.PatchComponentMissing("File '%s' is missing" % self.resource.name))
+            self.raise_or_log(error.PathComponentMissing("File '%s' is missing" % self.resource.name))
             return
 
         lines = platform.get(self.resource.name).splitlines()

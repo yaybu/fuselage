@@ -13,8 +13,6 @@
 # limitations under the License.
 
 import os
-import mock
-import six
 import unittest
 
 from fuselage import platform, error
@@ -31,7 +29,7 @@ class TestPlatform(unittest.TestCase):
 
     def test_exists_file(self):
         self.assertEqual(True, platform.exists(__file__))
-    
+
     def test_exists_dir(self):
         self.assertEqual(True, platform.exists(os.getcwd()))
 
