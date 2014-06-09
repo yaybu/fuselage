@@ -54,7 +54,7 @@ class ResourceFormatter(logging.Formatter):
         return formatted
 
 
-class ConsoleHandler(object, logging.StreamHandler):
+class ConsoleHandler(logging.StreamHandler, object):
 
     def __init__(self, stream=sys.stdout, level=logging.INFO):
         super(ConsoleHandler, self).__init__(stream)
