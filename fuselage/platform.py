@@ -151,10 +151,12 @@ class Process(subprocess.Popen):
 def check_call(command, *args, **kwargs):
     logger = kwargs.pop('logger', None)
     expected = kwargs.pop('expected', 0)
+    stdin = kwargs.pop('stdin', None)
+    kwargs['stdin'] = subprocess.PIPE if stdin else None
     p = Process(command, *args, **kwargs)
     if logger:
         p.attach_callback(logger.info)
-    stdout, stderr = p.communicate()
+    stdout, stderr = p.communicate(stdin=stdin)
     p.wait()
     if expected is not None and p.returncode != expected:
         raise error.SystemError(p.returncode, stdout, stderr)

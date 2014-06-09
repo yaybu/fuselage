@@ -14,7 +14,7 @@
 
 from fuselage.tests.base import TestCaseWithRunner
 from fuselage.resources import Patch
-from fuselage import error
+from fuselage import error, platform
 
 
 EMPTY_FILE_DIFF = """
@@ -34,3 +34,12 @@ class TestPatch(TestCaseWithRunner):
             patch=EMPTY_FILE_DIFF,
         ))
         self.assertRaises(error.PathComponentMissing, self.apply)
+
+    def test_simple_patch(self):
+        platform.put("/etc/simple_patch", "")
+        self.bundle.add(Patch(
+            name="/etc/simple_patch.out",
+            source="/etc/simple_patch",
+            patch=EMPTY_FILE_DIFF,
+        ))
+        self.check_apply()

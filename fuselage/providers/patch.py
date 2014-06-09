@@ -37,8 +37,7 @@ class Patch(provider.Provider):
                 raise error.PathComponentNotDirectory(path)
 
     def apply_patch(self):
-        patch = self.get_file(self.resource.patch)
-
+        patch = self.resource.patch
         try:
             stdout, stderr = platform.check_call(
                 command=[

@@ -60,7 +60,7 @@ class Patch(Resource):
     with a digit will be interpreted as a GID, otherwise it will be looked up
     using the python 'grp' module."""
 
-    mode = Octal(default="644")
+    mode = Octal(default=0o644)
     """A mode representation as an octal. This can begin with leading zeros if
     you like, but this is not required. DO NOT use yaml Octal representation
     (0o666), this will NOT work."""
