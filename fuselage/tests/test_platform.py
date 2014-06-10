@@ -148,5 +148,4 @@ class TestPlatform(unittest.TestCase):
 
     def test_getspnam(self):
         if platform.spwd_supported():
-            u = platform.getpwuid(os.getuid())
-            platform.getspnam(u.pw_name)
+            platform.getspnam("root")
