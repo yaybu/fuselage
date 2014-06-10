@@ -148,4 +148,7 @@ class TestPlatform(unittest.TestCase):
 
     def test_getspnam(self):
         if platform.spwd_supported():
-            platform.getspnam("root")
+            passwords = platform.getspall()
+            if not passwords:
+                return
+            platform.getspnam(passwords[0].sp_nam)
