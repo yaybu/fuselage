@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 from fuselage import resources, provider, platform
 from fuselage.changes import ShellCommand
 
@@ -25,8 +27,15 @@ class Mounted(provider.Provider):
         return resource.scm in ("dummy", "mounted", "mount")
 
     def apply(self):
-        for w in self.resource.watch:
-            if platform.exists(w):
-                self.change(ShellCommand(["touch", "-ac", w]))
+        if not platform.exists(self.resource.name):
+            return self.raise_or_log(error.PathComponentMissing(self.resource.name))
 
+        for path in self.resource.changes:
+            if platform.exists(path):
+                self.logger.debug("Faking changes to %s" % (path, ))
+                self.change(ShellCommand(["touch", "-ac", path]))
+            else:
+                self.logger.debug("Not faking changes to %s (file not present)" % (path, ))
+
+        self.logger.debug("Faking that checkout changed")
         return True
