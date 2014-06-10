@@ -16,7 +16,7 @@ For example in your ``fabfile.py`` you might write::
     from fuselage.resources import *
 
     @blueprint
-    def deploy():
+    def deploy(bundle):
         """ Deploy configuration to app server cluster """
         yield File(
             name='/tmp/some-thing'

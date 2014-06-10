@@ -31,7 +31,7 @@ You can write simple deployment scripts with Fabric by adding this to your fabfi
     from fuselage.resources import *
 
     @blueprint
-    def app_server():
+    def app_server(bundle):
         yield File(
             name='/tmp/some-thing'
         )

@@ -52,7 +52,7 @@ class TestFabric(unittest.TestCase):
             return
 
         @fabric.blueprint
-        def example():
+        def example(bundle):
             yield resources.File(name='/tmp/hello')
         example()
         self.assertEqual(self.sudo.called, True)
@@ -67,7 +67,7 @@ class TestFabric(unittest.TestCase):
             return
 
         @fabric.blueprint
-        def example():
+        def example(bundle):
             yield resources.File(nam='/tmp/hello')
         self.assertRaises(FabricError, example)
         self.assertEqual(self.sudo.called, False)

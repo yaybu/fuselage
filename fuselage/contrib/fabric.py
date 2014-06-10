@@ -30,7 +30,11 @@ class DeploymentTask(tasks.WrappedCallableTask):
 
     def get_resource_bundle(self, *args, **kwargs):
         bun = bundle.ResourceBundle()
-        iterator = self.wrapped(*args, **kwargs)
+        iterator = self.wrapped(bun, *args, **kwargs)
+
+        if not iterator:
+            return bun
+
         while True:
             try:
                 resource = iterator.next()
