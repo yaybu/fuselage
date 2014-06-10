@@ -146,7 +146,7 @@ class Integer(Argument):
 
     @classmethod
     def _generate_valid(self):
-        return random.randint(0, sys.maxint)
+        return random.randint(0, sys.maxsize)
 
 
 class Octal(Integer):
