@@ -15,7 +15,6 @@
 import six
 import sys
 from abc import ABCMeta, abstractmethod
-import unicodedata
 import random
 
 from fuselage import error
@@ -77,15 +76,14 @@ class Boolean(Argument):
             value = bool(value)
         setattr(instance, self.arg_id, value)
 
+    @classmethod
+    def _generate_valid(self):
+        return random.choice([True, False])
+
 
 class String(Argument):
 
     """ Represents a string. """
-
-    try:
-        UNICODE_TYPE = unicode
-    except NameError:
-        UNICODE_TYPE = str
 
     def __set__(self, instance, value):
         if value is not None:
@@ -93,20 +91,28 @@ class String(Argument):
         setattr(instance, self.arg_id, value)
 
     @classmethod
-    def _get_unicode_glyphs(self):
-        return ''.join(
-            six.unichr(char)
-            for char in range(sys.maxunicode + 1)
-            if unicodedata.category(six.unichr(char))[0] in ('LMNPSZ')
-        )
-
-    @classmethod
     def _generate_valid(self):
-        unicode_glyphs = self._get_unicode_glyphs()
-        l = []
+        glyphs = []
         for i in range(random.randint(0, 1024)):
-            l.append(random.choice(unicode_glyphs))
-        return "".join(l)
+            glyphs.append(random.choice([
+                u"\u2603",
+                u"\U0001F42D",
+                "/",
+                "1",
+                "+",
+                "-",
+                ".",
+                "`",
+                "\"",
+                "'",
+                "a",
+                "b",
+                "c",
+                "d",
+                "E",
+                "F",
+                ]))
+        return "".join(glyphs)
 
 
 class FullPath(String):
@@ -121,12 +127,7 @@ class FullPath(String):
 
     @classmethod
     def _generate_valid(self):
-        # TODO: needs work
-        unicode_glyphs = self._get_unicode_glyphs()
-        l = []
-        for i in range(random.randint(0, 1024)):
-            l.append(random.choice(unicode_glyphs))
-        return "/" + "".join(l)
+        return "/" + super(FullPath, self)._generate_valid()
 
 
 class Integer(Argument):
@@ -184,6 +185,9 @@ class File(Argument):
     def __set__(self, instance, value):
         setattr(instance, self.arg_id, value)
 
+    def _generate_valid(self):
+        return '/tmp/foo'
+
 
 class PolicyTrigger:
 
@@ -222,6 +226,9 @@ class SubscriptionArgument(Argument):
             policy.append(t.on)
         return policy
 
+    def _generate_valid(self):
+        return []
+
 
 class PolicyArgument(Argument):
 
@@ -241,3 +248,6 @@ class PolicyArgument(Argument):
         if not hasattr(instance, self.arg_id):
             return
         return getattr(instance, self.arg_id).name
+
+    def _generate_valid(self):
+        return "invalid-policy"

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fuselage.tests.base import TestCaseWithBundle
+from fuselage.tests.base import TestCaseWithBundle, fuzz_resource
 from fuselage.resources import Link
 
 
@@ -24,3 +24,6 @@ class TestLink(TestCaseWithBundle):
             to='/dev',
         ))
         self.assertEqual(r.name, '/tmp/my-link')
+
+    def test_fuzz(self):
+        fuzz_resource(Link)

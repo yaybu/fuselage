@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fuselage.tests.base import TestCaseWithBundle
+from fuselage.tests.base import TestCaseWithBundle, fuzz_resource
 from fuselage.resources import Package
 
 
@@ -23,3 +23,6 @@ class TestPackage(TestCaseWithBundle):
             name='ubuntu-desktop',
         ))
         self.assertEqual(r.name, 'ubuntu-desktop')
+
+    def test_fuzz(self):
+        fuzz_resource(Package)

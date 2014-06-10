@@ -26,6 +26,17 @@ from .recorder import Player, Recorder
 logger = logging.getLogger()
 
 
+def fuzz_resource(klass, iterations=100):
+    for i in range(iterations):
+        kwargs = {}
+        for name, arg in klass.__args__.items():
+            kwargs[name] = arg._generate_valid()
+        try:
+            klass(**kwargs)
+        except error.Error:
+            pass
+
+
 class TestCaseWithBundle(unittest.TestCase):
 
     def setUp(self):

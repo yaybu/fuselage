@@ -24,6 +24,7 @@ class TestArguments(unittest.TestCase):
     def test_octal(self):
         class R_test_octal(resource.Resource):
             a = argument.Octal()
+        self.assertTrue(isinstance(R_test_octal.a, argument.Octal))
         r = R_test_octal(name="test")
         r.a = "666"
         self.assertEqual(r.a, 438)
@@ -33,6 +34,7 @@ class TestArguments(unittest.TestCase):
     def test_string(self):
         class R_test_string(resource.Resource):
             a = argument.String()
+        self.assertTrue(isinstance(R_test_string.a, argument.String))
         r = R_test_string(name="test")
         r.a = "foo"
         self.assertEqual(r.a, "foo")
@@ -42,6 +44,7 @@ class TestArguments(unittest.TestCase):
     def test_integer(self):
         class R_test_integer(resource.Resource):
             a = argument.Integer()
+        self.assertTrue(isinstance(R_test_integer.a, argument.Integer))
         r = R_test_integer(name="test")
         r.a = 10
         self.assertEqual(r.a, 10)
@@ -49,3 +52,21 @@ class TestArguments(unittest.TestCase):
         self.assertEqual(r.a, 10)
         r.a = 10.5
         self.assertEqual(r.a, 10)
+
+    def test_boolean(self):
+        class R_test_bool(resource.Resource):
+            a = argument.Boolean()
+        self.assertTrue(isinstance(R_test_bool.a, argument.Boolean))
+        r = R_test_bool(name="test")
+        r.a = True
+        self.assertEqual(r.a, True)
+        r.a = False
+        self.assertEqual(r.a, False)
+        r.a = "ON"
+        self.assertEqual(r.a, True)
+        r.a = "yes"
+        self.assertEqual(r.a, True)
+        r.a = "1"
+        self.assertEqual(r.a, True)
+        #r.a = "off"
+        #self.assertEqual(r.a, False)
