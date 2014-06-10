@@ -15,8 +15,7 @@
 
 import unittest
 
-from fuselage import argument
-from fuselage import resource
+from fuselage import argument, resource, error
 
 
 class TestArguments(unittest.TestCase):
@@ -53,6 +52,8 @@ class TestArguments(unittest.TestCase):
         r.a = 10.5
         self.assertEqual(r.a, 10)
 
+        self.assertRaises(error.ParseError, setattr, r, "a", "one")
+
     def test_boolean(self):
         class R_test_bool(resource.Resource):
             a = argument.Boolean()
@@ -70,3 +71,9 @@ class TestArguments(unittest.TestCase):
         self.assertEqual(r.a, True)
         #r.a = "off"
         #self.assertEqual(r.a, False)
+
+    def test_full_path(self):
+        class R_test_full_path(resource.Resource):
+            a = argument.FullPath()
+        self.assertTrue(isinstance(R_test_full_path.a, argument.FullPath))
+        self.assertRaises(error.ParseError, R_test_full_path, name="test", a="test")
