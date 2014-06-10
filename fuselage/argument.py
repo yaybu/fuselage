@@ -111,7 +111,7 @@ class String(Argument):
                 "d",
                 "E",
                 "F",
-                ]))
+            ]))
         return "".join(glyphs)
 
 

@@ -159,4 +159,3 @@ class TestOR(unittest.TestCase):
     def test_false_and_false(self):
         t, d = self.setUpAnd(None, None)
         self.assertEqual(False, t)
-

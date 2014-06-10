@@ -14,7 +14,7 @@
 
 from fuselage.tests.base import TestCaseWithRunner
 from fuselage.resources import Checkout, Directory, File
-from fuselage import platform, error
+from fuselage import platform
 
 
 class TestDummyCheckout(TestCaseWithRunner):

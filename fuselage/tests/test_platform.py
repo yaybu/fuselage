@@ -14,6 +14,8 @@
 
 import os
 import unittest
+import tempfile
+import shutil
 
 from fuselage import platform, error
 
@@ -34,10 +36,10 @@ class TestPlatform(unittest.TestCase):
         self.assertEqual(True, platform.exists(os.getcwd()))
 
     def test_isfile_TRUE(self):
-        self.assertEqual(False, platform.isdir(__file__))
+        self.assertEqual(True, platform.isfile(__file__))
 
     def test_isfile_FALSE(self):
-        self.assertEqual(True, platform.isdir(os.getcwd()))
+        self.assertEqual(False, platform.isfile(os.getcwd()))
 
     def test_isdir_TRUE(self):
         self.assertEqual(True, platform.isdir(os.getcwd()))
@@ -45,9 +47,44 @@ class TestPlatform(unittest.TestCase):
     def test_isdir_FALSE(self):
         self.assertEqual(False, platform.isdir(__file__))
 
+    def test_islink_TRUE(self):
+        p = __file__ + "test_islink_TRUE"
+        os.symlink(__file__, p)
+        try:
+            self.assertEqual(True, platform.islink(p))
+        finally:
+            os.unlink(p)
+
+    def test_islink_FALSE(self):
+        self.assertEqual(False, platform.islink(__file__))
+
     def test_stat(self):
         # FIXME: Make some assertions!!
         platform.stat(__file__)
+
+    def test_lexists_TRUE(self):
+        p = __file__ + "test_lexists_TRUE"
+        os.symlink(__file__, p)
+        try:
+            self.assertEqual(True, platform.lexists(p))
+        finally:
+            os.unlink(p)
+
+    def test_readlink(self):
+        p = __file__ + "test_readlink"
+        os.symlink(__file__, p)
+        try:
+            self.assertEqual(platform.readlink(p), __file__)
+        finally:
+            os.unlink(p)
+
+    def test_lstat(self):
+        p = __file__ + "test_lstat"
+        os.symlink(__file__, p)
+        try:
+            platform.lstat(p)
+        finally:
+            os.unlink(p)
 
     def test_get(self):
         self.assertTrue("platform" in platform.get(__file__))
@@ -70,14 +107,46 @@ class TestPlatform(unittest.TestCase):
         finally:
             platform.unlink(path)
 
+    def test_makedirs(self):
+        d1 = tempfile.mkdtemp()
+        d2 = os.path.join(d1, "test_makedirs")
+        try:
+            platform.makedirs(d2)
+            self.assertTrue(platform.isdir(d2))
+        finally:
+            shutil.rmtree(d1)
+
     def test_getgrall(self):
         if platform.gr_supported():
             self.assertTrue(isinstance(platform.getgrall(), list))
+
+    def test_getgrgid(self):
+        if platform.gr_supported():
+            platform.getgrgid(os.getgid())
+
+    def test_getgrname(self):
+        if platform.gr_supported():
+            grp = platform.getgrgid(os.getgid())
+            platform.getgrnam(grp.gr_name)
 
     def test_getpwall(self):
         if platform.pwd_supported():
             self.assertTrue(isinstance(platform.getpwall(), list))
 
+    def test_getpwuid(self):
+        if platform.pwd_supported():
+            platform.getgrgid(os.getgid())
+
+    def test_getpwnam(self):
+        if platform.pwd_supported():
+            u = platform.getpwuid(os.getuid())
+            platform.getpwnam(u.pw_name)
+
     def test_getspall(self):
         if platform.spwd_supported():
             self.assertTrue(isinstance(platform.getspall(), list))
+
+    def test_getspnam(self):
+        if platform.spwd_supported():
+            u = platform.getpwuid(os.getuid())
+            platform.getspnam(u.pw_name)
