@@ -54,11 +54,6 @@ class Policy(six.with_metaclass(PolicyType)):
     def __init__(self, resource):
         self.resource = resource
 
-    def conforms(self):
-        """ Test if the provided resource conforms to the signature for this
-        policy. """
-        return AND(*self.signature).test(self.resource)
-
     def validate(self):
         a = AND(*self.signature)
         if a.test(self.resource):
