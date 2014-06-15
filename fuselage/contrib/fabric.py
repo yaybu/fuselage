@@ -63,10 +63,13 @@ class DeploymentTask(tasks.WrappedCallableTask):
         bu.embed_resource_bundle(bun)
         bu.close()
 
-        put(buffer, '~/payload.pex', mode=755)
+        uploaded = put(buffer, '~/payload.pex', mode=755)
+        if uploaded.failed:
+            utils.error("Could not upload fuselange bundle to target. Aborting.")
+            return
 
         with settings(warn_only=True):
-            result = sudo('~/payload.pex')
+            result = sudo(uploaded[0])
 
             if not result.return_code in (0, 254):
                 utils.error("Could not apply fuselage blueprint. Aborting.")
