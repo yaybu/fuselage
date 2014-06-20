@@ -86,9 +86,11 @@ class AptUninstall(provider.Provider):
             "DEBIAN_FRONTEND": "noninteractive",
         }
 
-        command = ["apt-get", "remove", "-q", "-y"]
+        command = ['dpkg', '--force-remove-essential']
         if self.resource.purge:
             command.append("--purge")
+        else:
+            command.append("--remove")
         command.append(self.resource.name)
 
         try:
