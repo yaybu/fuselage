@@ -32,7 +32,7 @@ except ImportError:  # pragma: no cover
 
 
 from fuselage import error
-from fuselage.utils import force_str
+from fuselage.utils import force_str, force_bytes
 
 
 class Handle(object):
@@ -202,7 +202,7 @@ def get(path):
 def put(path, contents, chmod=0o644):
     fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC | os.O_SYNC, chmod)
     try:
-        os.write(fd, contents.encode("utf-8"))
+        os.write(fd, force_bytes(contents))
     finally:
         os.close(fd)
 
