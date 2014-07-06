@@ -31,12 +31,38 @@ You can write simple deployment scripts with Fabric by adding this to your fabfi
     from fuselage.resources import *
 
     @blueprint
-    def app_server(bundle):
+    def minecraft(bundle):
+        yield Directory(
+            name='/var/local/minecraft',
+        )
+        yield Execute(
+            name='wget https://s3.amazonaws.com/Minecraft.Download/versions/1.6.2/minecraft_server.1.6.2.jar',
+            cwd="/var/local/minecraft",
+            creates="/var/local/minecraft/minecraft_server.1.6.2.jar",
+        )
         yield File(
-            name='/tmp/some-thing'
+            name='/var/local/minecraft/server.properties',
+            contents=open('var_local_minecraft_server.properties').read(),
+        )
+        yield File(
+            name="/etc/systemd/system/minecraft.service",
+            contents=open("etc_systemd_system_minecraft.service"),
+        )
+        yield Execute(
+            name="systemctl-daemon-reload-minecraft",
+            command="systemctl daemon-reload",
+            watches=['/etc/systemd/system/minecraft.service'],
+        )
+        yield Execute(
+            name="systemctl-restart-minecraft",
+            command="systemctl restart minecraft.service",
+            watches=[
+                "/var/local/minecraft/server.properties",
+                "/etc/systemd/system/minecraft.service",
+            ]
         )
 
 And then run it against multiple servers::
 
-    fab -H server1,server2,server3 app_server
+    fab -H server1,server2,server3 minecraft
 
