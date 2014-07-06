@@ -24,6 +24,7 @@ def force_str(s):
         return s.decode("utf-8")
     raise ValueError("Not a string")
 
+
 def force_bytes(s):
     if isinstance(s, six.binary_type):
         return s
