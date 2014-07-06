@@ -43,6 +43,7 @@ class TestFabric(unittest.TestCase):
         self.error = self.utils.error
         self.error.side_effect = FabricError()
         self.sudo.return_value.return_code = 0
+        self.put.return_value.failed = []
 
     def cleanUp(self):
         [x.stop() for x in self.cleanup()]
