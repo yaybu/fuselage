@@ -5,7 +5,8 @@ fuselage
 0.0.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Extend changes.ShellCommand so that it can be instructed to log something
+  other than command.
 
 
 0.0.1 (2014-07-06)

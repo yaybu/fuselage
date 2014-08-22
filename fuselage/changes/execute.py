@@ -26,9 +26,23 @@ class ShellCommand(base.Change):
 
     changed = True
 
-    def __init__(self, command, shell=None, stdin=None, cwd=None, env=None, user="root", group=None, umask=None, expected=0):
-        self.command = command
-        self.shell = shell
+    def __init__(self, command, shell=None, stdin=None, cwd=None, env=None, user="root", group=None, umask=None, expected=0, logas=None):
+        if isinstance(command, list):
+            self.command = command
+        elif isinstance(command, six.string_types):
+            self.command = shlex.split(command)
+        else:
+            raise RuntimeError("'command' must be a list or string")
+
+        # Commands can be logged differently to what is executed, so that passwords aren't revealed
+        if logas:
+            if isinstance(logas, six.string_types):
+                self.logas = shlex.split(self.command)
+            else:
+                self.logas = logas
+        else:
+            self.logas = self.command
+
         self.stdin = stdin
         self.cwd = cwd
 
@@ -65,10 +79,7 @@ class ShellCommand(base.Change):
                 return True
 
     def apply(self, ctx):
-        if isinstance(self.command, list):
-            logas = command = self.command
-        elif isinstance(self.command, six.string_types):
-            logas = command = shlex.split(self.command)
+        command, logas = self.command, self.logas
 
         ctx.changelog.critical('# ' + ' '.join(logas))
 
