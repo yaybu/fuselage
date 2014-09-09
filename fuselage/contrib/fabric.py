@@ -68,12 +68,16 @@ class DeploymentTask(tasks.WrappedCallableTask):
             utils.error("Could not upload fuselange bundle to target. Aborting.")
             return
 
-        with settings(warn_only=True):
-            result = sudo(uploaded[0])
+        try:
+            with settings(warn_only=True):
+                result = sudo(uploaded[0])
 
-            if not result.return_code in (0, 254):
-                utils.error("Could not apply fuselage blueprint. Aborting.")
-                return
+                if not result.return_code in (0, 254):
+                    utils.error("Could not apply fuselage blueprint. Aborting.")
+                    return
+
+        finally:
+            sudo("rm %s" % uploaded[0])
 
     def __call__(self, *args, **kwargs):
         return self.run(*args, **kwargs)

@@ -8,6 +8,8 @@ fuselage
 - Extend changes.ShellCommand so that it can be instructed to log something
   other than command.
 
+- Clean up temporary files after execution.
+
 
 0.0.1 (2014-07-06)
 ------------------
