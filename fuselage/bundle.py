@@ -36,7 +36,8 @@ class ResourceBundle(object):
     @classmethod
     def from_iterator(cls, iterator):
         bun = cls()
-        bun.extend(iterator)
+        if iterator:
+            bun.extend(iterator)
         return bun
 
     def __len__(self):

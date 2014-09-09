@@ -28,29 +28,9 @@ from fuselage import bundle, builder, error
 
 class DeploymentTask(tasks.WrappedCallableTask):
 
-    def get_resource_bundle(self, *args, **kwargs):
-        bun = bundle.ResourceBundle()
-        iterator = self.wrapped(bun, *args, **kwargs)
-
-        if not iterator:
-            return bun
-
-        while True:
-            try:
-                resource = iterator.next()
-            except StopIteration:
-                break
-
-            try:
-                bun.add(resource)
-            except Exception as e:
-                iterator.throw(e)
-
-        return bun
-
     def run(self, *args, **kwargs):
         try:
-            bun = self.get_resource_bundle(*args, **kwargs)
+            bun = ResourceBundle.from_iterator(self.wrapped(*args, **kwargs))
         except error.Error as e:
             utils.error(str(e), exception=e)
             return
