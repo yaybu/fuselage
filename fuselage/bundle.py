@@ -33,6 +33,12 @@ class ResourceBundle(object):
     def __init__(self):
         self.clear()
 
+    @classmethod
+    def from_iterator(cls, iterator):
+        bun = cls()
+        bun.extend(iterator)
+        return bun
+
     def __len__(self):
         return len(self.resources)
 
@@ -130,6 +136,18 @@ class ResourceBundle(object):
         self.resources.append(resource)
         self._index_by_id[resource.id] = resource
         return resource
+
+    def extend(self, iterator):
+        while True:
+            try:
+                resource = iterator.next()
+            except StopIteration:
+                break
+
+            try:
+                self.add(resource)
+            except Exception as e:
+                iterator.throw(e)
 
     def apply(self, runner):
         """ Apply the resources to the system, using the provided context and

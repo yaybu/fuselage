@@ -10,6 +10,10 @@ fuselage
 
 - Clean up temporary files after execution.
 
+- Add a ResourceBundle.from_iterator(..) convenience method. When used with
+  generators it will throw validation errors at the point where the resource
+  was yielded.
+
 
 0.0.1 (2014-07-06)
 ------------------
