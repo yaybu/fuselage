@@ -31,8 +31,7 @@ class FuselageDeployment(deployment.Deployment):
             self.bundle = ResourceBundle()
 
         if resources:
-            for resource in resources:
-                self.bundle.add(resource)
+            self.bundle.extend(resources)
 
     def run(self, node, client):
         random_string = binascii.hexlify(os.urandom(4)).decode('ascii')
