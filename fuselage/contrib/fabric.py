@@ -29,6 +29,11 @@ from fuselage import bundle, builder, error
 class DeploymentTask(tasks.WrappedCallableTask):
 
     def run(self, *args, **kwargs):
+        unsupported = set(kwargs.keys()).difference(set(["simulate"]))
+        if unsupported:
+            utils.error("The following parameters were not understood: %s" % ", ".join(unsupported))
+            return
+
         try:
             bun = bundle.ResourceBundle()
             bun.extend(self.wrapped(bun, *args, **kwargs))
@@ -49,9 +54,14 @@ class DeploymentTask(tasks.WrappedCallableTask):
             utils.error("Could not upload fuselange bundle to target. Aborting.")
             return
 
+        command = [uploaded[0]]
+
+        if kwargs.get("simulate", "false").lower() in ("true", "y", "yes", "on", "1"):
+            command.append("--simulate")
+
         try:
             with settings(warn_only=True):
-                result = sudo(uploaded[0])
+                result = sudo(" ".join(command))
 
                 if not result.return_code in (0, 254):
                     utils.error("Could not apply fuselage blueprint. Aborting.")

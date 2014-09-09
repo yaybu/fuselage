@@ -14,6 +14,8 @@ fuselage
   generators it will throw validation errors at the point where the resource
   was yielded.
 
+- Add support for --simulate flag passing in fabric backend.
+
 
 0.0.1 (2014-07-06)
 ------------------
