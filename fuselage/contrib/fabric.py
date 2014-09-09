@@ -30,7 +30,8 @@ class DeploymentTask(tasks.WrappedCallableTask):
 
     def run(self, *args, **kwargs):
         try:
-            bun = ResourceBundle.from_iterator(self.wrapped(*args, **kwargs))
+            bun = bundle.ResourceBundle()
+            bun.extend(self.wrapped(bun, *args, **kwargs))
         except error.Error as e:
             utils.error(str(e), exception=e)
             return
