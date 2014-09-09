@@ -44,6 +44,7 @@ class TestFabric(unittest.TestCase):
         self.error.side_effect = FabricError()
         self.sudo.return_value.return_code = 0
         self.put.return_value.failed = []
+        self.put.return_value.__getitem__.return_value = '~/payload.pex'
 
     def cleanUp(self):
         [x.stop() for x in self.cleanup()]
@@ -53,7 +54,7 @@ class TestFabric(unittest.TestCase):
             return
 
         @fabric.blueprint
-        def example(bundle):
+        def example(bundle, **kwargs):
             yield resources.File(name='/tmp/hello')
         example()
         self.assertEqual(self.sudo.called, True)
@@ -68,7 +69,7 @@ class TestFabric(unittest.TestCase):
             return
 
         @fabric.blueprint
-        def example(bundle):
+        def example(bundle, **kwargs):
             yield resources.File(nam='/tmp/hello')
         self.assertRaises(FabricError, example)
         self.assertEqual(self.sudo.called, False)
