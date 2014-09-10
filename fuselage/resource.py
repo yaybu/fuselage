@@ -146,8 +146,6 @@ class Resource(six.with_metaclass(ResourceType)):
         if not self.implicit_name:
             raise error.ParseError("Resource is not explicitly named and name cannot be implied")
 
-        print self.implicit_name
-
     @classmethod
     def get_argument_names(klass):
         for key in klass.__args__:
