@@ -36,9 +36,9 @@ You can write simple deployment scripts with Fabric by adding this to your fabfi
             name='/var/local/minecraft',
         )
         yield Execute(
-            name='wget https://s3.amazonaws.com/Minecraft.Download/versions/1.6.2/minecraft_server.1.6.2.jar',
+            command='wget https://s3.amazonaws.com/Minecraft.Download/versions/1.8/minecraft_server.1.8.jar',
             cwd="/var/local/minecraft",
-            creates="/var/local/minecraft/minecraft_server.1.6.2.jar",
+            creates="/var/local/minecraft/minecraft_server.1.8.jar",
         )
         yield File(
             name='/var/local/minecraft/server.properties',
@@ -49,12 +49,10 @@ You can write simple deployment scripts with Fabric by adding this to your fabfi
             contents=open("etc_systemd_system_minecraft.service"),
         )
         yield Execute(
-            name="systemctl-daemon-reload-minecraft",
             command="systemctl daemon-reload",
             watches=['/etc/systemd/system/minecraft.service'],
         )
         yield Execute(
-            name="systemctl-restart-minecraft",
             command="systemctl restart minecraft.service",
             watches=[
                 "/var/local/minecraft/server.properties",

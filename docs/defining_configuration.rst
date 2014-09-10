@@ -40,7 +40,6 @@ For example::
     ))
 
     bundle.add(Execute(
-        name="install-requirements",
         command="/var/sites/myapp/bin/pip install -r /usr/local/src/mycheckout/requirements.txt",
         watches=['/usr/local/src/mycheckout'],
     ))
@@ -55,7 +54,6 @@ You can do the same for monitoring file changes too::
     ))
 
     bundle.add(Execute(
-        name="restart-apache",
         command="apache2ctl graceful",
         watches=['/etc/apache2/security.conf'],
     ))
@@ -63,13 +61,11 @@ You can do the same for monitoring file changes too::
 Sometimes you can't use ``File`` (perhaps ``buildout`` or ``maven`` or similar generates a config file for you), but you still want to trigger a command when a file changes during deployment::
 
     bundle.add(Execute(
-        name="buildout",
         command="buildout -c production.cfg",
         changes=['/var/sites/mybuildout/parts/apache.cfg'],
     ))
 
     bundle.add(Execute(
-        name="restart-apache",
         command="apache2ctl graceful",
         watches=['/var/sites/mybuildout/parts/apache.cfg'],
     ))
@@ -87,7 +83,6 @@ All of these examples use a trigger system. When a trigger has been set fuselage
     ))
 
     bundle.add(Execute(
-        name="restart-apache2",
         command="/etc/init.d/apache2 restart",
         watches=['/etc/apache2/sites-enabled/mydemosite'],
     ))
