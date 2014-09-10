@@ -11,7 +11,7 @@ install:
 
 script:
   - coverage run $(which nose2)
-  - flake8 yaybu
+  - flake8 fuselage
 
 after_success:
   - coveralls
