@@ -52,7 +52,7 @@ class ResourceBundle(object):
 
     def get_resource_by_name(self, target):
         for res in self.resources:
-            if res.name == target:
+            if res.implicit_name == target:
                 return res
         else:
             raise KeyError("No such resource by name '%s'" % target)

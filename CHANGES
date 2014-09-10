@@ -5,6 +5,11 @@ fuselage
 0.0.2 (unreleased)
 ------------------
 
+- Execute resources are now implicitly named by taking the command or commands
+  parameters and filterning non-ascii non-alphanumeric characters out. For
+  example, an Execute that did ``touch /foo`` would be implicitly named
+  ``touch-foo``.
+
 - Extend changes.ShellCommand so that it can be instructed to log something
   other than command.
 

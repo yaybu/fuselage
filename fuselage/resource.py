@@ -135,18 +135,18 @@ class Resource(six.with_metaclass(ResourceType)):
         """ Takes a reference to a Yay AST node """
         self.observers = list()
 
-        try:
-            setattr(self, "name", kwargs["name"])
-        except KeyError:
-            raise error.ParseError("Unnamed resource!")
-
         for key, value in kwargs.items():
             if key not in self.__args__:
-                raise error.ParseError("'%s' is not a valid option for resource %s" % (key, self))
+                raise error.ParseError("'%s' is not a valid option for this resource" % (key, ))
             setattr(self, key, value)
 
         self.policy.validate()
         self.policy.get_provider()
+
+        if not self.implicit_name:
+            raise error.ParseError("Resource is not explicitly named and name cannot be implied")
+
+        print self.implicit_name
 
     @classmethod
     def get_argument_names(klass):
@@ -202,8 +202,16 @@ class Resource(six.with_metaclass(ResourceType)):
         return bound
 
     @property
+    def implicit_name(self):
+        if self.name:
+            return force_str(self.name)
+        return None
+
+    @property
     def id(self):
-        name = force_str(self.name)
+        name = self.implicit_name
+        if not name:
+            raise ValueError("Resource is not named")
         classname = getattr(self, '__resource_name__', self.__class__.__name__)
         return "%s[%s]" % (classname, name)
 

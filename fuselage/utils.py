@@ -51,4 +51,3 @@ def simple_str(s):
     s = re.sub(r'[^\w\s-]', '', s)
     s = re.sub(r'[-\s]+', '-', s)
     return s
-

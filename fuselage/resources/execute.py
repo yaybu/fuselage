@@ -14,6 +14,7 @@
 
 from fuselage.resource import Resource
 from fuselage.policy import Policy, Present, XOR
+from fuselage.utils import simple_str
 from fuselage.argument import (
     FullPath,
     String,
@@ -48,6 +49,16 @@ class Execute(Resource):
           user: root
 
     """
+
+    @property
+    def implicit_name(self):
+        implicit_name = super(Execute, self).implicit_name
+        if not implicit_name:
+            if self.command:
+                implicit_name = simple_str(self.command)
+            elif self.commands:
+                implicit_name = simple_str("; ".join(self.commands))
+        return implicit_name
 
     name = String()
     """ The name of this resource. This should be unique and descriptive, and
@@ -114,6 +125,6 @@ class ExecutePolicy(Policy):
     resource = Execute
     name = "execute"
     default = True
-    signature = (Present("name"),
-                 XOR(Present("command"), Present("commands")),
-                 )
+    signature = (
+        XOR(Present("command"), Present("commands")),
+    )

@@ -189,3 +189,43 @@ class TestExecute(TestCaseWithRunner):
             command="/this_binary_definitely_doesnt_exist",
         ))
         self.assertRaises(error.BinaryMissing, self.apply)
+
+    def test_implicit_name(self):
+        self.bundle.add(Execute(
+            command="touch /foo",
+            creates="/foo",
+        ))
+        self.check_apply()
+        self.failUnlessExists("/foo")
+
+    def test_implicit_name_for_commands(self):
+        self.bundle.add(Execute(
+            commands=["touch /foo"],
+            creates="/foo",
+        ))
+        self.check_apply()
+        self.failUnlessExists("/foo")
+
+    def test_implicit_name_watch_positive(self):
+        self.bundle.add(Execute(
+            command="touch /foo",
+            creates="/foo",
+        ))
+        self.bundle.add(Execute(
+            command="touch /bar",
+            watches=['touch-foo'],
+        ))
+        self.check_apply()
+        self.failUnlessExists("/bar")
+
+    def test_implicit_name_watch_negative(self):
+        self.bundle.add(Execute(
+            command="touch /foo",
+            creates="/bin/false",
+        ))
+        self.bundle.add(Execute(
+            command="touch /bar",
+            watches=['touch-foo'],
+        ))
+        self.assertRaises(error.NothingChanged, self.check_apply)
+        self.failIfExists("/bar")
