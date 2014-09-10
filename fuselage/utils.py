@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import re
+import unicodedata
+
 import six
 
 
@@ -25,9 +28,27 @@ def force_str(s):
     raise ValueError("Not a string")
 
 
+def force_unicode(s):
+    if isinstance(s, six.binary_type):
+        return s.decode("utf-8")
+    elif isinstance(s, six.text_type):
+        return s
+    raise ValueError("Not a string")
+
+
 def force_bytes(s):
     if isinstance(s, six.binary_type):
         return s
     elif isinstance(s, six.text_type):
         return s.encode("utf-8")
     raise ValueError("Not a string")
+
+
+def simple_str(s):
+    """ 'Normalize' a string - lowercase, strip unicode, replace whitespace, etc """
+    s = force_str(unicodedata.normalize('NFKD', force_unicode(s)).encode('ascii', 'ignore'))
+    s = s.lower().strip()
+    s = re.sub(r'[^\w\s-]', '', s)
+    s = re.sub(r'[-\s]+', '-', s)
+    return s
+
