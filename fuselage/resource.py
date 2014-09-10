@@ -209,7 +209,7 @@ class Resource(six.with_metaclass(ResourceType)):
     def id(self):
         name = self.implicit_name
         if not name:
-            raise ValueError("Resource is not named")
+            raise error.ParseError("Resource is not named")
         classname = getattr(self, '__resource_name__', self.__class__.__name__)
         return "%s[%s]" % (classname, name)
 
