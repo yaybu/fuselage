@@ -118,8 +118,6 @@ class TestCaseWithRunner(TestCaseWithBundle):
                         command[0] = path
                         break
 
-            print command, args, kwargs
-
             return orig_check_call(command, *args, **kwargs)
 
         patch("check_call", check_call)
