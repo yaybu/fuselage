@@ -152,3 +152,6 @@ class TestPlatform(unittest.TestCase):
             if not passwords:
                 return
             platform.getspnam(passwords[0].sp_nam)
+
+    def test_getuid(self):
+        self.assertEqual(platform.getuid(), os.getuid())

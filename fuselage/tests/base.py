@@ -16,6 +16,7 @@ import inspect
 import os
 import unittest
 import logging
+import shlex
 import mock
 import fakechroot
 
@@ -104,7 +105,10 @@ class TestCaseWithRunner(TestCaseWithBundle):
             cwd = kwargs.get('cwd', None)
             kwargs['cwd'] = os.path.join(self.chroot.chroot_path, cwd.lstrip("/")) if cwd else self.chroot.chroot_path
 
-            command = list(command)
+            if isinstance(command, str):
+                command = shlex.split(command)
+            else:
+                command = list(command)
             paths = [self.chroot.overlay_dir]
             if "PATH" in env:
                 paths.extend(os.path.join(env["FAKECHROOT_BASE"], p.lstrip("/")) for p in env["PATH"].split(":"))
@@ -114,9 +118,13 @@ class TestCaseWithRunner(TestCaseWithBundle):
                         command[0] = path
                         break
 
+            print command, args, kwargs
+
             return orig_check_call(command, *args, **kwargs)
 
         patch("check_call", check_call)
+
+        patch("getuid", lambda: 0)
 
         logger.debug("Patched platform layer with fakechroot monkeypatches")
 

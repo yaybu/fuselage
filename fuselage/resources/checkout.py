@@ -19,6 +19,7 @@ from fuselage.argument import (
     String,
     Octal,
 )
+from fuselage.defaults import get_default_user, get_default_group
 
 
 class Checkout(Resource):
@@ -58,10 +59,10 @@ class Checkout(Resource):
     scm_password = String()
     """ The password for the remote repository. """
 
-    user = String(default="root")
+    user = String(default=lambda r: get_default_user())
     """ The user to perform actions as, and who will own the resulting files. """
 
-    group = String(default="root")
+    group = String(default=lambda r: get_default_group(r.user))
     """ The group to perform actions as. """
 
     mode = Octal(default="755")

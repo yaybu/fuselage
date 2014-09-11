@@ -18,6 +18,7 @@ import shlex
 
 from fuselage import error, platform
 from fuselage.changes import base
+from fuselage.utils import force_str
 
 
 class ShellCommand(base.Change):
@@ -81,7 +82,7 @@ class ShellCommand(base.Change):
     def apply(self, ctx):
         command, logas = self.command, self.logas
 
-        ctx.changelog.critical('# ' + ' '.join(logas))
+        ctx.changelog.critical('# ' + ' '.join([force_str(l) for l in logas]))
 
         if not self.command_exists(command):
             ctx.raise_or_log(error.BinaryMissing("Command '%s' not found" % command[0]))

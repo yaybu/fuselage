@@ -26,6 +26,7 @@ from fuselage.argument import (
     Octal,
     Boolean,
 )
+from fuselage.defaults import get_default_user, get_default_group
 
 
 class Directory(Resource):
@@ -46,10 +47,10 @@ class Directory(Resource):
     name = FullPath()
     """ The full path to the directory on disk """
 
-    owner = String(default="root")
+    owner = String(default=lambda r: get_default_user())
     """ The unix username who should own this directory, by default this is 'root' """
 
-    group = String(default="root")
+    group = String(default=lambda r: get_default_group(r.owner))
     """ The unix group who should own this directory, by default this is 'root' """
 
     mode = Octal(default=0o755)

@@ -257,3 +257,7 @@ def getspall():
 
 def getspnam(name):
     return spwd.getspnam(name)
+
+
+def getuid():
+    return os.getuid()

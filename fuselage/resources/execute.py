@@ -23,6 +23,7 @@ from fuselage.argument import (
     Dict,
     List,
 )
+from fuselage.defaults import get_default_user, get_default_group
 
 
 class Execute(Resource):
@@ -90,11 +91,11 @@ class Execute(Resource):
     command does not return this return code then the resource is considered
     to be in error. """
 
-    user = String(default="root")
+    user = String(default=lambda r: get_default_user())
     """ The user to execute the command as.
     """
 
-    group = String()
+    group = String(default=lambda r: get_default_group(r.user))
     """ The group to execute the command as.
     """
 

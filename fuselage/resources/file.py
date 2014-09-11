@@ -30,6 +30,7 @@ from fuselage.argument import (
     Octal,
     File,
 )
+from fuselage.defaults import get_default_user, get_default_group
 
 
 class File(Resource):
@@ -65,12 +66,12 @@ class File(Resource):
     name = FullPath()
     """The full path to the file this resource represents."""
 
-    owner = String(default="root")
+    owner = String(default=lambda r: get_default_user())
     """A unix username or UID who will own created objects. An owner that
     begins with a digit will be interpreted as a UID, otherwise it will be
     looked up using the python 'pwd' module."""
 
-    group = String(default="root")
+    group = String(default=lambda r: get_default_group(r.owner))
     """A unix group or GID who will own created objects. A group that begins
     with a digit will be interpreted as a GID, otherwise it will be looked up
     using the python 'grp' module."""
