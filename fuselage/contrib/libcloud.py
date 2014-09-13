@@ -14,7 +14,6 @@
 
 import binascii
 import os
-import six
 
 from libcloud.compute import deployment
 
