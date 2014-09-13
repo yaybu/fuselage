@@ -44,7 +44,9 @@ class Builder(object):
     @classmethod
     def write_to(cls, fp):
         fp.write(b"#!/usr/bin/env python\n")
-        return cls(zipfile.ZipFile(fp, "w", compression=zipfile.ZIP_DEFLATED))
+        obj = cls(zipfile.ZipFile(fp, "w", compression=zipfile.ZIP_DEFLATED))
+        obj.fp = fp
+        return obj
 
     @classmethod
     def write_to_path(cls, path):

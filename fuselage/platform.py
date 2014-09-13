@@ -85,6 +85,8 @@ class Process(subprocess.Popen):
         kwargs['preexec_fn'] = self.preexec
         if 'stdout' not in kwargs:
             kwargs['stdout'] = subprocess.PIPE
+        if 'stderr' not in kwargs:
+            kwargs['stderr'] = subprocess.PIPE
         super(Process, self).__init__(command, **kwargs)
 
     def preexec(self):

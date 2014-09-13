@@ -48,7 +48,7 @@ class FuselageMixin(object):
 
         buffer.seek(0)
 
-        return buffer
+        return bu
 
     def apply_bundle(self, buffer, *args, **kwargs):
         raise NotImplementedError(self.apply_bundle)
@@ -84,7 +84,7 @@ class DeploymentTask(FuselageMixin, tasks.WrappedCallableTask):
     arguments = ['simulate']
 
     def apply_bundle(self, bundle, *args, **kwargs):
-        uploaded = put(bundle, '~/payload.pex', mode=755)
+        uploaded = put(bundle.fp, '~/payload.pex', mode=755)
         if uploaded.failed:
             utils.error("Could not upload fuselange bundle to target. Aborting.")
             return
@@ -112,68 +112,14 @@ class DockerBuildTask(FuselageMixin, tasks.WrappedCallableTask):
 
     arguments = ['from_image', 'tag']
 
-    def apply_bundle(self, bundle, from_image='ubuntu', tag=None, *args, **kwargs):
-        import docker
-        import tarfile
-        import json
-
-        tar_buffer = six.BytesIO()
-        tar = tarfile.open(mode='w:gz', fileobj=tar_buffer)
-
-        def add(name, buf, mode=0o644):
-            ti = tarfile.TarInfo(name=name)
-            ti.size = len(buf.buf)
-            ti.mode = mode
-            tar.addfile(tarinfo=ti, fileobj=buf)
-
-        add("payload.pex", bundle, mode=0o755)
-
-        add("Dockerfile", six.BytesIO("\n".join([
-            "FROM %s" % from_image,
-            "ADD payload.pex /payload.pex",
-            'RUN apt-get update && apt-get install python -y',
-            'RUN /payload.pex',
-            'RUN rm /payload.pex',
-        ])))
-
-        tar.close()
-        tar_buffer.seek(0)
-
-        c = docker.Client(
-            base_url='unix://var/run/docker.sock',
-            version='1.12',
-            timeout=10,
-        )
-
-        build_output = c.build(
-            fileobj=tar_buffer,
-            custom_context=True,
-            stream=True,
-            rm=True,
-            tag=tag,
-        )
-
-        status = None
-        for data in build_output:
-            data = json.loads(data)
-            if 'status' in data:
-                # {u'status': u'Downloading', u'progressDetail': {u'current': 3239, u'start': 141059980, u'total': 133813}, u'id': u'2124c4204a05', u'progress': u'[=>] 32.32 kB/1.338 MB 29s'}
-                if status != data['status']:
-                    if status:
-                        utils.puts('', show_prefix=False)
-                    status = data['status']
-                    utils.puts(status, flush=True, end='')
-                else:
-                    utils.puts('.', show_prefix=False, flush=True, end='')
-            else:
-                if status:
-                    utils.puts('', show_prefix=False, flush=True)
-                    status = None
-
-                if 'stream' in data:
-                    utils.puts(data['stream'], end='')
-                elif 'errorDetail' in data:
-                    utils.error(data['error'])
-                    return
+    def apply_bundle(self, bundle, *args, **kwargs):
+        from fuselage.docker import DockerBuilder
+        d = DockerBuilder(bundle, **kwargs)
+        try:
+            for data in d.build():
+                utils.puts(data, flush=True, end='')
+        except RuntimeError as e:
+            utils.error(str(e))
+            return
 
 docker_container = DockerBuildTask.as_decorator()
