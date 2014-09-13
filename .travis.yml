@@ -11,7 +11,7 @@ install:
   - pip install -r requirements.txt
 
 script:
-  - coverage run $(py.test)
+  - coverage run $(which py.test)
   - flake8 fuselage
 
 after_success:
