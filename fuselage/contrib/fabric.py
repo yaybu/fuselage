@@ -71,8 +71,10 @@ class FuselageMixin(object):
             if not invoked:
                 func, args = args[0], ()
             task_class = kwargs.pop("task_class", cls)
+
             def wrapper(func):
                 return task_class(func, *args, **kwargs)
+
             return wrapper if invoked else wrapper(func)
         return _
 
@@ -144,8 +146,8 @@ class DockerBuildTask(FuselageMixin, tasks.WrappedCallableTask):
         )
 
         build_output = c.build(
-            fileobj = tar_buffer,
-            custom_context = True,
+            fileobj=tar_buffer,
+            custom_context=True,
             stream=True,
             rm=True,
             tag=tag,
