@@ -38,17 +38,7 @@ class FuselageMixin(object):
             utils.error(str(e), exception=e)
             return
 
-        buffer = six.BytesIO()
-        buffer.name = self.name
-
-        bu = builder.Builder.write_to(buffer)
-        bu.embed_fuselage_runtime()
-        bu.embed_resource_bundle(bun)
-        bu.close()
-
-        buffer.seek(0)
-
-        return bu
+        return bun
 
     def apply_bundle(self, buffer, *args, **kwargs):
         raise NotImplementedError(self.apply_bundle)
@@ -84,7 +74,7 @@ class DeploymentTask(FuselageMixin, tasks.WrappedCallableTask):
     arguments = ['simulate']
 
     def apply_bundle(self, bundle, *args, **kwargs):
-        uploaded = put(bundle.fp, '~/payload.pex', mode=755)
+        uploaded = put(builder.build(bundle), '~/payload.pex', mode=755)
         if uploaded.failed:
             utils.error("Could not upload fuselange bundle to target. Aborting.")
             return

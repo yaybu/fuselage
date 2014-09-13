@@ -99,3 +99,16 @@ class Builder(object):
 
     def close(self):
         self.zipfile.close()
+
+
+def build(bundle, name="payload.pex"):
+    buffer = six.BytesIO()
+    buffer.name = name
+
+    bu = Builder.write_to(buffer)
+    bu.embed_fuselage_runtime()
+    bu.embed_resource_bundle(bundle)
+    bu.close()
+
+    buffer.seek(0)
+    return buffer

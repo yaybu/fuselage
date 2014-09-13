@@ -23,6 +23,8 @@ try:
 except ImportError:
     docker = None
 
+from fuselage.builder import build
+
 
 class DockerBuilder(object):
 
@@ -77,7 +79,7 @@ class DockerBuilder(object):
             ti.mode = mode
             tar.addfile(tarinfo=ti, fileobj=buf)
 
-        add("payload.pex", self.bundle.fp, mode=0o755)
+        add("payload.pex", build(self.bundle), mode=0o755)
         add("Dockerfile", six.BytesIO(self.get_dockerfile()))
 
         tar.close()

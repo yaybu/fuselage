@@ -37,13 +37,7 @@ class FuselageDeployment(deployment.Deployment):
         random_string = binascii.hexlify(os.urandom(4)).decode('ascii')
         name = 'fuselage_%s' % (random_string)
 
-        buffer = six.BytesIO()
-        buffer.name = name
-
-        bu = builder.Builder.write_to(buffer)
-        bu.embed_fuselage_runtime()
-        bu.embed_resource_bundle(self.bundle)
-        bu.close()
+        bu = builder.build(self.bundle)
 
         file_path = client.put(path=name, chmod=0o755, contents=bu.getvalue())
         self.stdout, self.stderr, self.exit_status = client.run(file_path)
