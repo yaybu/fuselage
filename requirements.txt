@@ -1,5 +1,5 @@
-six<1.4
-nose2
+six
+pytest
 coverage
 coveralls
 flake8
