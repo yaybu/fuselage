@@ -121,7 +121,7 @@ class ResourceBundle(object):
 
         # Create implicit File[] nodes for any watched files
         for watched in resource.changes:
-            w = self.add("File", {
+            w = self.create("File", **{
                 "name": watched,
                 "policy": "watched",
             })
