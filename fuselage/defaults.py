@@ -21,7 +21,7 @@ def get_default_user():
 
 def get_default_group(user):
     try:
-        gid = platform.getpwnam(user)
+        gid = platform.getpwnam(user).pw_gid
         return platform.getgrgid(gid).gr_name
     except KeyError:
         return None
