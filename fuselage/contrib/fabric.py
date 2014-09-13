@@ -29,6 +29,13 @@ class FuselageMixin(object):
 
     arguments = []
 
+    def __init__(self, *args, **kwargs):
+        super(FuselageMixin, self).__init__(*args, **kwargs)
+        self.kwargs = {}
+        for k, v in kwargs.items():
+            if k in self.arguments:
+                self.kwargs[k] = v
+
     def get_bundle_stream(self, *args, **kwargs):
         try:
             bun = bundle.ResourceBundle()
@@ -48,7 +55,11 @@ class FuselageMixin(object):
             utils.error("The following parameters were not understood: %s" % ", ".join(unsupported))
             return
 
-        return self.apply_bundle(self.get_bundle_stream(*args, **kwargs), *args, **kwargs)
+        k = {}
+        k.update(self.kwargs)
+        k.update(kwargs)
+
+        return self.apply_bundle(self.get_bundle_stream(*args, **k), *args, **kwargs)
 
     def __call__(self, *args, **kwargs):
         return self.run(*args, **kwargs)
@@ -99,7 +110,7 @@ blueprint = DeploymentTask.as_decorator()
 
 class DockerBuildTask(FuselageMixin, tasks.WrappedCallableTask):
 
-    arguments = ['from_image', 'tag']
+    arguments = ['from_image', 'tag', 'env', 'ports', 'volumes', 'maintainer']
 
     def apply_bundle(self, bundle, *args, **kwargs):
         from fuselage.docker import DockerBuilder
