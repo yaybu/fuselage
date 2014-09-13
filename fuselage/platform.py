@@ -153,6 +153,7 @@ def check_call(command, *args, **kwargs):
     expected = kwargs.pop('expected', 0)
     stdin = kwargs.pop('stdin', None)
     kwargs['stdin'] = subprocess.PIPE if stdin else None
+    kwargs.setdefault('shell', not isinstance(command, list))
     p = Process(command, *args, **kwargs)
     if logger:
         p.attach_callback(logger.info)
