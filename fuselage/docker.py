@@ -23,9 +23,6 @@ try:
 except ImportError:
     docker = None
 
-from fuselage import bundle, builder, error
-
-
 
 class DockerBuilder(object):
 
