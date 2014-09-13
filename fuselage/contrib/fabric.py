@@ -159,16 +159,19 @@ class DockerBuildTask(FuselageMixin, tasks.WrappedCallableTask):
             if 'status' in data:
                 # {u'status': u'Downloading', u'progressDetail': {u'current': 3239, u'start': 141059980, u'total': 133813}, u'id': u'2124c4204a05', u'progress': u'[=>] 32.32 kB/1.338 MB 29s'}
                 if status != data['status']:
+                    if status:
+                        utils.puts('', show_prefix=False)
                     status = data['status']
                     utils.puts(status, flush=True, end='')
                 else:
                     utils.puts('.', show_prefix=False, flush=True, end='')
             else:
-                utils.puts('', show_prefix=False, flush=True)
-                status = None
+                if status:
+                    utils.puts('', show_prefix=False, flush=True)
+                    status = None
 
                 if 'stream' in data:
-                    utils.puts(data['stream'])
+                    utils.puts(data['stream'], end='')
                 elif 'errorDetail' in data:
                     utils.error(data['error'])
                     return
