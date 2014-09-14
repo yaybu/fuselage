@@ -71,7 +71,7 @@ class Policy(six.with_metaclass(PolicyType)):
         import fuselage.providers  # noqa
         valid = [p.isvalid(self, self.resource) for p in self.providers]
         if valid.count(True) > 1:
-            raise error.TooManyProviders()
+            raise error.TooManyProviders("Too many matching providers for %s" % self.resource)
         if valid.count(True) == 0:
             raise error.NoSuitableProviders("Could not find a provider to setup %s" % self.resource)
         return self.providers[valid.index(True)]
