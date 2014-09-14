@@ -1,0 +1,9 @@
+===============================
+Debian Preseeding with Fuselage
+===============================
+
+The Debian preseed system allows you to preanswer debconf questions with
+values. This allows Debian Installer to finish setting up a machine without and
+user interaction. However this will leave you with a fairly empty Debian
+system. If you want to preconfigure an application ready for deployment you'll
+need to run your own scripts in the FIXME post_script hook.
