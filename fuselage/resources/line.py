@@ -45,7 +45,7 @@ class Line(Resource):
 
     @property
     def implicit_id(self):
-        return force_str(self.name) + ":" +  simple_str(self.match)
+        return force_str(self.name) + ":" + simple_str(self.match)
 
     name = FullPath()
     """ The full path to the file to perform an operation on. """
