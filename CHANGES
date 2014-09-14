@@ -21,6 +21,8 @@ fuselage
 
 - Add support for --simulate flag passing in fabric backend.
 
+- Add support for Yum packages.
+
 
 0.0.1 (2014-07-06)
 ------------------

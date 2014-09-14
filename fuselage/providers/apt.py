@@ -26,7 +26,7 @@ def is_installed(resource):
         if exc.returncode == 1:
             return False
         # if the return code is anything but zero or one, we have a problem
-        raise error.DpkgError(
+        raise error.PackageError(
             "%s search failed with return code %s" % (resource, exc.returncode))
 
     # if the return code is 0, dpkg is aware of the package
@@ -39,6 +39,10 @@ def is_installed(resource):
 class AptInstall(provider.Provider):
 
     policies = (resources.package.PackageInstallPolicy,)
+
+    @classmethod
+    def isvalid(self, policy, resource):
+        return platform.exists("/usr/bin/dpkg")
 
     def apply(self):
         if is_installed(self.resource):
@@ -62,11 +66,11 @@ class AptInstall(provider.Provider):
                         ShellCommand(["apt-get", "update", "-q", "-y"], env=env))
                     self.change(ShellCommand(command, env=env))
                 except error.SystemError as exc:
-                    raise error.AptError(
+                    raise error.PackageError(
                         "%s with what looked like a recoverable error, but it wasn't (return code %d)" %
                         (self.resource, exc.returncode))
             else:
-                raise error.AptError(
+                raise error.PackageError(
                     "%s failed with return code %d" %
                     (self.resource, exc.returncode))
 
@@ -76,6 +80,10 @@ class AptInstall(provider.Provider):
 class AptUninstall(provider.Provider):
 
     policies = (resources.package.PackageUninstallPolicy,)
+
+    @classmethod
+    def isvalid(self, policy, resource):
+        return platform.exists("/usr/bin/dpkg")
 
     def apply(self):
         if not is_installed(self.resource):
@@ -94,7 +102,7 @@ class AptUninstall(provider.Provider):
         try:
             self.change(ShellCommand(command, env=env))
         except error.SystemError as exc:
-            raise error.AptError(
+            raise error.PackageError(
                 "%s failed to uninstall with return code %d" % (self.resource, exc.returncode))
 
         return True

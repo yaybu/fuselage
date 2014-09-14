@@ -30,7 +30,7 @@ class TestApt(TestCaseWithRunner):
 
     def test_nonexistent_package(self):
         self.bundle.add(Package(name="zzzz"))
-        self.assertRaises(error.AptError, self.apply)
+        self.assertRaises(error.PackageError, self.apply)
 
     def test_package_reinstallation(self):
         p = self.bundle.add(Package(name="hello"))

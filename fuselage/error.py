@@ -49,14 +49,9 @@ class ExecutionError(Error):
     returncode = 130
 
 
-class DpkgError(ExecutionError):
-    """ dpkg returned something other than 0 or 1 """
+class PackageError(ExecutionError):
+    """ Error whilst performing a packaging error """
     returncode = 131
-
-
-class AptError(ExecutionError):
-    """ An apt command failed unrecoverably. """
-    returncode = 132
 
 
 class CommandError(ExecutionError):
