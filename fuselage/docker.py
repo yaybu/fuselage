@@ -72,8 +72,6 @@ class DockerBuilder(object):
             df.append("")
             df.append("CMD %s" % json.dumps(self.cmd))
 
-        print ("\n".join(df))
-
         return "\n".join(df)
 
     def build(self):
