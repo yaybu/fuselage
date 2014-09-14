@@ -52,7 +52,7 @@ class ResourceBundle(object):
 
     def get_resource_by_name(self, target):
         for res in self.resources:
-            if res.implicit_name == target:
+            if res.id == target:
                 return res
         else:
             raise KeyError("No such resource by name '%s'" % target)
@@ -130,12 +130,12 @@ class ResourceBundle(object):
         return self.add(resource)
 
     def add(self, resource):
-        if resource.id in self._index_by_id:
+        if resource.typed_id in self._index_by_id:
             raise error.ParseError("Resources cannot be defined multiple times")
 
         resource.bind(self)
         self.resources.append(resource)
-        self._index_by_id[resource.id] = resource
+        self._index_by_id[resource.typed_id] = resource
         return resource
 
     def extend(self, iterator):
@@ -161,7 +161,7 @@ class ResourceBundle(object):
         mylen = len(self.resources)
         for i, resource in enumerate(self.resources, start=1):
             resource_log = log.LoggerAdapter(logger, {
-                "fuselage.resource": resource.id,
+                "fuselage.resource": resource.typed_id,
             })
 
             resource_log.debug("Started applying '%r' (%d of %d)" % (resource, i, mylen), extra={"fuselage.type": "resource-start"})

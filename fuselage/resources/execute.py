@@ -52,14 +52,14 @@ class Execute(Resource):
     """
 
     @property
-    def implicit_name(self):
-        implicit_name = super(Execute, self).implicit_name
-        if not implicit_name:
+    def implicit_id(self):
+        implicit_id = super(Execute, self).implicit_id
+        if not implicit_id:
             if self.command:
-                implicit_name = simple_str(self.command)
+                implicit_id = simple_str(self.command)
             elif self.commands:
-                implicit_name = simple_str("; ".join(self.commands))
-        return implicit_name
+                implicit_id = simple_str("; ".join(self.commands))
+        return implicit_id
 
     name = String()
     """ The name of this resource. This should be unique and descriptive, and

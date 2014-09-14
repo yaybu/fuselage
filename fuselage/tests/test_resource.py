@@ -37,12 +37,12 @@ class TestResource(unittest.TestCase):
         self.assertRaises(error.ParseError, resource.Resource)
 
     def test_only_valid_kwargs(self):
-        self.assertRaises(error.ParseError, resource.Resource, name="/foo", frob=True)
+        self.assertRaises(error.ParseError, resource.Resource, id="/foo", frob=True)
 
     def test_repr(self):
-        r = resource.Resource(name="foo")
+        r = resource.Resource(id="foo")
         self.assertEqual(repr(r), "Resource[foo]")
 
     def test_id(self):
-        r = resource.Resource(name="foo")
-        self.assertEqual(r.id, "Resource[foo]")
+        r = resource.Resource(id="foo")
+        self.assertEqual(r.typed_id, "Resource[foo]")

@@ -24,7 +24,7 @@ class TestArguments(unittest.TestCase):
         class R_test_octal(resource.Resource):
             a = argument.Octal()
         self.assertTrue(isinstance(R_test_octal.a, argument.Octal))
-        r = R_test_octal(name="test")
+        r = R_test_octal(id="test")
         r.a = "666"
         self.assertEqual(r.a, 438)
         r.a = 0o666
@@ -34,7 +34,7 @@ class TestArguments(unittest.TestCase):
         class R_test_string(resource.Resource):
             a = argument.String()
         self.assertTrue(isinstance(R_test_string.a, argument.String))
-        r = R_test_string(name="test")
+        r = R_test_string(id="test")
         r.a = "foo"
         self.assertEqual(r.a, "foo")
         r.a = u"foo"
@@ -44,7 +44,7 @@ class TestArguments(unittest.TestCase):
         class R_test_integer(resource.Resource):
             a = argument.Integer()
         self.assertTrue(isinstance(R_test_integer.a, argument.Integer))
-        r = R_test_integer(name="test")
+        r = R_test_integer(id="test")
         r.a = 10
         self.assertEqual(r.a, 10)
         r.a = "10"
@@ -58,7 +58,7 @@ class TestArguments(unittest.TestCase):
         class R_test_bool(resource.Resource):
             a = argument.Boolean()
         self.assertTrue(isinstance(R_test_bool.a, argument.Boolean))
-        r = R_test_bool(name="test")
+        r = R_test_bool(id="test")
         r.a = True
         self.assertEqual(r.a, True)
         r.a = False
@@ -76,4 +76,4 @@ class TestArguments(unittest.TestCase):
         class R_test_full_path(resource.Resource):
             a = argument.FullPath()
         self.assertTrue(isinstance(R_test_full_path.a, argument.FullPath))
-        self.assertRaises(error.ParseError, R_test_full_path, name="test", a="test")
+        self.assertRaises(error.ParseError, R_test_full_path, id="test", a="test")

@@ -27,19 +27,19 @@ class DummyResource(resource.Resource):
 class TestPolicy(unittest.TestCase):
 
     def test_validate_true(self):
-        r = DummyResource(name="hello", arg1="hello")
+        r = DummyResource(id="hello", arg1="hello")
         p = policy.Policy(r)
         p.signature = [policy.Present("arg1")]
         p.validate()
 
     def test_validate_false(self):
-        r = DummyResource(name="hello")
+        r = DummyResource(id="hello")
         p = policy.Policy(r)
         p.signature = [policy.Present("arg1")]
         self.assertRaises(error.NonConformingPolicy, p.validate)
 
     def test_get_provider_no_suitable(self):
-        r = DummyResource(name="hello")
+        r = DummyResource(id="hello")
         p = policy.Policy(r)
         self.assertRaises(error.NoSuitableProviders, p.get_provider)
 
@@ -47,13 +47,13 @@ class TestPolicy(unittest.TestCase):
 class TestPresent(unittest.TestCase):
 
     def test_is_not_present(self):
-        r = DummyResource(name="hello")
+        r = DummyResource(id="hello")
         p = policy.Present("arg1")
         self.assertEqual(False, p.test(r))
         self.assertEqual(["'arg1' must be present (False)"], list(p.describe(r)))
 
     def test_is_present(self):
-        r = DummyResource(name="hello", arg1="i am present")
+        r = DummyResource(id="hello", arg1="i am present")
         p = policy.Present("arg1")
         self.assertEqual(True, p.test(r))
         self.assertEqual(["'arg1' must be present (True)"], list(p.describe(r)))
@@ -62,13 +62,13 @@ class TestPresent(unittest.TestCase):
 class TestAbsent(unittest.TestCase):
 
     def test_is_not_present(self):
-        r = DummyResource(name="hello")
+        r = DummyResource(id="hello")
         p = policy.Absent("arg1")
         self.assertEqual(True, p.test(r))
         self.assertEqual(["'arg1' must be absent (True)"], list(p.describe(r)))
 
     def test_is_present(self):
-        r = DummyResource(name="hello", arg1="i am present")
+        r = DummyResource(id="hello", arg1="i am present")
         p = policy.Absent("arg1")
         self.assertEqual(False, p.test(r))
         self.assertEqual(["'arg1' must be absent (False)"], list(p.describe(r)))
@@ -77,7 +77,7 @@ class TestAbsent(unittest.TestCase):
 class TestAND(unittest.TestCase):
 
     def setUpAnd(self, arg1=None, arg2=None):
-        kwargs = {"name": "hello"}
+        kwargs = {"id": "hello"}
         if arg1:
             kwargs['arg1'] = arg1
         if arg2:
@@ -106,7 +106,7 @@ class TestAND(unittest.TestCase):
 class TestNAND(unittest.TestCase):
 
     def setUpAnd(self, arg1=None, arg2=None):
-        kwargs = {"name": "hello"}
+        kwargs = {"id": "hello"}
         if arg1:
             kwargs['arg1'] = arg1
         if arg2:
@@ -135,7 +135,7 @@ class TestNAND(unittest.TestCase):
 class TestOR(unittest.TestCase):
 
     def setUpAnd(self, arg1=None, arg2=None):
-        kwargs = {"name": "hello"}
+        kwargs = {"id": "hello"}
         if arg1:
             kwargs['arg1'] = arg1
         if arg2:

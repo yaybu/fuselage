@@ -103,7 +103,7 @@ class Resource(six.with_metaclass(ResourceType)):
     like any other, but has a complex representation that holds the conditions
     and options for the policies as specified in the input file. """
 
-    name = String()
+    id = String(default=lambda r: r.implicit_id)
 
     watches = SubscriptionArgument()
 
@@ -143,7 +143,7 @@ class Resource(six.with_metaclass(ResourceType)):
         self.policy.validate()
         self.policy.get_provider()
 
-        if not self.implicit_name:
+        if not self.id:
             raise error.ParseError("Resource is not explicitly named and name cannot be implied")
 
     @classmethod
@@ -200,18 +200,18 @@ class Resource(six.with_metaclass(ResourceType)):
         return bound
 
     @property
-    def implicit_name(self):
-        if self.name:
+    def implicit_id(self):
+        if getattr(self, "name", None):
             return force_str(self.name)
         return None
 
     @property
-    def id(self):
-        name = self.implicit_name
+    def typed_id(self):
+        name = self.id
         if not name:
             raise error.ParseError("Resource is not named")
         classname = getattr(self, '__resource_name__', self.__class__.__name__)
         return "%s[%s]" % (classname, name)
 
     def __repr__(self):
-        return self.id
+        return self.typed_id
