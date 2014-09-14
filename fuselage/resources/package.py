@@ -49,6 +49,10 @@ class Package(Resource):
     purge = Boolean(default=False)
     """ When removing a package, whether to purge it or not. """
 
+    backend = String()
+    """ On a normal system, this does not need to be set. Set to 'apt' to force
+    the use of apt-get, and 'yum' to force the use of yum. """
+
 
 class PackageInstallPolicy(Policy):
 
