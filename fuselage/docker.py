@@ -126,4 +126,4 @@ class DockerBuilder(object):
                 if 'stream' in data:
                     yield data['stream']
                 elif 'errorDetail' in data:
-                    raise RuntimeError(data['errorDetail'])
+                    raise RuntimeError(data['errorDetail']['message'])
