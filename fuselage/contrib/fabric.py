@@ -59,7 +59,7 @@ class FuselageMixin(object):
         k.update(self.kwargs)
         k.update(kwargs)
 
-        return self.apply_bundle(self.get_bundle_stream(*args, **k), *args, **kwargs)
+        return self.apply_bundle(self.get_bundle_stream(*args, **k), *args, **k)
 
     def __call__(self, *args, **kwargs):
         return self.run(*args, **kwargs)
@@ -110,7 +110,7 @@ blueprint = DeploymentTask.as_decorator()
 
 class DockerBuildTask(FuselageMixin, tasks.WrappedCallableTask):
 
-    arguments = ['from_image', 'tag', 'env', 'ports', 'volumes', 'maintainer']
+    arguments = ['from_image', 'tag', 'env', 'ports', 'volumes', 'cmd', 'maintainer']
 
     def apply_bundle(self, bundle, *args, **kwargs):
         from fuselage.docker import DockerBuilder

@@ -28,13 +28,14 @@ from fuselage.builder import build
 
 class DockerBuilder(object):
 
-    def __init__(self, bundle, from_image='ubuntu', tag=None, env=None, volumes=None, ports=None, maintainer=None):
+    def __init__(self, bundle, from_image='ubuntu', tag=None, env=None, volumes=None, ports=None, cmd=None, maintainer=None):
         self.bundle = bundle
         self.from_image = from_image
         self.tag = tag
         self.env = env or {}
         self.volumes = volumes or []
         self.ports = ports or []
+        self.cmd = cmd
         self.maintainer = maintainer
 
     def get_dockerfile(self):
@@ -66,6 +67,12 @@ class DockerBuilder(object):
             'RUN /payload.pex',
             'RUN rm /payload.pex',
         ])
+
+        if self.cmd:
+            df.append("")
+            df.append("CMD %s" % json.dumps(self.cmd))
+
+        print ("\n".join(df))
 
         return "\n".join(df)
 
