@@ -112,6 +112,8 @@ class DockerBuilder(object):
             if 'status' in data:
                 # {u'status': u'Downloading', u'progressDetail': {u'current': 3239, u'start': 141059980, u'total': 133813}, u'id': u'2124c4204a05', u'progress': u'[=>] 32.32 kB/1.338 MB 29s'}
                 if status != data['status']:
+                    if status:
+                        yield '\n'
                     status = data['status']
                     yield status
                 else:
