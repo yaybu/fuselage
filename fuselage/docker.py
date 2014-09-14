@@ -62,8 +62,10 @@ class DockerBuilder(object):
             df.append("")
 
         df.extend([
+            'RUN if [[ -f /usr/bin/apt-get ]]; then apt-get update && apt-get install python -y; fi',
+            'RUN if [[ -f /usr/bin/yum ]]; then yum install python -y; fi',
+            '',
             "ADD payload.pex /payload.pex",
-            'RUN apt-get update && apt-get install python -y',
             'RUN /payload.pex',
             'RUN rm /payload.pex',
         ])
