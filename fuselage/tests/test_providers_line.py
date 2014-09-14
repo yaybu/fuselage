@@ -76,3 +76,23 @@ class TestLine(TestCaseWithRunner):
         ))
         self.check_apply()
         self.assertEqual(platform.get("/replace_existing_line_append"), "FOO 1\nBAZ 3")
+
+    def test_multiple_lines(self):
+        platform.put("/multiple_lines", "FOO 1\nBAR 2\nBAZ 3")
+        self.bundle.add(Line(
+            name="/multiple_lines",
+            match="^BAR",
+            line="BAR 3",
+        ))
+        self.bundle.add(Line(
+            name="/multiple_lines",
+            match="^BAZ",
+            line="BAZ 4",
+        ))
+        self.bundle.add(Line(
+            name="/multiple_lines",
+            match="^FOO",
+            line="FOO 2",
+        ))
+        self.check_apply()
+        self.assertEqual(platform.get("/multiple_lines"), "FOO 2\nBAR 3\nBAZ 4")
