@@ -26,6 +26,7 @@ from fuselage.argument import (
     FullPath,
     String,
 )
+from fuselage.utils import simple_str
 
 
 class Line(Resource):
@@ -41,6 +42,10 @@ class Line(Resource):
             replace="SELINUX=disabled",
         )
     """
+
+    @property
+    def implicit_name(self):
+        return self.name + ":" +  simple_str(self.match)
 
     name = FullPath()
     """ The full path to the file to perform an operation on. """
