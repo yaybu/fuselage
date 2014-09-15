@@ -11,6 +11,9 @@ Fuselage
 .. image:: https://pypip.in/version/fuselage/badge.png
     :target: https://pypi.python.org/pypi/fuselage/
 
+.. image:: https://readthedocs.org/projects/fuselage/badge/?version=latest
+    :target: http://docs.yaybu.com/projects/fuselage/en/latest/
+
 
 fuselage is a idempotent configuration bundle builder and runtime.
 
