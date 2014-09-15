@@ -25,6 +25,7 @@ from fuselage.policy import (
 from fuselage.argument import (
     FullPath,
     String,
+    Boolean,
 )
 from fuselage.utils import simple_str, force_str
 
@@ -55,6 +56,8 @@ class Line(Resource):
 
     match = String(default="")
     """ The python regular expression to match the line to be updated. """
+
+    sensitive = Boolean(default=False)
 
 
 class LineApplyPolicy(Policy):

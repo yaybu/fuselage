@@ -33,6 +33,7 @@ class _LineMixin(object):
         fc = EnsureContents(
             self.resource.name,
             contents,
+            sensitive=self.resource.sensitive,
         )
         self.change(fc)
 
