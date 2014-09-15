@@ -190,6 +190,7 @@ class Mercurial(provider.Provider):
                 self.resource.user,
                 self.resource.group,
                 0o600,
+                sensitive=bool(self.resource.scm_password),
             ))
             # changed = changed or f.changed
         except error.SystemError:
