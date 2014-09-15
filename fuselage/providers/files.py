@@ -47,7 +47,8 @@ class File(provider.Provider):
             self.resource.contents,  # self.get_file(self.resource.source),
             self.resource.owner,
             self.resource.group,
-            self.resource.mode
+            self.resource.mode,
+            sensitive=self.resource.sensitive,
         )
         self.change(fc)
 

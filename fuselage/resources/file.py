@@ -29,6 +29,7 @@ from fuselage.argument import (
     String,
     Octal,
     File,
+    Boolean,
 )
 from fuselage.defaults import get_default_user, get_default_group
 
@@ -86,6 +87,8 @@ class File(Resource):
 
     source = File()
     """A file that will be applied to this resource. """
+
+    sensitive = Boolean(default=False)
 
 
 class FileApplyPolicy(Policy):

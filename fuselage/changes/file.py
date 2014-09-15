@@ -41,7 +41,7 @@ class EnsureContents(base.Change):
     catered for. Additionally the minimum changes required to the contents are
     applied, and logs of the changes made are recorded. """
 
-    def __init__(self, filename, contents):
+    def __init__(self, filename, contents, sensitive=False):
         self.filename = filename
         self.current = ""
         self.contents = contents
@@ -110,17 +110,18 @@ class EnsureContents(base.Change):
 
 class EnsureFile(base.Change):
 
-    def __init__(self, filename, contents, user, group, mode):
+    def __init__(self, filename, contents, user, group, mode, sensitive=False):
         self.filename = filename
         self.contents = contents
         self.user = user
         self.group = group
         self.mode = mode
         self.changed = False
+        self.sensitive = sensitive
 
     def apply(self, context):
         """ Apply the changes necessary to the file contents. """
-        fc = EnsureContents(self.filename, self.contents)
+        fc = EnsureContents(self.filename, self.contents, sensitive=self.sensitive)
         context.change(fc)
 
         ac = AttributeChanger(self.filename, self.user, self.group, self.mode)
