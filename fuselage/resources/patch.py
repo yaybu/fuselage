@@ -20,6 +20,7 @@ from fuselage.argument import (
     Integer,
     Octal,
     File,
+    Boolean,
 )
 
 
@@ -64,6 +65,8 @@ class Patch(Resource):
     """A mode representation as an octal. This can begin with leading zeros if
     you like, but this is not required. DO NOT use yaml Octal representation
     (0o666), this will NOT work."""
+
+    sensitive = Boolean(default=False)
 
 
 class PatchApplyPolicy(Policy):

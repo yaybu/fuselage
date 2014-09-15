@@ -69,7 +69,7 @@ class Patch(provider.Provider):
         contents = self.apply_patch()
 
         fc = EnsureFile(name, contents, self.resource.owner,
-                        self.resource.group, self.resource.mode)
+                        self.resource.group, self.resource.mode, sensitive=self.resource.sensitive)
         self.change(fc)
 
         return fc.changed
