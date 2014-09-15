@@ -16,6 +16,8 @@ Contents:
    defining_configuration
    resources
    contrib
+   docker
+
 
 Contributing
 ============
