@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import shlex
-
 from fuselage import provider, error, resources, platform
 from fuselage.changes import ShellCommand
 
@@ -25,7 +23,7 @@ class _ServiceMixin(object):
         if self.resource.running:
             self.logger.debug("Running %r to determine if already running" % self.resource.running)
             try:
-                platform.check_call(shlex.split(self.resource.running))
+                platform.check_call(self.resource.running)
             except error.SystemError as e:
                 self.logger.debug("Got exit code %d. Assuming not running." % (e.returncode, ))
                 return "not-running"
@@ -74,7 +72,7 @@ class _ServiceMixin(object):
         pass
 
     def get_command(self, action):
-        return shlex.split(getattr(self.resource, action))
+        return getattr(self.resource, action)
 
 
 class Start(_ServiceMixin, provider.Provider):
