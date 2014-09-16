@@ -13,6 +13,8 @@
 # limitations under the License.
 
 from __future__ import absolute_import, print_function
+import os
+import subprocess
 
 try:
     from fabric import tasks
@@ -23,6 +25,28 @@ except SyntaxError:
     raise ImportError("Fabric cannot be imported due to syntax errors. Are you using a supported version of python?")
 
 from fuselage import bundle, builder, error
+
+
+def template(path, ctx):
+    from jinja2 import Environment, FileSystemLoader
+    env = Environment(loader=FileSystemLoader(os.path.join(os.getcwd(), "deployment")), line_statement_prefix='%')
+    return env.get_template(path).render(ctx) + "\n"
+
+
+def static(path):
+    with open(os.path.join(os.getcwd(), "deployment", path), "rb") as fp:
+        return fp.read()
+
+
+def decrypt(path):
+    with open(os.path.join(os.getcwd(), "deployment", path), "rb") as fp:
+        data = fp.read()
+    p = subprocess.Popen(["gpg", "--use-agent", "--batch", "-d"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    stdout, stderr = p.communicate(data)
+    if p.returncode != 0:
+        utils.error("Unable to decrypt data '%s'" % path)
+        raise RuntimeError("Unable to decrypt data '%s'" % path)
+    return stdout
 
 
 class FuselageMixin(object):
