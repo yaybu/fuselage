@@ -46,7 +46,7 @@ class EnsureContents(base.Change):
         self.current = ""
         self.contents = contents
         self.changed = False
-        self.sensitive = False
+        self.sensitive = sensitive
 
     def diff(self, context, note, previous, replacement):
         extra = {}
