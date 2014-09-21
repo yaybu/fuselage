@@ -35,9 +35,9 @@ class YumInstall(provider.Provider):
 
     @classmethod
     def isvalid(self, policy, resource):
-        if resource.backend and resource.backend != "yum":
-            return False
-        return platform.exists("/usr/bin/rpm")
+        if resource.backend == "yum":
+            return True
+        return False
 
     def apply(self):
         if is_installed(self.resource):
@@ -61,9 +61,9 @@ class YumUninstall(provider.Provider):
 
     @classmethod
     def isvalid(self, policy, resource):
-        if resource.backend and resource.backend != "yum":
-            return False
-        return platform.exists("/usr/bin/rpm")
+        if resource.backend == "yum":
+            return True
+        return False
 
     def apply(self):
         if not is_installed(self.resource):

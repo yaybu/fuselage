@@ -44,7 +44,7 @@ class AptInstall(provider.Provider):
     def isvalid(self, policy, resource):
         if resource.backend and resource.backend != "apt":
             return False
-        return platform.exists("/usr/bin/dpkg")
+        return True
 
     def apply(self):
         if is_installed(self.resource):
@@ -87,7 +87,7 @@ class AptUninstall(provider.Provider):
     def isvalid(self, policy, resource):
         if resource.backend and resource.backend != "apt":
             return False
-        return platform.exists("/usr/bin/dpkg")
+        return True
 
     def apply(self):
         if not is_installed(self.resource):
