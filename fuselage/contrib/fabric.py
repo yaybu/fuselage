@@ -41,11 +41,17 @@ def static(path):
 def decrypt(path):
     with open(os.path.join(os.getcwd(), "deployment", path), "rb") as fp:
         data = fp.read()
-    p = subprocess.Popen(["gpg", "--use-agent", "--batch", "-d"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    env = os.environ.copy()
+    if "GPG_TTY" not in env and os.path.exists("/proc/self/fd/0"):
+        env['GPG_TTY'] = os.readlink('/proc/self/fd/0')
+    p = subprocess.Popen(["gpg", "--use-agent", "--batch", "-d"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, env=env)
     stdout, stderr = p.communicate(data)
     if p.returncode != 0:
-        utils.error("Unable to decrypt data '%s'" % path)
-        raise RuntimeError("Unable to decrypt data '%s'" % path)
+        error_message = "Unable to decrypt data '%s'." % path
+        if "GPG_AGENT_INFO" not in env:
+            error_message += " GPG Agent not running so your GPG key may not be available."
+        utils.error(error_message)
+        raise RuntimeError(error_message)
     return stdout
 
 
