@@ -19,7 +19,7 @@ import subprocess
 try:
     from fabric import tasks
     from fabric.operations import put, sudo
-    from fabric.api import settings
+    from fabric.api import env, settings
     from fabric import utils
 except SyntaxError:
     raise ImportError("Fabric cannot be imported due to syntax errors. Are you using a supported version of python?")
@@ -29,26 +29,29 @@ from fuselage import bundle, builder, error
 
 def template(path, ctx):
     from jinja2 import Environment, FileSystemLoader
-    env = Environment(loader=FileSystemLoader(os.path.join(os.getcwd(), "deployment")), line_statement_prefix='%')
-    return env.get_template(path).render(ctx) + "\n"
+    base_dir = os.path.dirname(env.real_fabfile)
+    e = Environment(loader=FileSystemLoader(os.path.join(base_dir, "deployment")), line_statement_prefix='%')
+    return e.get_template(path).render(ctx) + "\n"
 
 
 def static(path):
-    with open(os.path.join(os.getcwd(), "deployment", path), "rb") as fp:
+    base_dir = os.path.dirname(env.real_fabfile)
+    with open(os.path.join(base_dir, "deployment", path), "rb") as fp:
         return fp.read()
 
 
 def decrypt(path):
-    with open(os.path.join(os.getcwd(), "deployment", path), "rb") as fp:
+    base_dir = os.path.dirname(env.real_fabfile)
+    with open(os.path.join(base_dir, "deployment", path), "rb") as fp:
         data = fp.read()
-    env = os.environ.copy()
-    if "GPG_TTY" not in env and os.path.exists("/proc/self/fd/0"):
-        env['GPG_TTY'] = os.readlink('/proc/self/fd/0')
-    p = subprocess.Popen(["gpg", "--use-agent", "--batch", "-d"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, env=env)
+    environ = os.environ.copy()
+    if "GPG_TTY" not in environ and os.path.exists("/proc/self/fd/0"):
+        environ['GPG_TTY'] = os.readlink('/proc/self/fd/0')
+    p = subprocess.Popen(["gpg", "--use-agent", "--batch", "-d"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, env=environ)
     stdout, stderr = p.communicate(data)
     if p.returncode != 0:
         error_message = "Unable to decrypt data '%s'." % path
-        if "GPG_AGENT_INFO" not in env:
+        if "GPG_AGENT_INFO" not in environ:
             error_message += " GPG Agent not running so your GPG key may not be available."
         utils.error(error_message)
         raise RuntimeError(error_message)
