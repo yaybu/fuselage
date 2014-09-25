@@ -18,7 +18,7 @@ import logging
 import optparse
 import pkgutil
 
-from fuselage import bundle, error, event, platform
+from fuselage import log, bundle, error, event, platform
 
 logger = logging.getLogger(__name__)
 
@@ -65,8 +65,7 @@ class Runner(object):
         )
 
     def run(self):
-        #if self.verbosity is not None:
-        #    logging.getLogger().setLevel(self.verbosity)
+        log.configure(verbosity=self.verbosity, force=True)
 
         logger.debug("Runner started")
         logger.debug("Created runner with %d resources" % len(self.resources))

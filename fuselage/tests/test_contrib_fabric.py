@@ -40,11 +40,16 @@ class TestFabric(unittest.TestCase):
             setattr(self, api, p.start())
             self.cleanup.append(p)
 
+        p = mock.patch("fuselage.contrib.fabric.env")
+        self.env = p.start()
+        self.cleanup.append(p)
+
         self.error = self.utils.error
         self.error.side_effect = FabricError()
         self.sudo.return_value.return_code = 0
         self.put.return_value.failed = []
         self.put.return_value.__getitem__.return_value = '~/payload.pex'
+        self.env.real_fabfile = '/fabfile.py'
 
     def cleanUp(self):
         [x.stop() for x in self.cleanup()]

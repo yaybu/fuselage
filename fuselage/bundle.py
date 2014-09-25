@@ -69,7 +69,8 @@ class ResourceBundle(object):
         obj = {"version": self.BUNDLE_VERSION}
         resources = obj['resources'] = []
         for r in self.resources:
-            resources.append(r.serialize(builder))
+            if not getattr(r, "_implicit", False):
+                resources.append(r.serialize(builder))
         return obj
 
     def load(self, fp):
@@ -119,6 +120,12 @@ class ResourceBundle(object):
 
         resource = kls(**kwargs)
 
+        return self.add(resource)
+
+    def add(self, resource):
+        if resource.typed_id in self._index_by_id:
+            raise error.ParseError("Resources cannot be defined multiple times")
+
         # Create implicit File[] nodes for any watched files
         for watched in resource.changes:
             w = self.create("File", **{
@@ -126,12 +133,7 @@ class ResourceBundle(object):
                 "policy": "watched",
             })
             w._original_hash = None
-
-        return self.add(resource)
-
-    def add(self, resource):
-        if resource.typed_id in self._index_by_id:
-            raise error.ParseError("Resources cannot be defined multiple times")
+            w._implicit = True
 
         resource.bind(self)
         self.resources.append(resource)
@@ -155,7 +157,7 @@ class ResourceBundle(object):
         overall configuration. """
         for resource in self.resources:
             if hasattr(resource, "_original_hash"):
-                resource._original_hash = resource.hash(runner)
+                resource._original_hash = resource.hash()
 
         something_changed = False
         mylen = len(self.resources)

@@ -13,7 +13,10 @@
 # limitations under the License.
 
 from __future__ import absolute_import, print_function
+import ConfigParser
+import inspect
 import os
+import StringIO
 import subprocess
 
 try:
@@ -27,35 +30,66 @@ except SyntaxError:
 from fuselage import bundle, builder, error
 
 
-def template(path, ctx):
-    from jinja2 import Environment, FileSystemLoader
-    base_dir = os.path.dirname(env.real_fabfile)
-    e = Environment(loader=FileSystemLoader(os.path.join(base_dir, "deployment")), line_statement_prefix='%')
-    return e.get_template(path).render(ctx) + "\n"
+class Loader(object):
+
+    def __init__(self, dirname):
+        self._dirname = dirname
+
+    @property
+    def dirname(self):
+        return self._dirname() if callable(self._dirname) else self._dirname
+
+    def exists(self, path):
+        return os.path.exists(os.path.join(self.dirname, path))
+
+    def template(self, path, ctx):
+        from jinja2 import Environment, FileSystemLoader
+        e = Environment(loader=FileSystemLoader(self.dirname), line_statement_prefix='%')
+        return e.get_template(path).render(ctx) + "\n"
+
+    def static(self, path):
+        with open(os.path.join(self.dirname, path), "rb") as fp:
+            return fp.read()
+
+    def decrypt(self, path):
+        data = self.static(path)
+        environ = os.environ.copy()
+        if "GPG_TTY" not in environ and os.path.exists("/proc/self/fd/0"):
+            environ['GPG_TTY'] = os.readlink('/proc/self/fd/0')
+        p = subprocess.Popen(["gpg", "--use-agent", "--batch", "-d"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, env=environ)
+        stdout, stderr = p.communicate(data)
+        if p.returncode != 0:
+            error_message = "Unable to decrypt data '%s'." % path
+            if "GPG_AGENT_INFO" not in environ:
+                error_message += " GPG Agent not running so your GPG key may not be available."
+            utils.error(error_message)
+            raise RuntimeError(error_message)
+        return stdout
 
 
-def static(path):
-    base_dir = os.path.dirname(env.real_fabfile)
-    with open(os.path.join(base_dir, "deployment", path), "rb") as fp:
-        return fp.read()
+class Environment(ConfigParser.ConfigParser, object):
 
+    def __init__(self, environment, dirname=None):
+        super(Environment, self).__init__()
+        self.loader = Loader(dirname or os.path.join(os.path.dirname(env.real_fabfile), "environments"))
+        self.read("default.cfg")
+        self.read("default-secrets.cfg.gpg")
+        self.read(environment + ".cfg")
+        self.read(environment + "-secrets.cfg.gpg")
 
-def decrypt(path):
-    base_dir = os.path.dirname(env.real_fabfile)
-    with open(os.path.join(base_dir, "deployment", path), "rb") as fp:
-        data = fp.read()
-    environ = os.environ.copy()
-    if "GPG_TTY" not in environ and os.path.exists("/proc/self/fd/0"):
-        environ['GPG_TTY'] = os.readlink('/proc/self/fd/0')
-    p = subprocess.Popen(["gpg", "--use-agent", "--batch", "-d"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, env=environ)
-    stdout, stderr = p.communicate(data)
-    if p.returncode != 0:
-        error_message = "Unable to decrypt data '%s'." % path
-        if "GPG_AGENT_INFO" not in environ:
-            error_message += " GPG Agent not running so your GPG key may not be available."
-        utils.error(error_message)
-        raise RuntimeError(error_message)
-    return stdout
+    def read(self, path, required=False):
+        fn = self.loader.decrypt if path.endswith(".gpg") else self.loader.static
+        if not self.loader.exists(path):
+            if required:
+                utils.error("Configuration file '%s' not found" % path)
+                raise RuntimeError
+            return
+        self.readfp(StringIO.StringIO(fn(path)))
+
+    def iter_sections_starting(self, starting):
+        for section in self.sections():
+            if section.startswith(starting):
+                yield section[len(starting):], dict(self.items(section))
 
 
 class FuselageMixin(object):
@@ -64,6 +98,11 @@ class FuselageMixin(object):
 
     def __init__(self, *args, **kwargs):
         super(FuselageMixin, self).__init__(*args, **kwargs)
+        self.arguments = list(self.arguments)
+        for arg in inspect.getargspec(self.wrapped).args:
+            if arg not in ("bundle", ):
+                self.arguments.append(arg)
+
         self.kwargs = {}
         for k, v in kwargs.items():
             if k in self.arguments:
@@ -114,7 +153,7 @@ class FuselageMixin(object):
 
 class DeploymentTask(FuselageMixin, tasks.WrappedCallableTask):
 
-    arguments = ['simulate']
+    arguments = ['simulate', 'loglevel']
 
     def apply_bundle(self, bundle, *args, **kwargs):
         uploaded = put(builder.build(bundle), '~/payload.pex', mode=755)
@@ -126,6 +165,12 @@ class DeploymentTask(FuselageMixin, tasks.WrappedCallableTask):
 
         if kwargs.get("simulate", "false").lower() in ("true", "y", "yes", "on", "1"):
             command.append("--simulate")
+
+        if "loglevel" in kwargs:
+            if kwargs['loglevel'].lower() not in ("info", "debug", ):
+                utils.error("Invalid loglevel")
+                return
+            command.extend(["-v"] * {"info": 0, "debug": 1}[kwargs['loglevel'].lower()])
 
         try:
             with settings(warn_only=True):
@@ -156,3 +201,9 @@ class DockerBuildTask(FuselageMixin, tasks.WrappedCallableTask):
             return
 
 docker_container = DockerBuildTask.as_decorator()
+
+
+loader = Loader(lambda: os.path.join(os.path.dirname(env.real_fabfile), "deployment"))
+template = loader.template
+static = loader.static
+decrypt = loader.decrypt

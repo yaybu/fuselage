@@ -51,7 +51,7 @@ class _ServiceMixin(object):
         #     return "running"
 
         try:
-            platform.check_call(["kill", "-n", "0", str(pid)])
+            platform.check_call(["kill", "-0", str(pid)])
             self.logger.debug("Service is running.")
             return "running"
         except error.SystemError:

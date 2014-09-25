@@ -90,6 +90,13 @@ class File(Resource):
 
     sensitive = Boolean(default=False)
 
+    def hash(self):
+        from fuselage import platform
+        try:
+            return platform.stat(self.name).st_mtime
+        except OSError:
+            return 0
+
 
 class FileApplyPolicy(Policy):
 

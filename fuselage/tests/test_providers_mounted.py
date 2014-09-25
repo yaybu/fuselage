@@ -21,7 +21,6 @@ class TestDummyCheckout(TestCaseWithRunner):
 
     def test_dummy_checkout(self):
         self.bundle.add(Directory(name="/dummy"))
-        self.bundle.add(File(name="/dummy/foo"))
         self.bundle.add(Checkout(
             name="/dummy",
             repository="",
