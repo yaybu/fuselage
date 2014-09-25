@@ -27,7 +27,7 @@ class Runner(object):
 
     state_path = "/var/run/yaybu"
 
-    def __init__(self, resources, resume=False, no_resume=False, simulate=False, verbosity=None):
+    def __init__(self, resources, resume=False, no_resume=False, simulate=False, verbosity=logging.INFO):
         if resume and no_resume:
             raise error.ParseError("'resume' and 'no_resume' cannot both be True")
 
