@@ -2,7 +2,7 @@
 fuselage
 ========
 
-0.0.2 (unreleased)
+0.0.2 (2014-10-06)
 ------------------
 
 - ``Execute`` resources are now implicitly named by taking the command or
