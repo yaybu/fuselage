@@ -5,23 +5,37 @@ fuselage
 0.0.2 (unreleased)
 ------------------
 
-- Execute resources are now implicitly named by taking the command or commands
-  parameters and filterning non-ascii non-alphanumeric characters out. For
-  example, an Execute that did ``touch /foo`` would be implicitly named
+- ``Execute`` resources are now implicitly named by taking the command or
+  commands parameters and filterning non-ascii non-alphanumeric characters out.
+  For example, an Execute that did ``touch /foo`` would be implicitly named
   ``touch-foo``.
 
-- Extend changes.ShellCommand so that it can be instructed to log something
+- Extend ``changes.ShellCommand`` so that it can be instructed to log something
   other than command.
 
 - Clean up temporary files after execution.
 
-- Add a ResourceBundle.from_iterator(..) convenience method. When used with
+- Add a ``ResourceBundle.from_iterator()`` convenience method. When used with
   generators it will throw validation errors at the point where the resource
   was yielded.
 
-- Add support for --simulate flag passing in fabric backend.
+- Add a new ``ResoureBundle.extend`` convenience method.
 
-- Add support for Yum packages.
+- Add support for ``--simulate`` flag passing in fabric backend.
+
+- Add support for ``Yum`` packages.
+
+- Add a ``sensitve`` flag to ``File``, ``Line`` and ``Patch``.
+
+- Resources that take ``owner`` as a parameter now default to the current user instead of ``root``.
+
+- Resources that take ``group`` now default to the primary group of ``owner`` instead of ``root``.
+
+- Fixed the ``Service`` resource.
+
+- Add some more helpers around fabric support.
+
+- Fabric bundles can be converted into Docker containers.
 
 
 0.0.1 (2014-07-06)
