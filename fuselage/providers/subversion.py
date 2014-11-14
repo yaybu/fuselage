@@ -36,26 +36,17 @@ class Svn(provider.Provider):
             return repository + "/tags/" + self.resource.tag
         return repository + "/" + self.resource.branch
 
-    def action_checkout(self):
-        name = self.resource.name
-        user = self.resource.user
-        group = self.resource.group
-
-        self.change(EnsureDirectory(name, user, group, 0o755))
-
-        self.svn("co", self.url, self.resource.name)
-        return True
-
     def apply(self):
         if not platform.exists("/usr/bin/svn"):
             self.raise_or_log(error.MissingDependency(
                 "'/usr/bin/svn' is not available; update your configuration to install subversion?"
             ))
 
-        name = self.resource.name
+        self.change(EnsureDirectory(self.resource.name, user=self.resource.user, group=self.resource.group, 0o755))
 
-        if not platform.exists(name):
-            return self.action_checkout()
+        if not platform.exists(os.path.join(self.resource.name, ".svn")):
+            self.svn("co", self.url, self.resource.name)
+            return True
 
         changed = False
 
