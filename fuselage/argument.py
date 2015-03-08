@@ -179,14 +179,16 @@ class List(Argument):
 
 class File(Argument):
 
-    """ Provided with a URL, this can get files by various means. Often used
-    with the package:// scheme """
-
     def __set__(self, instance, value):
         setattr(instance, self.arg_id, value)
 
-    def _generate_valid(self):
-        return '/tmp/foo'
+    def serialize(self, instance, builder=None):
+        assert builder
+        if not hasattr(instance, self.arg_id):
+            return self.default
+
+        with open(getattr(instance, self.arg_id), "rb") as fp:
+            return builder.add_resource_blob(fp.read())
 
 
 class PolicyTrigger:

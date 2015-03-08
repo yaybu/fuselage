@@ -42,9 +42,21 @@ class File(provider.Provider):
 
         self.check_path(os.path.dirname(name))
 
+        contents = ""
+        if self.resource.contents:
+            contents = self.resource.contents
+        elif self.resource.source:
+            if self.resource.source.startswith("bundle://"):
+                import pkgutil
+                loader = pkgutil.get_loader("fuselage")
+                contents = loader.get_data("assets/" + self.resource.source[9:])
+            else:
+                with open(self.resource.source, "rb") as fp:
+                    contents = fp.read()
+
         fc = EnsureFile(
             name,
-            self.resource.contents,  # self.get_file(self.resource.source),
+            contents,
             self.resource.owner,
             self.resource.group,
             self.resource.mode,
