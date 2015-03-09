@@ -182,6 +182,9 @@ class File(Argument):
     def __set__(self, instance, value):
         setattr(instance, self.arg_id, value)
 
+    def _generate_valid(self):
+        return '/tmp/foo'
+
     def serialize(self, instance, builder=None):
         assert builder
         if not hasattr(instance, self.arg_id):
