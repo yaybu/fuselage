@@ -52,10 +52,11 @@ class Git(provider.Provider):
                 user=self.resource.user,
                 cwd=self.resource.name,
             )
+            returncode = 0
         except error.SystemError as e:
-            return e.returncode, e.stdout, e.stderr
+            returncode, stdout, stderr = e.returncode, e.stdout, e.stderr
 
-        return 0, stdout, stderr
+        return returncode, stdout, stderr
 
     def action(self, action, *args):
         self.change(ShellCommand(
