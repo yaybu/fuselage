@@ -143,7 +143,7 @@ class ResourceBundle(object):
     def extend(self, iterator):
         while True:
             try:
-                resource = iterator.next()
+                resource = next(iterator)
             except StopIteration:
                 break
 
