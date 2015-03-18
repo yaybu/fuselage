@@ -156,7 +156,7 @@ class Process(subprocess.Popen):
 def check_call(command, *args, **kwargs):
     logger = kwargs.pop('logger', None)
     expected = kwargs.pop('expected', 0)
-    encoding = kwargs.pop('encoding', sys.getdefaultencoding())
+    encoding = kwargs.pop('encoding', 'UTF-8')
     stdin = kwargs.pop('stdin', None)
     kwargs['stdin'] = subprocess.PIPE if stdin else None
     kwargs.setdefault('shell', not isinstance(command, list))
