@@ -150,7 +150,11 @@ class ResourceBundle(object):
             try:
                 self.add(resource)
             except Exception as e:
-                iterator.throw(e)
+                throw = getattr(iterator, 'throw', None)
+                if callable(throw):
+                    throw(e)
+                else:
+                    raise
 
     def apply(self, runner):
         """ Apply the resources to the system, using the provided context and
