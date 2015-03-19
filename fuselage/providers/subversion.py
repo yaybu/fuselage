@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 from fuselage import error, resources, provider, platform
 from fuselage.changes import ShellCommand, EnsureDirectory
 
@@ -42,7 +44,7 @@ class Svn(provider.Provider):
                 "'/usr/bin/svn' is not available; update your configuration to install subversion?"
             ))
 
-        self.change(EnsureDirectory(self.resource.name, user=self.resource.user, group=self.resource.group, 0o755))
+        self.change(EnsureDirectory(self.resource.name, self.resource.user, self.resource.group, 0o755))
 
         if not platform.exists(os.path.join(self.resource.name, ".svn")):
             self.svn("co", self.url, self.resource.name)

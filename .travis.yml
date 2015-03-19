@@ -18,14 +18,14 @@ install:
   - pip install --no-index --find-links=$HOME/wheelhouse -r requirements.txt
 
 script:
-  - coverage run $(which py.test)
+  - coverage run $(which py.test) fuselage
   - flake8 fuselage
 
 after_success:
   - coveralls
 
 notifications:
-    irc: 
+    irc:
         channels:
           - "irc.oftc.net#yaybu"
         use_notice: true
