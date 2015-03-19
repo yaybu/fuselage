@@ -17,6 +17,7 @@ import modulefinder
 import os
 import pkgutil
 import zipfile
+import hashlib
 
 
 MAIN_PY = """
@@ -52,8 +53,10 @@ class Builder(object):
     def write_to_path(cls, path):
         return cls.write_to(open(path, "wb"))
 
-    def add_resource(self, name, payload):
+    def add_resource_blob(self, payload):
+        name = hashlib.sha1(payload).hexdigest()
         self.zipfile.writestr(os.path.join("assets", name), payload)
+        return "bundle://" + name
 
     def embed_resource_bundle(self, bundle):
         data = bundle.dumps(self)
