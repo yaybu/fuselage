@@ -5,7 +5,15 @@ fuselage
 0.0.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Embed ``File.source`` assets in fuselage bundles properly (instead of
+  including them in the JSON payload).
+
+- For SVN, always run EnsureDirectory to ensure can checkout to directory. Only
+  svn co if no .svn directory. This will fail if directory isnt empty.
+
+- Various python 3 fixes (thanks mitchellrj)
+
+- Various OSX fixes.
 
 
 0.0.2 (2014-10-06)
