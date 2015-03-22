@@ -2,7 +2,7 @@
 fuselage
 ========
 
-0.0.3 (unreleased)
+0.0.3 (2015-03-22)
 ------------------
 
 - Embed ``File.source`` assets in fuselage bundles properly (instead of
