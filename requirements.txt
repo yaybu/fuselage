@@ -5,7 +5,7 @@ coveralls
 flake8
 mock
 fabric
-apache-libcloud==0.16.0
+apache-libcloud==0.17.0
 fakechroot>=0.2.1
 
 -e .
