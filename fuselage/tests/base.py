@@ -109,14 +109,16 @@ class TestCaseWithRunner(TestCaseWithBundle):
                 command = shlex.split(command)
             else:
                 command = list(command)
+
             paths = [self.chroot.overlay_dir]
-            if "PATH" in env:
-                paths.extend(os.path.join(env["FAKECHROOT_BASE"], p.lstrip("/")) for p in env["PATH"].split(":"))
-                for p in paths:
-                    path = os.path.join(p, command[0])
-                    if os.path.exists(path):
-                        command[0] = path
-                        break
+            for p in env.get("PATH", "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin").split(":"):
+                paths.append(os.path.join(env["FAKECHROOT_BASE"], p.lstrip("/")))
+
+            for p in paths:
+                path = os.path.join(p, command[0])
+                if os.path.exists(path):
+                    command[0] = path
+                    break
 
             return orig_check_call(command, *args, **kwargs)
 
