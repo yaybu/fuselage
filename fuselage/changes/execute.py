@@ -116,6 +116,6 @@ class ShellCommand(base.Change):
             umask=self.umask,
             env=self.env,
             cwd=self.cwd,
-            expected=self.expected or 0,
+            expected=self.expected,
             logger=ctx.changelog,
         )
