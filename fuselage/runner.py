@@ -28,9 +28,12 @@ class Runner(object):
 
     state_path = "/var/run/yaybu"
 
-    def __init__(self, resources, resume=False, no_resume=False, no_changes_ok=False, simulate=False, verbosity=logging.INFO):
+    def __init__(self, resources, resume=False, no_resume=False, no_changes_ok=False, simulate=False, verbosity=logging.INFO, state_path=None):
         if resume and no_resume:
             raise error.ParseError("'resume' and 'no_resume' cannot both be True")
+
+        if state_path is not None:
+            self.state_path = state_path
 
         self.resources = resources
         self.resume = resume
@@ -51,6 +54,7 @@ class Runner(object):
     @classmethod
     def setup_from_cmdline(cls, argv=sys.argv, resources=None):
         p = optparse.OptionParser()
+        p.add_option("--state", default=None)
         p.add_option("-s", "--simulate", action="store_true", default=False)
         p.add_option("--resume", action="store_true", default=False)
         p.add_option("--no-resume", action="store_true", default=False)
@@ -66,6 +70,7 @@ class Runner(object):
             no_changes_ok=opts.no_changes_ok,
             simulate=opts.simulate,
             verbosity=logging.INFO - (10 * (opts.verbose - opts.quiet)),
+            state_path=opts.state,
         )
 
     def run(self):
