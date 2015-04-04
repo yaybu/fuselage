@@ -216,11 +216,11 @@ class SubscriptionArgument(Argument):
 
     """ Parses the policy: argument for resources, including triggers etc. """
 
-    def save(self, instance, value):
-        super(SubscriptionArgument, self).save(instance, value)
+    def clean(self, instance, value):
         triggers = []
         for resource in value:
             triggers.append(PolicyTrigger(resource))
+        return triggers
 
     def serialize(self, instance, builder=None):
         if not hasattr(instance, self.arg_id):
