@@ -14,7 +14,7 @@
 
 import six
 import sys
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 import random
 
 from fuselage import error
