@@ -14,7 +14,6 @@
 
 import six
 import sys
-from abc import ABCMeta
 import random
 
 from fuselage import error
@@ -27,7 +26,6 @@ class Argument(object):
     neater ways of doing this that do not involve passing extra arguments to
     Argument are welcome. """
 
-    metaclass = ABCMeta
     argument_id = 0
     default = None
 
