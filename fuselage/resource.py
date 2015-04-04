@@ -138,7 +138,8 @@ class Resource(six.with_metaclass(ResourceType)):
         for key, value in kwargs.items():
             if key not in self.__args__:
                 raise error.ParseError("'%s' is not a valid option for this resource" % (key, ))
-            setattr(self, key, value)
+            arg = self.__args__[key]
+            arg.save(self, value)
 
         self.policy.validate()
         self.policy.get_provider()
@@ -157,7 +158,7 @@ class Resource(six.with_metaclass(ResourceType)):
         dictionary will be None. """
         retval = {}
         for name, arg in self.__args__.items():
-            if hasattr(self, arg.arg_id):
+            if arg.present(self):
                 retval[name] = arg.serialize(self, builder=builder)
         return {self.__resource_name__: retval}
 
