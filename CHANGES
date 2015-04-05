@@ -2,7 +2,7 @@
 fuselage
 ========
 
-0.0.4 (unreleased)
+0.0.4 (2015-04-05)
 ------------------
 
 - The state directory (which is used to make sure that interupted tasks can be
