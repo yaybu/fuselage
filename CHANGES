@@ -2,10 +2,26 @@
 fuselage
 ========
 
-0.0.4 (unreleased)
+0.0.5 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+
+0.0.4 (2015-04-05)
+------------------
+
+- The state directory (which is used to make sure that interupted tasks can be
+  safely resumed) is now configurable. This means it is now safe to run
+  multiple fuselage deployments in parallel (where it makes sense to do so).
+  It's now also possible to run fuselage as a normal user (mitchellrj).
+
+- The fuselage runner can be told to not raise an exception if no changes were
+  made (mitchellrj).
+
+- Shell commands can now be told to ignore failure cases (mitchellrj).
+
+- Further python 3 support fixes (mitchellrj).
 
 
 0.0.3 (2015-03-22)

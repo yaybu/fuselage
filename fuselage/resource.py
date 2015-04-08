@@ -138,8 +138,7 @@ class Resource(six.with_metaclass(ResourceType)):
         for key, value in kwargs.items():
             if key not in self.__args__:
                 raise error.ParseError("'%s' is not a valid option for this resource" % (key, ))
-            arg = self.__args__[key]
-            arg.save(self, value)
+            setattr(self, key, value)
 
         self.policy.validate()
         self.policy.get_provider()
