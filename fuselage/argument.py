@@ -38,21 +38,29 @@ class Argument(object):
     def __get__(self, instance, owner):
         if instance is None:
             return self
+        return self.get(instance)
+
+    def get(self, instance):
+        if instance is None:
+            return self
         elif self.present(instance):
-            return getattr(instance, self.arg_id)
-        elif callable(self.default):
-            return self.default(instance)
+            return self.get_raw(instance)
         else:
-            return self.default
+            return self.get_default(instance)
+
+    def get_default(self, instance):
+        if callable(self.default):
+            return self.default(instance)
+        return self.default
+
+    def get_raw(self, instance):
+        return getattr(instance, self.arg_id)
 
     def present(self, instance):
         return hasattr(instance, self.arg_id)
 
     def serialize(self, instance, builder=None):
-        if hasattr(instance, self.arg_id):
-            return getattr(instance, self.arg_id)
-        else:
-            return self.default
+        return self.get(instance)
 
     def clean(self, instance, value):
         return value
@@ -185,10 +193,11 @@ class File(Argument):
 
     def serialize(self, instance, builder=None):
         assert builder
-        if not hasattr(instance, self.arg_id):
-            return self.default
+        if not self.present(instance):
+            return self.get_default(instance)
 
-        with open(getattr(instance, self.arg_id), "rb") as fp:
+        filename = self.get_raw(instance)
+        with open(filename, "rb") as fp:
             return builder.add_resource_blob(fp.read())
 
 
@@ -221,9 +230,9 @@ class SubscriptionArgument(Argument):
         return triggers
 
     def serialize(self, instance, builder=None):
-        if not hasattr(instance, self.arg_id):
+        if not self.present(instance):
             return
-        value = getattr(instance, self.arg_id)
+        value = self.get_raw(instance)
         policy = []
         for t in value:
             policy.append(t.on)
@@ -245,13 +254,13 @@ class PolicyArgument(Argument):
             raise error.ParseError("'%s' is not a valid policy for this resource" % (value, ))
         return value
 
-    def default(self, instance):
+    def get_default(self, instance):
         return instance.policies.default()(instance)
 
     def serialize(self, instance, builder=None):
-        if not hasattr(instance, self.arg_id):
+        if not self.present(instance):
             return
-        return getattr(instance, self.arg_id).name
+        return self.get_raw(instance).name
 
     def _generate_valid(self):
         return "invalid-policy"
