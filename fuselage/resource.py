@@ -144,9 +144,11 @@ class Resource(six.with_metaclass(ResourceType)):
         self.policy.get_provider()
 
         if not self.id:
-            raise error.ParseError(
-                "{0} is not explicitly named and name cannot be implied".format(
-                self.__resource_name__))
+            raise error.ParseError((
+                "{0} is not explicitly named and name cannot be implied"
+                ).format(
+                    self.__resource_name__
+                ))
 
     @classmethod
     def get_argument_names(klass):
