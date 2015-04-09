@@ -104,7 +104,7 @@ class BundledRunner(Runner):
     def get_resources(self):
         loader = pkgutil.get_loader("fuselage")
         try:
-            resources_json = loader.get_data("resources.json")
+            resources_json = loader.get_data("resources.json").decode('ascii')
         except IOError:
             raise error.ParseError("Bundle is missing resources.json")
         b = bundle.ResourceBundle()
