@@ -226,7 +226,11 @@ class SubscriptionArgument(Argument):
     def clean(self, instance, value):
         triggers = []
         for resource in value:
-            triggers.append(PolicyTrigger(resource))
+            if isinstance(resource, PolicyTrigger):
+                trigger = resource
+            else:
+                trigger = PolicyTrigger(resource)
+            triggers.append(trigger)
         return triggers
 
     def serialize(self, instance, builder=None):
