@@ -5,6 +5,9 @@ Fuselage
 .. image:: https://travis-ci.org/yaybu/fuselage.png?branch=master
    :target: https://travis-ci.org/#!/yaybu/fuselage
 
+.. image:: https://ci.appveyor.com/api/projects/status/o00q9mf5plhmquk3?svg=true
+   :target: https://ci.appveyor.com/project/yaybu/fuselage
+
 .. image:: https://coveralls.io/repos/yaybu/fuselage/badge.png?branch=master
     :target: https://coveralls.io/r/yaybu/fuselage
 
