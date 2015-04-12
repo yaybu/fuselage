@@ -50,6 +50,7 @@ class TestPlatform(unittest.TestCase):
     def test_isdir_FALSE(self):
         self.assertEqual(False, platform.isdir(__file__))
 
+    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_islink_TRUE(self):
         p = __file__ + "test_islink_TRUE"
         os.symlink(__file__, p)
@@ -58,6 +59,7 @@ class TestPlatform(unittest.TestCase):
         finally:
             os.unlink(p)
 
+    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_islink_FALSE(self):
         self.assertEqual(False, platform.islink(__file__))
 
@@ -65,6 +67,7 @@ class TestPlatform(unittest.TestCase):
         # FIXME: Make some assertions!!
         platform.stat(__file__)
 
+    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_lexists_TRUE(self):
         p = __file__ + "test_lexists_TRUE"
         os.symlink(__file__, p)
@@ -82,6 +85,7 @@ class TestPlatform(unittest.TestCase):
         finally:
             os.unlink(p)
 
+    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_lstat(self):
         p = __file__ + "test_lstat"
         os.symlink(__file__, p)
