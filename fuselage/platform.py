@@ -215,7 +215,10 @@ def get(path):
 
 
 def put(path, contents, chmod=0o644):
-    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC | os.O_SYNC, chmod)
+    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
+    if not sys.platform.startswith("win"):
+        flags = falgs | os.O_SYNC
+    fd = os.open(path, flags, chmod)
     try:
         os.write(fd, force_bytes(contents))
     finally:
