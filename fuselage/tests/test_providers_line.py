@@ -24,6 +24,7 @@ class TestLine(TestCaseWithRunner):
             name="/target_doesnt_exist",
             match="^FOO",
             line="FOO 2",
+            linesep="\n",
         ))
         self.assertRaises(error.PathComponentMissing, self.apply)
 
@@ -33,6 +34,7 @@ class TestLine(TestCaseWithRunner):
             name="/replace_existing_line_start",
             match="^FOO",
             line="FOO 2",
+            linesep="\n",
         ))
         self.check_apply()
         self.assertEqual(platform.get("/replace_existing_line_start"), "FOO 2\nBAR 2\nBAZ 3")
@@ -43,6 +45,7 @@ class TestLine(TestCaseWithRunner):
             name="/replace_existing_line_middle",
             match="^BAR",
             line="BAR 1",
+            linesep="\n",
         ))
         self.check_apply()
         self.assertEqual(platform.get("/replace_existing_line_middle"), "FOO 1\nBAR 1\nBAZ 3")
@@ -53,6 +56,7 @@ class TestLine(TestCaseWithRunner):
             name="/replace_existing_line_end",
             match="^BAZ",
             line="BAZ 2",
+            linesep="\n",
         ))
         self.check_apply()
         self.assertEqual(platform.get("/replace_existing_line_end"), "FOO 1\nBAR 2\nBAZ 2")
@@ -63,6 +67,7 @@ class TestLine(TestCaseWithRunner):
             name="/replace_existing_line_append",
             match="^QUX",
             line="QUX 2",
+            linesep="\n",
         ))
         self.check_apply()
         self.assertEqual(platform.get("/replace_existing_line_append"), "FOO 1\nBAR 2\nBAZ 3\nQUX 2")
@@ -73,6 +78,7 @@ class TestLine(TestCaseWithRunner):
             name="/replace_existing_line_append",
             policy="remove",
             match="^BAR",
+            linesep="\n",
         ))
         self.check_apply()
         self.assertEqual(platform.get("/replace_existing_line_append"), "FOO 1\nBAZ 3")
@@ -83,16 +89,19 @@ class TestLine(TestCaseWithRunner):
             name="/multiple_lines",
             match="^BAR",
             line="BAR 3",
+            linesep="\n",
         ))
         self.bundle.add(Line(
             name="/multiple_lines",
             match="^BAZ",
             line="BAZ 4",
+            linesep="\n",
         ))
         self.bundle.add(Line(
             name="/multiple_lines",
             match="^FOO",
             line="FOO 2",
+            linesep="\n",
         ))
         self.check_apply()
         self.assertEqual(platform.get("/multiple_lines"), "FOO 2\nBAR 3\nBAZ 4")

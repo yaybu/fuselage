@@ -16,6 +16,8 @@
 both the metadata associated with the file (for example owner and permission)
 and the contents of the files themselves. """
 
+import os
+
 from fuselage.resource import Resource
 from fuselage.policy import (
     Policy,
@@ -56,6 +58,9 @@ class Line(Resource):
 
     match = String(default="")
     """ The python regular expression to match the line to be updated. """
+
+    linesep = String(default=os.linesep)
+    """ The delimiter used to mark a line. \\n on posix. """
 
     sensitive = Boolean(default=False)
 

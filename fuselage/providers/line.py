@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import re
 
 from fuselage import error, resources, provider, platform
@@ -28,7 +27,7 @@ class _LineMixin(object):
             return
 
         lines = force_str(platform.get(self.resource.name)).splitlines()
-        contents = os.linesep.join(line for line in self.filter_lines(lines))
+        contents = self.resource.linesep.join(line for line in self.filter_lines(lines))
 
         fc = EnsureContents(
             self.resource.name,
