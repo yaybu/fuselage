@@ -19,16 +19,17 @@ import tempfile
 import shutil
 
 from fuselage import platform, error
+from fuselage.tests.base import skipIf
 
 
 class TestPlatform(unittest.TestCase):
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_check_call(self):
         stdout, stderr = platform.check_call(['echo', 'hello'])
         self.assertEqual(stdout.strip(), 'hello')
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_check_call_FAIL(self):
         self.assertRaises(error.SystemError, platform.check_call, ['false'])
 
@@ -50,7 +51,7 @@ class TestPlatform(unittest.TestCase):
     def test_isdir_FALSE(self):
         self.assertEqual(False, platform.isdir(__file__))
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_islink_TRUE(self):
         p = __file__ + "test_islink_TRUE"
         os.symlink(__file__, p)
@@ -59,7 +60,7 @@ class TestPlatform(unittest.TestCase):
         finally:
             os.unlink(p)
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_islink_FALSE(self):
         self.assertEqual(False, platform.islink(__file__))
 
@@ -67,7 +68,7 @@ class TestPlatform(unittest.TestCase):
         # FIXME: Make some assertions!!
         platform.stat(__file__)
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_lexists_TRUE(self):
         p = __file__ + "test_lexists_TRUE"
         os.symlink(__file__, p)
@@ -76,7 +77,7 @@ class TestPlatform(unittest.TestCase):
         finally:
             os.unlink(p)
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_readlink(self):
         p = __file__ + "test_readlink"
         os.symlink(__file__, p)
@@ -85,7 +86,7 @@ class TestPlatform(unittest.TestCase):
         finally:
             os.unlink(p)
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_lstat(self):
         p = __file__ + "test_lstat"
         os.symlink(__file__, p)
@@ -124,44 +125,44 @@ class TestPlatform(unittest.TestCase):
         finally:
             shutil.rmtree(d1)
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_getgrall(self):
         if platform.gr_supported():
             self.assertTrue(isinstance(platform.getgrall(), list))
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_getgrgid(self):
         if platform.gr_supported():
             platform.getgrgid(os.getgid())
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_getgrname(self):
         if platform.gr_supported():
             grp = platform.getgrgid(os.getgid())
             platform.getgrnam(grp.gr_name)
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_getpwall(self):
         if platform.pwd_supported():
             self.assertTrue(isinstance(platform.getpwall(), list))
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_getpwuid(self):
         if platform.pwd_supported():
             platform.getgrgid(os.getgid())
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_getpwnam(self):
         if platform.pwd_supported():
             u = platform.getpwuid(os.getuid())
             platform.getpwnam(u.pw_name)
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_getspall(self):
         if platform.spwd_supported():
             self.assertTrue(isinstance(platform.getspall(), list))
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_getspnam(self):
         if platform.spwd_supported():
             passwords = platform.getspall()
@@ -169,6 +170,6 @@ class TestPlatform(unittest.TestCase):
                 return
             platform.getspnam(passwords[0].sp_nam)
 
-    @unittest.skipIf(sys.platform.startswith("win"), "requires *nix")
+    @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_getuid(self):
         self.assertEqual(platform.getuid(), os.getuid())

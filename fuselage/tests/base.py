@@ -20,8 +20,19 @@ import shlex
 import mock
 import fakechroot
 
+try:
+    from unittest import skipIf
+except ImportError:
+    from unittest2 import skipIf
+
 from fuselage import bundle, runner, error, platform, log
 from .recorder import Player, Recorder
+
+
+__all__ = [
+    'skipIf',
+    'TestCaseWithBundle',
+]
 
 
 logger = logging.getLogger()

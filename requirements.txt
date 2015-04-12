@@ -7,5 +7,6 @@ mock
 fabric
 apache-libcloud==0.17.0
 fakechroot>=0.2.1
+unittest2==1.0.1
 
 -e .
