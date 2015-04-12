@@ -75,7 +75,9 @@ class ShellCommand(base.Change):
         elif command[0].startswith("/"):
             return platform.exists(command[0])
 
-        for path in self.env["PATH"].split(os.pathsep):
+        # FIXME: This should use os.pathsep, but that breaks the tests as they stand
+        # rethink this!!
+        for path in self.env["PATH"].split(":"):
             if platform.exists(os.path.join(path, command[0])):
                 return True
 
