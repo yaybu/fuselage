@@ -31,7 +31,7 @@ class Directory(provider.Provider):
     policies = (resources.directory.DirectoryAppliedPolicy,)
 
     def check_path(self, directory):
-        if os.path.isdir(directory):
+        if platform.isdir(directory):
             return
 
         frags = directory.split("/")
