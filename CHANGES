@@ -5,7 +5,9 @@ fuselage
 0.0.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- The tests are now run on Windows via AppVeyor.
+
+- Better handling of PolicyArguments (mitchellrj).
 
 
 0.0.4 (2015-04-05)
