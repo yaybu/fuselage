@@ -2,7 +2,7 @@
 fuselage
 ========
 
-0.0.5 (unreleased)
+0.0.5 (2015-05-11)
 ------------------
 
 - The tests are now run on Windows via AppVeyor.
