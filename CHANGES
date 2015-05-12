@@ -2,7 +2,7 @@
 fuselage
 ========
 
-0.0.6 (unreleased)
+0.0.6 (2015-05-12)
 ------------------
 
 - Fix the runner on py3. json.loads won't accept bytes.
