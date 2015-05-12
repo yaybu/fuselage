@@ -20,6 +20,7 @@ import pkgutil
 
 from fuselage import log, bundle, error, event, platform
 from fuselage.error import NothingChanged
+from fuselage.utils import force_str
 
 logger = logging.getLogger(__name__)
 
@@ -108,5 +109,5 @@ class BundledRunner(Runner):
         except IOError:
             raise error.ParseError("Bundle is missing resources.json")
         b = bundle.ResourceBundle()
-        b.loads(resources_json)
+        b.loads(force_str(resources_json))
         return b
