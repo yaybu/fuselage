@@ -55,6 +55,48 @@ class TestCaseWithBundle(unittest.TestCase):
         self.bundle = bundle.ResourceBundle()
 
 
+class TestCaseWithRealRunner(TestCaseWithBundle):
+
+    def setUp(self):
+        super(TestCaseWithRealRunner, self).setUp()
+        log.configure(verbosity=logging.DEBUG, force=True)
+        self.logger = logging.getLogger(__name__)
+
+    def failUnlessExists(self, path):
+        if not platform.exists(path):
+            self.fail("Path '%s' does not exist" % path)
+
+    def failIfExists(self, path):
+        if platform.exists(path):
+            self.fail("Path '%s' exists" % path)
+
+    def apply(self, simulate=False):
+        r = runner.Runner(
+            self.bundle,
+            simulate=simulate,
+            state_path=os.path.join(os.getcwd(), ".fuselage-test-state"),
+        )
+        return r.run()
+
+    def check_apply(self):
+        logger.debug("Simulating bundle apply")
+        self.apply(simulate=True)
+
+        logger.debug("Applying bundle")
+        try:
+            self.apply(simulate=False)
+        except error.NothingChanged:
+            self.fail("Their were no pending changes after simulate")
+
+        logger.debug("Applying bundle again to check for idempotency")
+        try:
+            self.apply(simulate=False)
+        except error.NothingChanged:
+            return
+        else:
+            self.fail("After 2nd apply() their were still pending changes")
+
+
 class TestCaseWithRunner(TestCaseWithBundle):
 
     location = os.path.join(os.path.dirname(__file__), "..", "..")

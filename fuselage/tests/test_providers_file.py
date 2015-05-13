@@ -13,11 +13,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import stat
+import tempfile
 
-from fuselage.tests.base import TestCaseWithRunner
+from fuselage.tests.base import TestCaseWithRunner, TestCaseWithRealRunner
 from fuselage.resources import File
 from fuselage import error, platform
+
+
+class TestFileIntegration(TestCaseWithRealRunner):
+
+    def test_file_apply(self):
+        with tempfile.NamedTemporaryFile(delete=True) as fp:
+            self.bundle.add(File(
+                name=fp.name,
+                contents="hello",
+            ))
+            self.check_apply()
+            self.assertTrue(os.path.exists(fp.name))
+            self.assertEquals(open(fp.name, "r").read(), "hello")
+
+    def test_file_remove(self):
+        with tempfile.NamedTemporaryFile(delete=False) as fp:
+            fp.write(b"HELLO")
+
+        self.bundle.add(File(
+            name=fp.name,
+            policy="remove",
+        ))
+        self.check_apply()
+        self.assertFalse(os.path.exists(fp.name))
 
 
 class TestFile(TestCaseWithRunner):
