@@ -238,44 +238,52 @@ def gr_supported():
     return grp is not None
 
 
-def getgrall():
-    return list(grp.getgrall())
-
-
-def getgrnam(name):
-    return grp.getgrnam(name)
-
-
-def getgrgid(gid):
-    return grp.getgrgid(gid)
-
-
 def pwd_supported():
     return pwd is not None
-
-
-def getpwall():
-    return list(pwd.getpwall())
-
-
-def getpwnam(name):
-    return pwd.getpwnam(name)
-
-
-def getpwuid(uid):
-    return pwd.getpwuid(uid)
 
 
 def spwd_supported():
     return spwd is not None
 
+if gr_supported():
+    def getgrall():
+        return list(grp.getgrall())
 
-def getspall():
-    return list(spwd.getspall())
+    def getgrnam(name):
+        return grp.getgrnam(name)
+
+    def getgrgid(gid):
+        return grp.getgrgid(gid)
+else:
+    getgrall = None
+    getgrnam = None
+    getgrgid = None
 
 
-def getspnam(name):
-    return spwd.getspnam(name)
+if pwd_supported():
+    def getpwall():
+        return list(pwd.getpwall())
+
+    def getpwnam(name):
+        return pwd.getpwnam(name)
+
+    def getpwuid(uid):
+        return pwd.getpwuid(uid)
+else:
+    getpwall = None
+    getpwnam = None
+    getpwuid = None
+
+
+if spwd_supported():
+    def getspall():
+        return list(spwd.getspall())
+
+    def getspnam(name):
+        return spwd.getspnam(name)
+else:
+    getspall = None
+    getspnam = None
 
 
 def getuid():

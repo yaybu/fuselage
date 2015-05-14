@@ -89,13 +89,13 @@ class ShellCommand(base.Change):
         if not self.command_exists(command):
             ctx.raise_or_log(error.BinaryMissing("Command '%s' not found" % command[0]))
 
-        if self.user:
+        if platform.getpwnam and self.user:
             try:
                 platform.getpwnam(self.user)
             except KeyError:
                 ctx.raise_or_log(error.InvalidUser("User '%s' not found" % self.user))
 
-        if self.group:
+        if platform.getgrnam and self.group:
             try:
                 platform.getgrnam(self.group)
             except KeyError:

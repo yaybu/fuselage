@@ -134,8 +134,6 @@ class FullPath(String):
     '/'. """
 
     def clean(self, instance, value):
-        #if not value.startswith("/"):
-        #    raise error.ParseError("%s is not a full path" % value)
         return super(FullPath, self).clean(instance, value)
 
     @classmethod

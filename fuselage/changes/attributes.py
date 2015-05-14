@@ -33,6 +33,9 @@ class AttributeChanger(base.Change):
     def apply(self, context):
         """ Apply the changes """
 
+        if not platform.getpwnam or not platform.getgrnam:
+            return self
+
         uid = None
         gid = None
         mode = None

@@ -72,8 +72,8 @@ class TestArguments(unittest.TestCase):
         #r.a = "off"
         #self.assertEqual(r.a, False)
 
-    def test_full_path(self):
-        class R_test_full_path(resource.Resource):
-            a = argument.FullPath()
-        self.assertTrue(isinstance(R_test_full_path.a, argument.FullPath))
-        self.assertRaises(error.ParseError, R_test_full_path, id="test", a="test")
+    #def test_full_path(self):
+    #    class R_test_full_path(resource.Resource):
+    #        a = argument.FullPath()
+    #    self.assertTrue(isinstance(R_test_full_path.a, argument.FullPath))
+    #    self.assertRaises(error.ParseError, R_test_full_path, id="test", a="test")

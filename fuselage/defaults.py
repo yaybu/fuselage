@@ -16,10 +16,14 @@ from fuselage import platform
 
 
 def get_default_user():
+    if not platform.getpwuid:
+        return ""
     return platform.getpwuid(platform.getuid()).pw_name
 
 
 def get_default_group(user):
+    if not platform.getpwnam:
+        return ""
     try:
         gid = platform.getpwnam(user).pw_gid
         return platform.getgrgid(gid).gr_name
