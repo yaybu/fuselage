@@ -79,7 +79,7 @@ class RemoveFile(provider.Provider):
         if platform.exists(name):
             if not platform.isfile(name):
                 raise error.InvalidProvider("%s exists and is not a file" % name)
-            self.change(ShellCommand(["rm", self.resource.name]))
+            self.change(ShellCommand([self.get_delete_command(), self.resource.name]))
             changed = True
         else:
             self.logger.debug("File %s missing already so not removed" % name)
