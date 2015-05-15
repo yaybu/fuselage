@@ -70,7 +70,7 @@ class RemoveFile(provider.Provider):
     policies = (resources.file.FileRemovePolicy,)
 
     def get_delete_command(self):
-        if platform.platform == "nt":
+        if platform.platform == "win32":
             return "del"
         return "rm"
 
