@@ -26,6 +26,7 @@ class TestFileIntegration(TestCaseWithRealRunner):
 
     def test_file_apply(self):
         with tempfile.NamedTemporaryFile(delete=True) as fp:
+            fp.close()
             self.bundle.add(File(
                 name=fp.name,
                 contents="hello",

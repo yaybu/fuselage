@@ -38,6 +38,9 @@ from fuselage import error
 from fuselage.utils import force_str, force_bytes
 
 
+platform = sys.platform
+
+
 class Handle(object):
 
     def __init__(self, handle, callback=None):

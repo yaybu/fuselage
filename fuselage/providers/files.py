@@ -69,6 +69,11 @@ class File(provider.Provider):
 class RemoveFile(provider.Provider):
     policies = (resources.file.FileRemovePolicy,)
 
+    def get_delete_command(self):
+        if platform.platform == "nt":
+            return "del"
+        return "rm"
+
     def apply(self):
         name = self.resource.name
         if platform.exists(name):

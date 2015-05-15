@@ -120,6 +120,11 @@ class TestCaseWithRunner(TestCaseWithBundle):
 
         self.patches = []
 
+        p = mock.patch("fuselage.platform.platform")
+        self.patches.append(p)
+        patch = p.start()
+        patch.return_value = "posix"
+
         def patch(name, fn):
             self.cassette.register(name, fn)
 
