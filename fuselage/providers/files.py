@@ -71,15 +71,15 @@ class RemoveFile(provider.Provider):
 
     def get_delete_command(self):
         if platform.platform == "win32":
-            return "del"
-        return "rm"
+            return ["cmd.exe", "/C", "DEL", "/Q", "/F"]
+        return ["rm"]
 
     def apply(self):
         name = self.resource.name
         if platform.exists(name):
             if not platform.isfile(name):
                 raise error.InvalidProvider("%s exists and is not a file" % name)
-            self.change(ShellCommand([self.get_delete_command(), self.resource.name]))
+            self.change(ShellCommand(self.get_delete_command() +[self.resource.name]))
             changed = True
         else:
             self.logger.debug("File %s missing already so not removed" % name)
