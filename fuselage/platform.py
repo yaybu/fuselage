@@ -39,6 +39,7 @@ from fuselage.utils import force_str, force_bytes
 
 
 platform = sys.platform
+pathsep = os.pathsep
 
 
 class Handle(object):

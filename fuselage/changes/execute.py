@@ -47,9 +47,11 @@ class ShellCommand(base.Change):
         self.stdin = stdin
         self.cwd = cwd
 
-        self.env = {
-            "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-        }
+        self.env = {}
+        if platform.platform != "win32":
+            self.env.update({
+                "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            })
         if env:
             self.env.update(env)
 
@@ -75,9 +77,7 @@ class ShellCommand(base.Change):
         elif command[0].startswith("/"):
             return platform.exists(command[0])
 
-        # FIXME: This should use os.pathsep, but that breaks the tests as they stand
-        # rethink this!!
-        for path in self.env["PATH"].split(":"):
+        for path in self.env["PATH"].split(platform.pathsep):
             if platform.exists(os.path.join(path, command[0])):
                 return True
 

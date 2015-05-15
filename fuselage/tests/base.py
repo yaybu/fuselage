@@ -97,6 +97,22 @@ class TestCaseWithRealRunner(TestCaseWithBundle):
             self.fail("After 2nd apply() their were still pending changes")
 
 
+class Patch(object):
+
+    def __init__(self, module, param, value):
+        self.module = module
+        self.param = param
+        self.value = value
+
+    def start(self):
+        self.old_value = getattr(self.module, self.param)
+        setattr(self.module, self.param, self.value)
+        return self
+
+    def stop(self):
+        setattr(self.module, self.param, self.old_value)
+
+
 class TestCaseWithRunner(TestCaseWithBundle):
 
     location = os.path.join(os.path.dirname(__file__), "..", "..")
@@ -118,12 +134,10 @@ class TestCaseWithRunner(TestCaseWithBundle):
             self.chroot = mock.Mock()
             self.cassette = Player(path, id)
 
-        self.patches = []
-
-        p = mock.patch("fuselage.platform.platform")
-        self.patches.append(p)
-        patch = p.start()
-        patch.return_value = "posix"
+        self.patches = [
+            Patch(platform, "platform", "posix").start(),
+            Patch(platform, "pathsep", ":").start(),
+        ]
 
         def patch(name, fn):
             self.cassette.register(name, fn)
