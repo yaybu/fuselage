@@ -48,7 +48,11 @@ class ShellCommand(base.Change):
         self.cwd = cwd
 
         self.env = {}
-        if platform.platform != "win32":
+        if platform.platform == "win32":
+            self.env.update({
+                "PATH": os.environ.get("PATH", ""),
+            })
+        else:
             self.env.update({
                 "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
             })

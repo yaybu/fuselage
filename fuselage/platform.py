@@ -165,7 +165,9 @@ def check_call(command, *args, **kwargs):
     kwargs['stdin'] = subprocess.PIPE if stdin else None
     kwargs.setdefault('shell', not isinstance(command, list))
 
-    env = {"PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"}
+    env = {}
+    if platform == "posix":
+        env.update({"PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"})
     env.update(kwargs.get("env", {}))
     kwargs['env'] = env
 
