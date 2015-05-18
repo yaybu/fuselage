@@ -124,7 +124,6 @@ class Process(subprocess.Popen):
 
     def communicate_win32(self, stdout, stderr):
         if self.stdout:
-            stdout = []
             stdout_thread = threading.Thread(
                 target=stdout.read_win32,
             )
@@ -132,7 +131,6 @@ class Process(subprocess.Popen):
             stdout_thread.start()
 
         if self.stderr:
-            stderr = []
             stderr_thread = threading.Thread(
                 target=stderr.read_win32,
             )
