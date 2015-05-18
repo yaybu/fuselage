@@ -17,6 +17,7 @@ import subprocess
 import os
 import select
 import sys
+import threading
 
 import six
 
@@ -57,7 +58,12 @@ class Handle(object):
         if not data:
             self.handle.close()
             return False
+        self.feed(data)
 
+    def read_win32(self):
+        self.feed(self.handle.read())
+
+    def feed(self, data):
         data = force_str(data)
 
         self._output.append(data)
@@ -116,15 +122,32 @@ class Process(subprocess.Popen):
     def attach_callback(self, callback):
         self.callback = callback
 
-    def communicate(self, stdin=None):
-        if stdin:
-            self.stdin.write(stdin)
-            self.stdin.flush()
-            self.stdin.close()
+    def communicate_win32(self, stdout, stderr):
+        if self.stdout:
+            stdout = []
+            stdout_thread = threading.Thread(
+                target=stdout.read_win32,
+            )
+            stdout_thread.setDaemon(True)
+            stdout_thread.start()
 
-        stdout = Handle(self.stdout, self.callback)
-        stderr = Handle(self.stderr, self.callback)
+        if self.stderr:
+            stderr = []
+            stderr_thread = threading.Thread(
+                target=stderr.read_win32,
+            )
+            stderr_thread.setDaemon(True)
+            stderr_thread.start()
 
+        if self.stdout:
+            stdout_thread.join()
+
+        if self.stderr:
+            stderr_thread.join()
+
+        self.wait()
+
+    def communicate_posix(self, stdout, stderr):
         # Initial readlist is any handle that is valid
         readlist = [h for h in (stdout, stderr) if h.isready()]
 
@@ -155,6 +178,25 @@ class Process(subprocess.Popen):
                 if not r.read():
                     readlist.remove(r)
 
+    def communicate(self, input=None):
+        stdout = Handle(self.stdout, self.callback)
+        stderr = Handle(self.stderr, self.callback)
+
+        if self.stdin:
+            if input is not None:
+                try:
+                    self.stdin.write(input)
+                except IOError as e:
+                    if e.errno != errno.EPIPE:
+                        raise
+                self.stdin.flush()
+            self.stdin.close()
+
+        if platform == "win32":
+            self.communicate_win32(stdout, stderr)
+        else:
+            self.communicate_posix(stdout, stderr)
+
         return stdout.output, stderr.output
 
 
@@ -175,7 +217,7 @@ def check_call(command, *args, **kwargs):
     p = Process(command, *args, **kwargs)
     if logger:
         p.attach_callback(logger.info)
-    stdout, stderr = p.communicate(stdin=stdin)
+    stdout, stderr = p.communicate(input=stdin)
     p.wait()
     if encoding and not isinstance(stdout, six.text_type):
         stdout = stdout.decode(encoding)
