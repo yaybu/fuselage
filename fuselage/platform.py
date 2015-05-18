@@ -89,7 +89,8 @@ class Process(subprocess.Popen):
             self.gid = grp.getgrnam(group).gr_gid
         self.umask = umask
 
-        kwargs['preexec_fn'] = self.preexec
+        if platform != 'win32':
+            kwargs['preexec_fn'] = self.preexec
         if 'stdout' not in kwargs:
             kwargs['stdout'] = subprocess.PIPE
         if 'stderr' not in kwargs:
