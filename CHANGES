@@ -5,7 +5,9 @@ fuselage
 0.0.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- ``If File.contents`` is ``None`` then fuselage will ensure the file exists
+  with the correct permissions but won't empty it. To empty a file set contents
+  to ``''``.
 
 
 0.0.7 (2015-05-18)

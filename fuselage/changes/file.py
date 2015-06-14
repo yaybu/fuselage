@@ -60,20 +60,11 @@ class EnsureContents(base.Change):
         context.changelog.critical(note, extra=extra)
 
     def empty_file(self, context):
-        """ Write an empty file """
-        exists = platform.exists(self.filename)
-        if not exists:
+        """ Write an empty file if none exists"""
+        if not platform.exists(self.filename):
             context.changelog.debug("Creating empty file %r" % self.filename)
             context.change(ShellCommand(["touch", self.filename]))
             self.changed = True
-        else:
-            st = platform.stat(self.filename)
-            if st.st_size != 0:
-                self.diff(context, "Emptying file", platform.get(self.filename), "")
-                context.change(ShellCommand(["cp", "/dev/null", self.filename]))
-                self.changed = True
-            else:
-                context.logger.debug("Not changing empty file %r" % self.filename)
 
     def overwrite_existing_file(self, context):
         """ Change the content of an existing file """

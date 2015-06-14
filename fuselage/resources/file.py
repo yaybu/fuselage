@@ -82,7 +82,7 @@ class File(Resource):
     you like, but this is not required. DO NOT use yaml Octal representation
     (0o666), this will NOT work."""
 
-    contents = String()
+    contents = String(default=None)
     """ A complete string to write into a file """
 
     source = File()
