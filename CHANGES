@@ -5,7 +5,7 @@ fuselage
 0.0.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix regression in shell streaming introduced in 0.0.7.
 
 
 0.0.8 (2015-06-14)

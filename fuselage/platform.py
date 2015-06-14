@@ -58,7 +58,7 @@ class Handle(object):
         if not data:
             self.handle.close()
             return False
-        self.feed(data)
+        return self.feed(data)
 
     def read_win32(self):
         self.feed(self.handle.read())
