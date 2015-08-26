@@ -74,7 +74,7 @@ class Handle(object):
 
     def feed(self, data):
         data = self._buffer + data
-        while os.linesep in data:
+        while data.find(os.linesep) >= 0:
             line, data = data.split(os.linesep)
             line = force_str(line)
             self._output.append(line)
