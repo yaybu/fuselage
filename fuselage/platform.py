@@ -68,19 +68,32 @@ class Handle(object):
 
     def flush(self):
         self.feed(b'')
-        line = force_str(self._buffer)
-        self._output.append(line)
-        if self.callback:
-            self.callback(line)
+        if self._buffer:
+            line = force_str(self._buffer)
+            self._output.append(line)
+            if self.callback:
+                self.callback(line)
+            self._buffer = b''
 
     def feed(self, data):
         data = self._buffer + data
         while linesep in data:
-            line, data = data.split(linesep)
+            line, data = data.split(linesep, 1)
             line = force_str(line)
             self._output.append(line)
             if self.callback:
                 self.callback(line)
+
+        if b'\r' in data:
+            line, data = data.rsplit(b'\r', 1)
+            if b'\r' in line:
+                line = line.split(b'\r', 1)[1]
+            line = force_str(line.strip())
+            if line:
+                self._output.append(line)
+                if self.callback:
+                    self.callback(line)
+
         self._buffer = data
         return True
 
