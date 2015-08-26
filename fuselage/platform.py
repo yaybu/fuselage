@@ -41,6 +41,7 @@ from fuselage.utils import force_str, force_bytes
 
 platform = sys.platform
 pathsep = os.pathsep
+linesep = force_bytes(os.linesep)
 
 
 class Handle(object):
@@ -74,8 +75,8 @@ class Handle(object):
 
     def feed(self, data):
         data = self._buffer + data
-        while data.find(os.linesep) >= 0:
-            line, data = data.split(os.linesep)
+        while linesep in data:
+            line, data = data.split(linesep)
             line = force_str(line)
             self._output.append(line)
             if self.callback:
