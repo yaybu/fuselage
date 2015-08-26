@@ -49,6 +49,7 @@ class Handle(object):
         self.handle = handle
         self.callback = callback
         self._output = []
+        self._buffer = b''
 
     def fileno(self):
         return self.handle.fileno()
@@ -56,6 +57,7 @@ class Handle(object):
     def read(self):
         data = os.read(self.fileno(), 1024)
         if not data:
+            self.flush()
             self.handle.close()
             return False
         return self.feed(data)
@@ -63,15 +65,22 @@ class Handle(object):
     def read_win32(self):
         self.feed(self.handle.read())
 
-    def feed(self, data):
-        data = force_str(data)
-
-        self._output.append(data)
-
+    def flush(self):
+        self.feed(b'')
+        line = force_str(self._buffer)
+        self._output.append(line)
         if self.callback:
-            for l in data.splitlines():
-                self.callback(l)
+            self.callback(line)
 
+    def feed(self, data):
+        data = self._buffer + data
+        while os.linesep in data:
+            line, data = data.split(os.linesep)
+            line = force_str(line)
+            self._output.append(line)
+            if self.callback:
+                self.callback(line)
+        self._buffer = data
         return True
 
     def isready(self):
@@ -79,7 +88,7 @@ class Handle(object):
 
     @property
     def output(self):
-        out = ''.join(self._output)
+        out = os.linesep.join(self._output)
         return out
 
 

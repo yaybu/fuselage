@@ -5,7 +5,8 @@ fuselage
 0.0.10 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Don't split mid line as you could split a unicode character in half. Which
+  paramiko can choke on when using readline.
 
 
 0.0.9 (2015-06-14)
