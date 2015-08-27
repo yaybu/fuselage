@@ -184,7 +184,7 @@ class TestHandle(unittest.TestCase):
         self.stdout = platform.Handle(mock.Mock(), mock.Mock())
 
     def test_LF(self):
-        self.stdout.feed(force_bytes(os.linesep).join(("foo", "bar")))
+        self.stdout.feed(force_bytes(os.linesep).join((b"foo", b"bar")))
         self.stdout.flush()
         self.assertEqual(self.stdout._output, ["foo", "bar"])
 
