@@ -41,10 +41,12 @@ from fuselage.utils import force_str, force_bytes
 
 platform = sys.platform
 pathsep = os.pathsep
-linesep = force_bytes(os.linesep)
 
 
 class Handle(object):
+
+    LF = force_bytes(os.linesep)
+    CR = b'\r'
 
     def __init__(self, handle, callback=None):
         self.handle = handle
@@ -69,33 +71,30 @@ class Handle(object):
     def flush(self):
         self.feed(b'')
         if self._buffer:
-            line = force_str(self._buffer)
-            self._output.append(line)
-            if self.callback:
-                self.callback(line)
+            self.feed_line(self._buffer)
             self._buffer = b''
 
     def feed(self, data):
         data = self._buffer + data
-        while linesep in data:
-            line, data = data.split(linesep, 1)
-            line = force_str(line)
-            self._output.append(line)
-            if self.callback:
-                self.callback(line)
 
-        if b'\r' in data:
-            line, data = data.rsplit(b'\r', 1)
-            if b'\r' in line:
-                line = line.split(b'\r', 1)[1]
-            line = force_str(line.strip())
-            if line:
-                self._output.append(line)
-                if self.callback:
-                    self.callback(line)
+        while self.LF in data:
+            line, data = data.split(self.LF, 1)
+            self.feed_line(line)
 
-        self._buffer = data
+        # Deal with \r
+        # IGNORE THIS\rPRINT THIS\rTHIS IS HALF A LINE
+        line, _, self._buffer = data.rpartition(self.CR)
+        ignore, _, line = line.strip().rpartition(self.CR)
+        if line:
+            self.feed_line(line)
+
         return True
+
+    def feed_line(self, line):
+        line = force_str(line)
+        self._output.append(line)
+        if self.callback:
+            self.callback(line)
 
     def isready(self):
         return bool(self.handle)

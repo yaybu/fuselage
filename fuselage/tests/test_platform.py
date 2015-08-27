@@ -18,7 +18,10 @@ import unittest
 import tempfile
 import shutil
 
+import mock
+
 from fuselage import platform, error
+from fuselage.utils import force_bytes
 from fuselage.tests.base import skipIf
 
 
@@ -173,3 +176,29 @@ class TestPlatform(unittest.TestCase):
     @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_getuid(self):
         self.assertEqual(platform.getuid(), os.getuid())
+
+
+class TestHandle(unittest.TestCase):
+
+    def setUp(self):
+        self.stdout = platform.Handle(mock.Mock(), mock.Mock())
+
+    def test_LF(self):
+        self.stdout.feed(force_bytes(os.linesep).join(("foo", "bar")))
+        self.stdout.flush()
+        self.assertEqual(self.stdout._output, ["foo", "bar"])
+
+    def test_split_no_sep(self):
+        self.stdout.feed(b"foo")
+        self.stdout.flush()
+        self.assertEqual(self.stdout._output, ["foo"])
+
+    def test_split_CR_CR(self):
+        self.stdout.feed(b"foo\rbar\rbaz")
+        self.stdout.flush()
+        self.assertEqual(self.stdout._output, ["bar", "baz"])
+
+    def test_split_CR(self):
+        self.stdout.feed(b"foo\rbaz")
+        self.stdout.flush()
+        self.assertEqual(self.stdout._output, ["foo", "baz"])
