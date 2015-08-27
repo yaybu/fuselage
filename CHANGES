@@ -2,7 +2,7 @@
 fuselage
 ========
 
-0.0.10 (unreleased)
+0.0.10 (2015-08-27)
 -------------------
 
 - Don't split mid line as you could split a unicode character in half. Which
