@@ -70,7 +70,7 @@ class User(provider.Provider):
             changed = True
 
         password = self.resource.password
-        if password and not info["exists"]:
+        if password:
             command.extend(["--password", self.resource.password])
             changed = True
 
