@@ -2,20 +2,20 @@
 Fuselage
 ========
 
-.. image:: https://travis-ci.org/yaybu/fuselage.png?branch=master
+.. image:: https://img.shields.io/travis/yaybu/fuselage/master.svg
    :target: https://travis-ci.org/#!/yaybu/fuselage
 
-.. image:: https://ci.appveyor.com/api/projects/status/o00q9mf5plhmquk3?svg=true
+.. image:: https://img.shields.io/appveyor/ci/yaybu/fuselage/master.svg
    :target: https://ci.appveyor.com/project/yaybu/fuselage
 
-.. image:: https://coveralls.io/repos/yaybu/fuselage/badge.png?branch=master
-    :target: https://coveralls.io/r/yaybu/fuselage
+.. image:: https://img.shields.io/coveralls/yaybu/fuselage/master.svg
+   :target: https://coveralls.io/r/yaybu/fuselage
 
-.. image:: https://pypip.in/version/fuselage/badge.png
-    :target: https://pypi.python.org/pypi/fuselage/
+.. image:: https://img.shields.io/pypi/v/fuselage.svg
+   :target: https://pypi.python.org/pypi/fuselage/
 
-.. image:: https://readthedocs.org/projects/fuselage/badge/?version=latest
-    :target: http://docs.yaybu.com/projects/fuselage/en/latest/
+.. image:: https://img.shields.io/badge/docs-latest-green.svg
+   :target: http://docs.yaybu.com/projects/fuselage/en/latest/
 
 
 fuselage is a idempotent configuration bundle builder and runtime.
