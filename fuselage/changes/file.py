@@ -27,10 +27,10 @@ from .attributes import AttributeChanger
 def binary_buffers(*buffers):
     """ Check all of the passed buffers to see if any of them are binary. If
     any of them are binary this will return True. """
-    check = lambda buff: len(buff) == sum(
-        1 for c in buff if c in string.printable)
+    def is_printable(value):
+        return len(buff) == sum(1 for c in buff if c in string.printable)
     for buff in buffers:
-        if buff and not check(buff):
+        if buff and not is_printable(buff):
             return True
     return False
 
