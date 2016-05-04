@@ -2,7 +2,7 @@
 fuselage
 ========
 
-0.0.12 (unreleased)
+0.0.12 (2016-05-04)
 -------------------
 
 - Don't unset SSH_AUTH_SOCK in subprocesses.
