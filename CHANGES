@@ -5,7 +5,7 @@ fuselage
 0.0.12 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Don't unset SSH_AUTH_SOCK in subprocesses.
 
 
 0.0.11 (2015-08-27)

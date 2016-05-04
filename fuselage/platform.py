@@ -231,6 +231,8 @@ def check_call(command, *args, **kwargs):
     env = {}
     if platform == "posix":
         env.update({"PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"})
+    if "SSH_AUTH_SOCK" in os.environ:
+        env["SSH_AUTH_SOCK"] = os.environ["SSH_AUTH_SOCK"]
     env.update(kwargs.get("env", {}))
     kwargs['env'] = env
 
