@@ -23,12 +23,14 @@ from .attributes import AttributeChanger
 
 # FIXME: Set mode of file before writing to it
 
+PRINTABLE = string.printable.encode("utf-8")
+
 
 def binary_buffers(*buffers):
     """ Check all of the passed buffers to see if any of them are binary. If
     any of them are binary this will return True. """
     def is_printable(value):
-        return len(buff) == sum(1 for c in buff if c in string.printable)
+        return len(buff) == sum(1 for c in buff if c in PRINTABLE)
     for buff in buffers:
         if buff and not is_printable(buff):
             return True
