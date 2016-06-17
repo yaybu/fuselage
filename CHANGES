@@ -2,8 +2,8 @@
 fuselage
 ========
 
-0.0.13 (unreleased)
--------------------
+1.0.0 (2016-06-17)
+------------------
 
 - Declaring a stable release! The core API has served us well since mid 2015
   with out any major changes, and it would be unlucky to release ``0.0.13``.

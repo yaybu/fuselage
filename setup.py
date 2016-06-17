@@ -2,7 +2,7 @@ import os
 
 from setuptools import find_packages, setup
 
-version = '0.0.13.dev0'
+version = '1.0.0'
 
 setup(
     name='fuselage',
