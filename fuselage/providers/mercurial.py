@@ -25,7 +25,7 @@ from fuselage.changes import ShellCommand, EnsureFile, EnsureDirectory
 from fuselage.utils import force_bytes
 
 
-hgrc = b"""
+hgrc = """
 [paths]
 default = %(repository)s
 [extensions]
@@ -186,10 +186,10 @@ class Mercurial(provider.Provider):
         try:
             self.change(EnsureFile(
                 os.path.join(self.resource.name, ".hg", "hgrc"),
-                contents=hgrc % {
-                    b"repository": force_bytes(url),
-                    b"path": force_bytes(self.resource.name)
-                },
+                contents=force_bytes(hgrc % {
+                    "repository": url,
+                    "path": self.resource.name
+                }),
                 user=self.resource.user,
                 group=self.resource.group,
                 mode=0o600,
