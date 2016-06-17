@@ -8,8 +8,8 @@ Fuselage
 .. image:: https://img.shields.io/appveyor/ci/yaybu/fuselage/master.svg
    :target: https://ci.appveyor.com/project/yaybu/fuselage
 
-.. image:: https://img.shields.io/coveralls/yaybu/fuselage/master.svg
-   :target: https://coveralls.io/r/yaybu/fuselage
+.. image:: https://img.shields.io/codecov/c/github/yaybu/fuselage/master.svg
+   :target: https://codecov.io/github/yaybu/fuselage?ref=master
 
 .. image:: https://img.shields.io/pypi/v/fuselage.svg
    :target: https://pypi.python.org/pypi/fuselage/
