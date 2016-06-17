@@ -5,7 +5,23 @@ fuselage
 0.0.13 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Declaring a stable release! The core API has served us well since mid 2015
+  with out any major changes, and it would be unlucky to release ``0.0.13``.
+
+- Be more strict about bytes/text internally. The ``platform.get`` API now
+  exclusively deals in bytes and not text.
+
+- Fix a bug with passing binary data to a ``File`` resource via its ``source``
+  on Python 3.
+
+- Switch to codecov.io for our code coverage, to match Touchdown.
+
+- We are now being more strict! Imports must now follow the guidelines enforce
+  by our ``isort`` configuration.
+
+- Declare our support for Python 3.5. We aren't testing against pypy at the
+  moment as the latest version isn't available in our CI environment, but it
+  will return as soon as it is practical.
 
 
 0.0.12 (2016-05-04)
