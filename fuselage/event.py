@@ -16,6 +16,7 @@ import os
 import json
 
 from fuselage import error, platform
+from fuselage.utils import force_str
 
 
 class EventState(object):
@@ -52,7 +53,7 @@ class EventState(object):
         if self.loaded:
             return
         if platform.exists(self.save_file):
-            self.overrides = json.loads(platform.get(self.save_file))
+            self.overrides = json.loads(force_str(platform.get(self.save_file)))
         self.loaded = True
 
     def set_trigger(self, resource):

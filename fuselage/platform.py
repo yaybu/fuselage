@@ -283,7 +283,7 @@ def lstat(path):
 
 
 def get(path):
-    return open(path).read()
+    return open(path, "rb").read()
 
 
 def put(path, contents, chmod=0o644):

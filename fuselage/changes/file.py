@@ -19,6 +19,7 @@ from fuselage import platform
 from fuselage.changes import base
 from .execute import ShellCommand
 from .attributes import AttributeChanger
+from fuselage.utils import force_str
 
 
 # FIXME: Set mode of file before writing to it
@@ -32,7 +33,9 @@ def binary_buffers(*buffers):
     def is_printable(value):
         return len(buff) == sum(1 for c in buff if c in PRINTABLE)
     for buff in buffers:
-        if buff and not is_printable(buff):
+        if not buff:
+            continue
+        if not is_printable(buff):
             return True
     return False
 
@@ -45,7 +48,7 @@ class EnsureContents(base.Change):
 
     def __init__(self, filename, contents, sensitive=False):
         self.filename = filename
-        self.current = ""
+        self.current = b""
         self.contents = contents
         self.changed = False
         self.sensitive = sensitive
@@ -55,6 +58,8 @@ class EnsureContents(base.Change):
         if self.sensitive:
             extra['fuselage.diff'] = 'No diff; sensitive file contents'
         elif not binary_buffers(previous, replacement):
+            previous = force_str(previous)
+            replacement = force_str(replacement)
             diff = "".join(difflib.unified_diff(previous.splitlines(1), replacement.splitlines(1)))
             extra['fuselage.diff'] = diff
         else:
@@ -81,7 +86,7 @@ class EnsureContents(base.Change):
 
     def write_new_file(self, context):
         """ Write contents to a new file. """
-        self.diff(context, "Writing new file", "", self.contents)
+        self.diff(context, "Writing new file", b"", self.contents)
         if not context.simulate:
             platform.put(self.filename, self.contents)
         self.changed = True

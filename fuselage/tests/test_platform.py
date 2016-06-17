@@ -99,13 +99,13 @@ class TestPlatform(unittest.TestCase):
             os.unlink(p)
 
     def test_get(self):
-        self.assertTrue("platform" in platform.get(__file__))
+        self.assertTrue(b"platform" in platform.get(__file__))
 
     def test_put(self):
         path = os.path.join(os.getcwd(), "tmp_test_put")
         platform.put(path, "HELLO")
         try:
-            self.assertTrue("HELLO" in platform.get(path))
+            self.assertTrue(b"HELLO" in platform.get(path))
         finally:
             platform.unlink(path)
 
@@ -113,9 +113,9 @@ class TestPlatform(unittest.TestCase):
         path = os.path.join(os.getcwd(), "tmp_test_put_replace")
         platform.put(path, "HELLO")
         try:
-            self.assertTrue("HELLO" in platform.get(path))
+            self.assertTrue(b"HELLO" in platform.get(path))
             platform.put(path, "")
-            self.assertTrue("HELLO" not in platform.get(path))
+            self.assertTrue(b"HELLO" not in platform.get(path))
         finally:
             platform.unlink(path)
 

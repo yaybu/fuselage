@@ -16,6 +16,7 @@ import os
 
 from fuselage import error, resources, provider, platform
 from fuselage.changes import EnsureFile
+from fuselage.utils import force_bytes
 
 
 class Patch(provider.Provider):
@@ -66,7 +67,7 @@ class Patch(provider.Provider):
 
         self.check_path(os.path.dirname(name))
 
-        contents = self.apply_patch()
+        contents = force_bytes(self.apply_patch())
 
         fc = EnsureFile(name, contents, self.resource.owner,
                         self.resource.group, self.resource.mode, sensitive=self.resource.sensitive)

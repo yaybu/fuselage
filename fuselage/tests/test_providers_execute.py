@@ -114,7 +114,7 @@ class TestExecute(TestCaseWithRunner):
         ))
         self.check_apply()
         check_file = platform.get("/foo").split()
-        self.failUnlessEqual(["65534"] * 2, check_file)
+        self.failUnlessEqual([b"65534"] * 2, check_file)
 
     def test_group(self):
         self.bundle.add(Execute(
@@ -125,7 +125,7 @@ class TestExecute(TestCaseWithRunner):
         ))
         self.check_apply()
         check_file = platform.get("/foo").split()
-        self.failUnlessEqual(["65534"] * 2, check_file)
+        self.failUnlessEqual([b"65534"] * 2, check_file)
 
     def test_user_and_group(self):
         self.bundle.add(Execute(
@@ -137,7 +137,7 @@ class TestExecute(TestCaseWithRunner):
         ))
         self.check_apply()
         check_file = platform.get("/foo").split()
-        self.failUnlessEqual(["65534"] * 4, check_file)
+        self.failUnlessEqual([b"65534"] * 4, check_file)
 
     def test_unless_true(self):
         self.bundle.add(Execute(

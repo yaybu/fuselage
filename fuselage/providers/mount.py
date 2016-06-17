@@ -16,6 +16,7 @@ import os
 
 from fuselage import error, resources, provider, platform
 from fuselage.changes import ShellCommand
+from fuselage.utils import force_str
 
 
 class Mount(provider.Provider):
@@ -38,7 +39,7 @@ class Mount(provider.Provider):
                 raise error.PathComponentNotDirectory(path)
 
     def get_all_active_mounts(self):
-        path = platform.get("/proc/mounts")
+        path = force_str(platform.get("/proc/mounts"))
         d = {}
         for line in path.split("\n"):
             if not line.strip():

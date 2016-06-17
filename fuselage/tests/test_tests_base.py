@@ -36,4 +36,4 @@ class TestFile(TestCaseWithRunner):
 
     def test_platform_get(self):
         debconf = platform.get("/etc/debconf.conf")
-        self.assertTrue(isinstance(debconf, six.string_types))
+        self.assertTrue(isinstance(debconf, six.binary_type))

@@ -19,6 +19,7 @@ import pkgutil
 import logging
 
 from fuselage import error
+from fuselage.utils import force_bytes
 
 
 stat_result = collections.namedtuple("stat_result",
@@ -126,6 +127,7 @@ class Player(object):
                 "getpwuid": lambda x: struct_passwd(*x),
                 "getspall": lambda x: [struct_spwd(*y) for y in x],
                 "getspnam": lambda x: struct_spwd(*x),
+                "get": lambda x: force_bytes(x),
             }.get(f, lambda x: x)(results)
         return _
 

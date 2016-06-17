@@ -37,7 +37,7 @@ class TestLine(TestCaseWithRunner):
             linesep="\n",
         ))
         self.check_apply()
-        self.assertEqual(platform.get("/replace_existing_line_start"), "FOO 2\nBAR 2\nBAZ 3")
+        self.assertEqual(platform.get("/replace_existing_line_start"), b"FOO 2\nBAR 2\nBAZ 3")
 
     def test_replace_existing_line_middle(self):
         platform.put("/replace_existing_line_middle", "FOO 1\nBAR 2\nBAZ 3")
@@ -48,7 +48,7 @@ class TestLine(TestCaseWithRunner):
             linesep="\n",
         ))
         self.check_apply()
-        self.assertEqual(platform.get("/replace_existing_line_middle"), "FOO 1\nBAR 1\nBAZ 3")
+        self.assertEqual(platform.get("/replace_existing_line_middle"), b"FOO 1\nBAR 1\nBAZ 3")
 
     def test_replace_existing_line_end(self):
         platform.put("/replace_existing_line_end", "FOO 1\nBAR 2\nBAZ 3")
@@ -59,7 +59,7 @@ class TestLine(TestCaseWithRunner):
             linesep="\n",
         ))
         self.check_apply()
-        self.assertEqual(platform.get("/replace_existing_line_end"), "FOO 1\nBAR 2\nBAZ 2")
+        self.assertEqual(platform.get("/replace_existing_line_end"), b"FOO 1\nBAR 2\nBAZ 2")
 
     def test_replace_existing_line_append(self):
         platform.put("/replace_existing_line_append", "FOO 1\nBAR 2\nBAZ 3")
@@ -70,7 +70,7 @@ class TestLine(TestCaseWithRunner):
             linesep="\n",
         ))
         self.check_apply()
-        self.assertEqual(platform.get("/replace_existing_line_append"), "FOO 1\nBAR 2\nBAZ 3\nQUX 2")
+        self.assertEqual(platform.get("/replace_existing_line_append"), b"FOO 1\nBAR 2\nBAZ 3\nQUX 2")
 
     def test_remove_line(self):
         platform.put("/replace_existing_line_append", "FOO 1\nBAR 2\nBAZ 3")
@@ -81,7 +81,7 @@ class TestLine(TestCaseWithRunner):
             linesep="\n",
         ))
         self.check_apply()
-        self.assertEqual(platform.get("/replace_existing_line_append"), "FOO 1\nBAZ 3")
+        self.assertEqual(platform.get("/replace_existing_line_append"), b"FOO 1\nBAZ 3")
 
     def test_multiple_lines(self):
         platform.put("/multiple_lines", "FOO 1\nBAR 2\nBAZ 3")
@@ -104,4 +104,4 @@ class TestLine(TestCaseWithRunner):
             linesep="\n",
         ))
         self.check_apply()
-        self.assertEqual(platform.get("/multiple_lines"), "FOO 2\nBAR 3\nBAZ 4")
+        self.assertEqual(platform.get("/multiple_lines"), b"FOO 2\nBAR 3\nBAZ 4")

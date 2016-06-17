@@ -22,16 +22,17 @@ except ImportError:
 
 from fuselage import error, resources, provider, platform
 from fuselage.changes import ShellCommand, EnsureFile, EnsureDirectory
+from fuselage.utils import force_bytes
 
 
-hgrc = """
+hgrc = b"""
 [paths]
 default = %(repository)s
 [extensions]
 should = %(path)s/.hg/should.py
 """
 
-mercurial_ext = """
+mercurial_ext = b"""
 from mercurial import util, hg, node
 
 def should_pull(ui, repo, **opts):
@@ -185,11 +186,13 @@ class Mercurial(provider.Provider):
         try:
             self.change(EnsureFile(
                 os.path.join(self.resource.name, ".hg", "hgrc"),
-                hgrc % {"repository": url, "path":
-                        self.resource.name},
-                self.resource.user,
-                self.resource.group,
-                0o600,
+                contents=hgrc % {
+                    b"repository": force_bytes(url),
+                    b"path": force_bytes(self.resource.name)
+                },
+                user=self.resource.user,
+                group=self.resource.group,
+                mode=0o600,
                 sensitive=bool(self.resource.scm_password),
             ))
             # changed = changed or f.changed
@@ -198,12 +201,11 @@ class Mercurial(provider.Provider):
 
         try:
             self.change(EnsureFile(
-                os.path.join(
-                    self.resource.name, ".hg", "should.py"),
-                mercurial_ext,
-                self.resource.user,
-                self.resource.group,
-                0o600,
+                os.path.join(self.resource.name, ".hg", "should.py"),
+                contents=mercurial_ext,
+                user=self.resource.user,
+                group=self.resource.group,
+                mode=0o600,
             ))
             # changed = changed or f.changed
         except error.SystemError:

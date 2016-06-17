@@ -16,7 +16,7 @@ import re
 
 from fuselage import error, resources, provider, platform
 from fuselage.changes import EnsureContents
-from fuselage.utils import force_str
+from fuselage.utils import force_bytes, force_str
 
 
 class _LineMixin(object):
@@ -31,7 +31,7 @@ class _LineMixin(object):
 
         fc = EnsureContents(
             self.resource.name,
-            contents,
+            force_bytes(contents),
             sensitive=self.resource.sensitive,
         )
         self.change(fc)

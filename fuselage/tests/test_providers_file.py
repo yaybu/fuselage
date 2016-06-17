@@ -33,7 +33,7 @@ class TestFileIntegration(TestCaseWithRealRunner):
             ))
             self.check_apply()
             self.assertTrue(os.path.exists(fp.name))
-            self.assertEquals(open(fp.name, "r").read(), "hello")
+            self.assertEquals(open(fp.name, "rb").read(), b"hello")
 
     def test_file_remove(self):
         with tempfile.NamedTemporaryFile(delete=False) as fp:
@@ -98,7 +98,7 @@ class TestFile(TestCaseWithRunner):
             contents="test contents",
         ))
         self.check_apply()
-        self.assertEqual(platform.get("/etc/somefile"), "test contents")
+        self.assertEqual(platform.get("/etc/somefile"), b"test contents")
 
     def test_modify_file(self):
         platform.put("/etc/test_modify_file", "foo\nbar\baz")
@@ -108,7 +108,7 @@ class TestFile(TestCaseWithRunner):
             contents="test contents",
         ))
         self.check_apply()
-        self.assertEqual(platform.get("/etc/test_modify_file"), "test contents")
+        self.assertEqual(platform.get("/etc/test_modify_file"), b"test contents")
 
     def test_empty_file(self):
         platform.put("/etc/test_empty_file", "foo\nbar\baz")
@@ -118,7 +118,7 @@ class TestFile(TestCaseWithRunner):
             contents="",
         ))
         self.check_apply()
-        self.assertEqual(platform.get("/etc/test_empty_file"), "")
+        self.assertEqual(platform.get("/etc/test_empty_file"), b"")
 
 
 class TestFileRemove(TestCaseWithRunner):

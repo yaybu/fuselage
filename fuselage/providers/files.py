@@ -16,6 +16,7 @@ import os
 
 from fuselage import error, resources, provider, platform
 from fuselage.changes import ShellCommand, EnsureFile
+from fuselage.utils import force_bytes
 
 
 class File(provider.Provider):
@@ -50,8 +51,10 @@ class File(provider.Provider):
             else:
                 with open(self.resource.source, "rb") as fp:
                     contents = fp.read()
+        elif self.resource.contents is not None:
+            contents = force_bytes(self.resource.contents)
         else:
-            contents = self.resource.contents
+            contents = None
 
         fc = EnsureFile(
             name,
