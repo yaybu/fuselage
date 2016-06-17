@@ -15,7 +15,7 @@
 
 import unittest
 
-from fuselage import argument, resource, error
+from fuselage import argument, error, resource
 
 
 class TestArguments(unittest.TestCase):

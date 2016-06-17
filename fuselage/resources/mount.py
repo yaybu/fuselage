@@ -14,12 +14,9 @@
 
 """ Resources representing mount points. """
 
-from fuselage.resource import Resource
+from fuselage.argument import FullPath, String
 from fuselage.policy import Policy, Present
-from fuselage.argument import (
-    FullPath,
-    String,
-)
+from fuselage.resource import Resource
 
 
 class Mount(Resource):

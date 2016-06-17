@@ -13,11 +13,14 @@
 # limitations under the License.
 
 from __future__ import absolute_import, print_function
+
 import ConfigParser
 import inspect
 import os
 import StringIO
 import subprocess
+
+from fuselage import builder, bundle, error
 
 try:
     from fabric import tasks
@@ -26,8 +29,6 @@ try:
     from fabric import utils
 except SyntaxError:
     raise ImportError("Fabric cannot be imported due to syntax errors. Are you using a supported version of python?")
-
-from fuselage import bundle, builder, error
 
 
 class Loader(object):

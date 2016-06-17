@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fuselage import provider, error, resources, platform
+from fuselage import error, platform, provider, resources
 from fuselage.changes import ShellCommand
 
 

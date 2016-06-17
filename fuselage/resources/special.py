@@ -14,18 +14,9 @@
 
 """ Resources dealing with filesystem objects other than files. """
 
+from fuselage.argument import FullPath, Integer, Octal, String
+from fuselage.policy import Absent, Policy, Present
 from fuselage.resource import Resource
-from fuselage.policy import (
-    Policy,
-    Absent,
-    Present,
-)
-from fuselage.argument import (
-    FullPath,
-    String,
-    Integer,
-    Octal,
-)
 
 
 class Special(Resource):

@@ -14,8 +14,8 @@
 
 import os
 
-from fuselage import error, resources, provider, platform
-from fuselage.changes import ShellCommand, EnsureFile
+from fuselage import error, platform, provider, resources
+from fuselage.changes import EnsureFile, ShellCommand
 from fuselage.utils import force_bytes
 
 

@@ -12,12 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import six
+import hashlib
 import modulefinder
 import os
 import pkgutil
 import zipfile
-import hashlib
+
+import six
 
 
 MAIN_PY = """

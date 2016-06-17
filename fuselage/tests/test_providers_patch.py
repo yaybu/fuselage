@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fuselage.tests.base import TestCaseWithRunner
-from fuselage.resources import Patch
 from fuselage import error, platform
+from fuselage.resources import Patch
+from fuselage.tests.base import TestCaseWithRunner
 
 
 EMPTY_FILE_DIFF = """

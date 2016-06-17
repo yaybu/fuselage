@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from fuselage import error, platform
+from fuselage.resources import Directory, File
 from fuselage.tests.base import TestCaseWithRunner
-from fuselage.resources import File, Directory
-from fuselage import platform, error
 
 
 class TestEvent(TestCaseWithRunner):

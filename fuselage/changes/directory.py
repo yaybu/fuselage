@@ -15,8 +15,9 @@
 
 from fuselage import platform
 from fuselage.changes import base
-from .execute import ShellCommand
+
 from .attributes import AttributeChanger
+from .execute import ShellCommand
 
 
 class EnsureDirectory(base.Change):

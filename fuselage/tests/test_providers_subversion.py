@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fuselage.tests.base import TestCaseWithRunner
-from fuselage.resources import Package, Checkout
 from fuselage import error
+from fuselage.resources import Checkout, Package
+from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestSubversion(TestCaseWithRunner):

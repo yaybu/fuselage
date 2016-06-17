@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import sys
 import logging
 import optparse
+import os
 import pkgutil
+import sys
 
-from fuselage import log, bundle, error, event, platform
+from fuselage import bundle, error, event, log, platform
 from fuselage.error import NothingChanged
 from fuselage.utils import force_str
 

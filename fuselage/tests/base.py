@@ -13,20 +13,22 @@
 # limitations under the License.
 
 import inspect
-import os
-import unittest
 import logging
+import os
 import shlex
-import mock
+import unittest
+
 import fakechroot
+import mock
+
+from fuselage import bundle, error, log, platform, runner
+
+from .recorder import Player, Recorder
 
 try:
     from unittest import skipIf
 except ImportError:
     from unittest2 import skipIf
-
-from fuselage import bundle, runner, error, platform, log
-from .recorder import Player, Recorder
 
 
 __all__ = [

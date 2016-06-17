@@ -13,8 +13,9 @@
 # limitations under the License.
 
 import six
-from fuselage.tests.base import TestCaseWithRunner
+
 from fuselage import platform
+from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestFile(TestCaseWithRunner):

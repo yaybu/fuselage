@@ -14,7 +14,7 @@
 
 import os
 
-from fuselage import error, resources, provider, platform
+from fuselage import error, platform, provider, resources
 from fuselage.changes import EnsureDirectory, ShellCommand
 
 

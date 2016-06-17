@@ -15,8 +15,8 @@
 from __future__ import absolute_import
 
 import unittest
-import mock
 
+import mock
 from libcloud.compute.ssh import BaseSSHClient
 
 from fuselage.contrib.libcloud import FuselageDeployment

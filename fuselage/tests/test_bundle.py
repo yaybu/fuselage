@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import six
 import unittest
+
+import six
 
 from fuselage import bundle, error, resources
 

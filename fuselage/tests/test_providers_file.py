@@ -17,9 +17,9 @@ import os
 import stat
 import tempfile
 
-from fuselage.tests.base import TestCaseWithRunner, TestCaseWithRealRunner
-from fuselage.resources import File
 from fuselage import error, platform
+from fuselage.resources import File
+from fuselage.tests.base import TestCaseWithRealRunner, TestCaseWithRunner
 
 
 class TestFileIntegration(TestCaseWithRealRunner):

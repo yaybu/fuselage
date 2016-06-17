@@ -14,11 +14,12 @@
 
 """ Core classes for providers """
 
-import six
-from abc import ABCMeta, abstractmethod
 import logging
+from abc import ABCMeta, abstractmethod
 
-from fuselage import policy, log
+import six
+
+from fuselage import log, policy
 
 
 class ProviderType(ABCMeta):

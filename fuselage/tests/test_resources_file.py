@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fuselage.tests.base import TestCaseWithBundle, fuzz_resource
 from fuselage.resources import File
+from fuselage.tests.base import TestCaseWithBundle, fuzz_resource
 
 
 class TestFile(TestCaseWithBundle):

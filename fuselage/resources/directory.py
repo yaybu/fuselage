@@ -14,19 +14,10 @@
 
 """ Resources dealing with filesystem objects other than files. """
 
+from fuselage.argument import Boolean, FullPath, Octal, String
+from fuselage.defaults import get_default_group, get_default_user
+from fuselage.policy import Absent, Policy, Present
 from fuselage.resource import Resource
-from fuselage.policy import (
-    Policy,
-    Absent,
-    Present,
-)
-from fuselage.argument import (
-    FullPath,
-    String,
-    Octal,
-    Boolean,
-)
-from fuselage.defaults import get_default_user, get_default_group
 
 
 class Directory(Resource):

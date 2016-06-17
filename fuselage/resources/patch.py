@@ -12,16 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fuselage.resource import Resource
+from fuselage.argument import Boolean, File, FullPath, Integer, Octal, String
 from fuselage.policy import Policy, Present
-from fuselage.argument import (
-    FullPath,
-    String,
-    Integer,
-    Octal,
-    File,
-    Boolean,
-)
+from fuselage.resource import Resource
 
 
 class Patch(Resource):

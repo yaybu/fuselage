@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fuselage.tests.base import TestCaseWithRunner
-from fuselage.resources import Group
 from fuselage import error, platform
+from fuselage.resources import Group
+from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestGroup(TestCaseWithRunner):

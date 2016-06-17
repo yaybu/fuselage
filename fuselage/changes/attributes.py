@@ -16,6 +16,7 @@ import stat
 
 from fuselage import error, platform
 from fuselage.changes import base
+
 from .execute import ShellCommand
 
 

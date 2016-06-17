@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fuselage.tests.base import TestCaseWithRunner
-from fuselage.resources import Mount
 from fuselage import platform
+from fuselage.resources import Mount
+from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestMount(TestCaseWithRunner):

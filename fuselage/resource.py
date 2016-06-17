@@ -13,10 +13,17 @@
 # limitations under the License.
 
 import logging
+
 import six
 
-from fuselage.argument import Argument, List, SubscriptionArgument, PolicyArgument, String
-from fuselage import policy, error, log
+from fuselage import error, log, policy
+from fuselage.argument import (
+    Argument,
+    List,
+    PolicyArgument,
+    String,
+    SubscriptionArgument,
+)
 from fuselage.utils import force_str
 
 logger = logging.getLogger(__name__)

@@ -13,16 +13,16 @@
 # limitations under the License.
 
 import os
-import sys
-import unittest
-import tempfile
 import shutil
+import sys
+import tempfile
+import unittest
 
 import mock
 
-from fuselage import platform, error
-from fuselage.utils import force_bytes
+from fuselage import error, platform
 from fuselage.tests.base import skipIf
+from fuselage.utils import force_bytes
 
 
 class TestPlatform(unittest.TestCase):

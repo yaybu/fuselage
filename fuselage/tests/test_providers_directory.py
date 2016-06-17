@@ -15,9 +15,9 @@
 
 import stat
 
-from fuselage.tests.base import TestCaseWithRunner
-from fuselage.resources import Directory
 from fuselage import platform
+from fuselage.resources import Directory
+from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestDirectory(TestCaseWithRunner):

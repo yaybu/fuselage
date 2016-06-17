@@ -18,7 +18,6 @@ import logging
 from fuselage import error, log
 from fuselage.resource import ResourceType
 
-
 logger = logging.getLogger(__name__)
 
 

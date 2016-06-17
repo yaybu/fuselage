@@ -12,14 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fuselage.resource import Resource
+from fuselage.argument import FullPath, Octal, String
+from fuselage.defaults import get_default_group, get_default_user
 from fuselage.policy import Policy, Present
-from fuselage.argument import (
-    FullPath,
-    String,
-    Octal,
-)
-from fuselage.defaults import get_default_user, get_default_group
+from fuselage.resource import Resource
 
 
 class Checkout(Resource):

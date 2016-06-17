@@ -12,17 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from fuselage.argument import Boolean, Integer, String
+from fuselage.policy import Absent, Policy, Present
 from fuselage.resource import Resource
-from fuselage.policy import (
-    Policy,
-    Absent,
-    Present,
-)
-from fuselage.argument import (
-    String,
-    Integer,
-    Boolean,
-)
 
 
 class Group(Resource):

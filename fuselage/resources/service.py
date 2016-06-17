@@ -12,16 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from fuselage.argument import Integer, String
+from fuselage.policy import NAND, Policy, Present
 from fuselage.resource import Resource
-from fuselage.policy import (
-    Policy,
-    Present,
-    NAND)
-
-from fuselage.argument import (
-    String,
-    Integer,
-)
 
 
 class Service(Resource):

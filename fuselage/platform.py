@@ -13,13 +13,16 @@
 # limitations under the License.
 
 import errno
-import subprocess
 import os
 import select
+import subprocess
 import sys
 import threading
 
 import six
+
+from fuselage import error
+from fuselage.utils import force_bytes, force_str
 
 try:
     import pwd
@@ -33,10 +36,6 @@ try:
     import spwd
 except ImportError:  # pragma: no cover
     spwd = None
-
-
-from fuselage import error
-from fuselage.utils import force_str, force_bytes
 
 
 platform = sys.platform

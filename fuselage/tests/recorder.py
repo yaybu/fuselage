@@ -13,14 +13,13 @@
 # limitations under the License.
 
 import collections
-import os
 import json
-import pkgutil
 import logging
+import os
+import pkgutil
 
 from fuselage import error
 from fuselage.utils import force_bytes
-
 
 stat_result = collections.namedtuple("stat_result",
                                      ("st_mode", "st_ino", "st_dev", "st_nlink", "st_uid", "st_gid",

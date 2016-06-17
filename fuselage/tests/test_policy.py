@@ -14,7 +14,7 @@
 
 import unittest
 
-from fuselage import error, resource, policy, argument
+from fuselage import argument, error, policy, resource
 
 
 class DummyResource(resource.Resource):

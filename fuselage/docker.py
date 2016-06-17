@@ -13,17 +13,18 @@
 # limitations under the License.
 
 from __future__ import absolute_import, print_function
+
 import json
 import tarfile
 
 import six
 
+from fuselage.builder import build
+
 try:
     import docker
 except ImportError:
     docker = None
-
-from fuselage.builder import build
 
 
 class DockerBuilder(object):

@@ -12,15 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from fuselage.argument import Boolean, FullPath, Integer, List, String
+from fuselage.policy import NAND, Policy, Present
 from fuselage.resource import Resource
-from fuselage.policy import Policy, Present, NAND
-from fuselage.argument import (
-    String,
-    FullPath,
-    Integer,
-    Boolean,
-    List,
-)
 
 
 class User(Resource):

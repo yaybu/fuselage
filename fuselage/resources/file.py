@@ -16,22 +16,10 @@
 both the metadata associated with the file (for example owner and permission)
 and the contents of the files themselves. """
 
+from fuselage.argument import Boolean, File, FullPath, Octal, String
+from fuselage.defaults import get_default_group, get_default_user
+from fuselage.policy import NAND, Absent, Policy, Present
 from fuselage.resource import Resource
-from fuselage.policy import (
-    Policy,
-    Absent,
-    Present,
-    NAND,
-)
-
-from fuselage.argument import (
-    FullPath,
-    String,
-    Octal,
-    File,
-    Boolean,
-)
-from fuselage.defaults import get_default_user, get_default_group
 
 
 class File(Resource):

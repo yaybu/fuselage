@@ -17,10 +17,10 @@ import string
 
 from fuselage import platform
 from fuselage.changes import base
-from .execute import ShellCommand
-from .attributes import AttributeChanger
 from fuselage.utils import force_str
 
+from .attributes import AttributeChanger
+from .execute import ShellCommand
 
 # FIXME: Set mode of file before writing to it
 

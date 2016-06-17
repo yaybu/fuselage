@@ -18,18 +18,10 @@ and the contents of the files themselves. """
 
 import os
 
+from fuselage.argument import Boolean, FullPath, String
+from fuselage.policy import Policy, Present
 from fuselage.resource import Resource
-from fuselage.policy import (
-    Policy,
-    Present,
-)
-
-from fuselage.argument import (
-    FullPath,
-    String,
-    Boolean,
-)
-from fuselage.utils import simple_str, force_str
+from fuselage.utils import force_str, simple_str
 
 
 class Line(Resource):

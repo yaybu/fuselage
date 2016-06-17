@@ -12,18 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from fuselage.argument import Dict, FullPath, Integer, List, Octal, String
+from fuselage.defaults import get_default_group, get_default_user
+from fuselage.policy import XOR, Policy, Present
 from fuselage.resource import Resource
-from fuselage.policy import Policy, Present, XOR
 from fuselage.utils import simple_str
-from fuselage.argument import (
-    FullPath,
-    String,
-    Integer,
-    Octal,
-    Dict,
-    List,
-)
-from fuselage.defaults import get_default_user, get_default_group
 
 
 class Execute(Resource):

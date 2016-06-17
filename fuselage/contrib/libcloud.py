@@ -19,8 +19,8 @@ import os
 
 from libcloud.compute import deployment
 
-from fuselage.bundle import ResourceBundle
 from fuselage import builder
+from fuselage.bundle import ResourceBundle
 
 
 class FuselageDeployment(deployment.Deployment):
