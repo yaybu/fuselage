@@ -3,7 +3,7 @@ pytest
 coverage
 mock
 fabric
-apache-libcloud==1.1.0
+apache-libcloud==1.2.1
 fakechroot>=0.2.1
 unittest2==1.1.0
 
