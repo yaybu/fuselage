@@ -10,7 +10,7 @@ unittest2==1.1.0
 codecov==2.0.5
 flake8==3.2.1
 pep8==1.7.0
-flake8-isort==2.1.1
+flake8-isort==2.1.2
 isort==4.2.5
 testfixtures==4.13.1
 
