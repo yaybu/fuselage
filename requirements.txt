@@ -12,6 +12,6 @@ flake8==3.3.0
 pep8==1.7.0
 flake8-isort==2.2.1
 isort==4.2.15
-testfixtures==5.0.0
+testfixtures==5.1.0
 
 -e .
