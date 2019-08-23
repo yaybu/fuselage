@@ -16,7 +16,6 @@ from fuselage import error
 from fuselage.resources import Checkout, File, Package
 from fuselage.tests.base import TestCaseWithRunner
 
-
 MIRRORS = """
 deb http://uk.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse
 deb http://uk.archive.ubuntu.com/ubuntu/ precise-updates main restricted universe multiverse

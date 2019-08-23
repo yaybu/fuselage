@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .execute import ShellCommand
 from .attributes import AttributeChanger
-from .file import EnsureFile, EnsureContents
 from .directory import EnsureDirectory
+from .execute import ShellCommand
+from .file import EnsureContents, EnsureFile
 
 __all__ = [
     "AttributeChanger",

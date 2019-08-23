@@ -159,10 +159,10 @@ class XOR(ArgumentAssertion):
         self.args = args
 
     def test(self, resource):
-        l = [1 for a in self.args if a.test(resource)]
-        if len(l) == 0:
+        true_values = [1 for a in self.args if a.test(resource)]
+        if len(true_values) == 0:
             return False
-        elif len(l) == 1:
+        elif len(true_values) == 1:
             return True
         else:
             return False
@@ -181,8 +181,8 @@ class OR(ArgumentAssertion):
         self.args = args
 
     def test(self, resource):
-        l = [1 for a in self.args if a.test(resource)]
-        if len(l) == 0:
+        true_values = [1 for a in self.args if a.test(resource)]
+        if len(true_values) == 0:
             return False
         else:
             return True

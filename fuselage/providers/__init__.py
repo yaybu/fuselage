@@ -24,9 +24,9 @@ from . import (
     mercurial,
     mount,
     mounted,
+    patch,
     service,
     subversion,
-    patch,
     user,
     yum,
 )

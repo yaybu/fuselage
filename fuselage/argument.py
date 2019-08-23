@@ -208,7 +208,7 @@ class PolicyTrigger:
     def bind(self, resources, target):
         try:
             resource = resources.get_resource_by_name(self.on)
-        except:
+        except Exception:
             try:
                 resource = resources[self.on]
             except KeyError:

@@ -315,6 +315,7 @@ def pwd_supported():
 def spwd_supported():
     return spwd is not None
 
+
 if gr_supported():
     def getgrall():
         return list(grp.getgrall())

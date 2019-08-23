@@ -43,7 +43,7 @@ class _ServiceMixin(object):
 
         try:
             pid = int(platform.get(self.resource.pidfile).strip())
-        except:
+        except Exception:
             self.logger.debug("The pidfile could not be understood (should just contain a single int). Cannot determine service state.")
             return "unknown"
 

@@ -59,21 +59,24 @@ class Recorder(object):
         def _(*args, **kwargs):
             logger.debug("fuselage.platform.%s(*%r, **%r)" % (function_name, args, kwargs))
 
-            e = None
             try:
                 results = attr(*args, **kwargs)
                 exception = None
+                self.results.append((function_name, results, exception))
             except KeyError as e:
                 results = []
                 exception = "KeyError"
+                self.results.append((function_name, results, exception))
+                raise e
             except OSError as e:
                 results = []
                 exception = "OSError"
+                self.results.append((function_name, results, exception))
+                raise e
             except error.SystemError as e:
                 results = [e.returncode, e.stdout, e.stderr]
                 exception = "SystemError"
-            self.results.append((function_name, results, exception))
-            if e:
+                self.results.append((function_name, results, exception))
                 raise e
             return results
         return _

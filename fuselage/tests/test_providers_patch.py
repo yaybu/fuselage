@@ -16,7 +16,6 @@ from fuselage import error, platform
 from fuselage.resources import Patch
 from fuselage.tests.base import TestCaseWithRunner
 
-
 EMPTY_FILE_DIFF = """
 --- empty_file  2013-09-03 10:03:18.684478066 +0100
 +++ hello_world 2013-09-14 23:23:15.367744089 +0100

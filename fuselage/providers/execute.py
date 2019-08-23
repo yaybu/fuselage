@@ -34,7 +34,7 @@ class Execute(provider.Provider):
         except error.InvalidGroup as exc:
             self.raise_or_log(exc)
 
-        except error.SystemError as exc:
+        except error.SystemError:
             return True
 
         return False

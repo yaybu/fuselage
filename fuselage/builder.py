@@ -20,7 +20,6 @@ import zipfile
 
 import six
 
-
 MAIN_PY = """
 import logging
 import sys

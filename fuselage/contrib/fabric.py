@@ -184,6 +184,7 @@ class DeploymentTask(FuselageMixin, tasks.WrappedCallableTask):
         finally:
             sudo("rm %s" % uploaded[0])
 
+
 blueprint = DeploymentTask.as_decorator()
 
 
@@ -200,6 +201,7 @@ class DockerBuildTask(FuselageMixin, tasks.WrappedCallableTask):
         except RuntimeError as e:
             utils.error(str(e))
             return
+
 
 docker_container = DockerBuildTask.as_decorator()
 

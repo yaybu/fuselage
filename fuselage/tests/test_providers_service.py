@@ -16,7 +16,6 @@ from fuselage import error, platform
 from fuselage.resources import Service
 from fuselage.tests.base import TestCaseWithRunner
 
-
 simpleservice = """
 #! /usr/bin/env python
 import os, select, sys, time
