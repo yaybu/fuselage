@@ -29,7 +29,7 @@ class TestLink(TestCaseWithRunner):
             to="/etc",
         ))
         self.check_apply()
-        self.failUnless(platform.islink("/etc/create_link"))
+        self.assertTrue(platform.islink("/etc/create_link"))
 
     def test_unicode(self):
         self.bundle.add(Link(
@@ -55,7 +55,7 @@ class TestLink(TestCaseWithRunner):
             to="/",
         ))
         self.assertRaises(error.NothingChanged, self.apply)
-        self.failUnlessEqual(platform.readlink("/etc/already_exists"), "/")
+        self.assertEqual(platform.readlink("/etc/already_exists"), "/")
 
     def test_already_exists_notalink(self):
         platform.put("/etc_already_exists_notalink", "")
@@ -65,7 +65,7 @@ class TestLink(TestCaseWithRunner):
             to="/foo",
         ))
         self.check_apply()
-        self.failUnlessEqual(platform.readlink("/etc/already_exists_notalink"), "/foo")
+        self.assertEqual(platform.readlink("/etc/already_exists_notalink"), "/foo")
 
     def test_already_exists_points_elsewhere(self):
         platform.put("/baz", "")
@@ -76,7 +76,7 @@ class TestLink(TestCaseWithRunner):
             to="/foo",
         ))
         self.check_apply()
-        self.failUnlessEqual(platform.readlink("/etc/bar_elsewhere"), "/foo")
+        self.assertEqual(platform.readlink("/etc/bar_elsewhere"), "/foo")
 
     def test_dangling(self):
         self.bundle.add(Link(

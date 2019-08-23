@@ -114,7 +114,7 @@ class TestExecute(TestCaseWithRunner):
         ))
         self.check_apply()
         check_file = platform.get("/foo").split()
-        self.failUnlessEqual([b"65534"] * 2, check_file)
+        self.assertEqual([b"65534"] * 2, check_file)
 
     def test_group(self):
         self.bundle.add(Execute(
@@ -125,7 +125,7 @@ class TestExecute(TestCaseWithRunner):
         ))
         self.check_apply()
         check_file = platform.get("/foo").split()
-        self.failUnlessEqual([b"65534"] * 2, check_file)
+        self.assertEqual([b"65534"] * 2, check_file)
 
     def test_user_and_group(self):
         self.bundle.add(Execute(
@@ -137,7 +137,7 @@ class TestExecute(TestCaseWithRunner):
         ))
         self.check_apply()
         check_file = platform.get("/foo").split()
-        self.failUnlessEqual([b"65534"] * 4, check_file)
+        self.assertEqual([b"65534"] * 4, check_file)
 
     def test_unless_true(self):
         self.bundle.add(Execute(
@@ -168,7 +168,7 @@ class TestExecute(TestCaseWithRunner):
         self.failUnlessExists("/test_umask_022")
 
         mode = stat.S_IMODE(platform.stat("/test_umask_022").st_mode)
-        self.failUnlessEqual(mode, 0o644)
+        self.assertEqual(mode, 0o644)
 
     def test_umask_002(self):
         self.bundle.add(Execute(
@@ -181,7 +181,7 @@ class TestExecute(TestCaseWithRunner):
         self.failUnlessExists("/test_umask_002")
 
         mode = stat.S_IMODE(platform.stat("/test_umask_002").st_mode)
-        self.failUnlessEqual(mode, 0o664)
+        self.assertEqual(mode, 0o664)
 
     def test_missing_binary_absolute(self):
         self.bundle.add(Execute(

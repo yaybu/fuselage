@@ -33,7 +33,7 @@ class TestFileIntegration(TestCaseWithRealRunner):
             ))
             self.check_apply()
             self.assertTrue(os.path.exists(fp.name))
-            self.assertEquals(open(fp.name, "rb").read(), b"hello")
+            self.assertEqual(open(fp.name, "rb").read(), b"hello")
 
     def test_file_remove(self):
         with tempfile.NamedTemporaryFile(delete=False) as fp:

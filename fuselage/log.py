@@ -91,7 +91,7 @@ class ConsoleHandler(logging.StreamHandler, object):
         self._needs_footer = True
 
     def _render_resource_footer(self):
-        self.stream.write("\%s\n\n" % ("-" * 79, ))
+        self.stream.write("\\%s\n\n" % ("-" * 79, ))
         self._needs_footer = False
 
     def handle(self, record):

@@ -29,7 +29,7 @@ class TestDirectory(TestCaseWithRunner):
             group="root",
         ))
         self.check_apply()
-        self.failUnless(platform.isdir("/etc/somedir"))
+        self.assertTrue(platform.isdir("/etc/somedir"))
 
     def test_create_directory_and_parents(self):
         self.bundle.add(Directory(
@@ -37,7 +37,7 @@ class TestDirectory(TestCaseWithRunner):
             parents=True,
         ))
         self.check_apply()
-        self.failUnless(platform.isdir("/etc/foo/bar/baz"))
+        self.assertTrue(platform.isdir("/etc/foo/bar/baz"))
 
     def test_remove_directory(self):
         platform.makedirs("/etc/somedir")
