@@ -1,4 +1,0 @@
-recursive-include fuselage *
-recursive-include doc *
-include *
-global-exclude *.pyc
