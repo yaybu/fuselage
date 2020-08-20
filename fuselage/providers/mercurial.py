@@ -19,10 +19,11 @@ from fuselage.changes import EnsureDirectory, EnsureFile, ShellCommand
 from fuselage.utils import force_bytes
 
 try:
-    from urllib.parse import urlparse, urlunparse, quote
+    from urllib.parse import quote, urlparse, urlunparse
 except ImportError:
-    from urlparse import urlparse, urlunparse
     from urllib import quote
+
+    from urlparse import urlparse, urlunparse
 
 
 hgrc = """

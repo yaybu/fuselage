@@ -14,19 +14,19 @@
 
 from __future__ import absolute_import, print_function
 
-import ConfigParser
 import inspect
 import os
-import StringIO
 import subprocess
+
+import ConfigParser
+import StringIO
 
 from fuselage import builder, bundle, error
 
 try:
-    from fabric import tasks
-    from fabric.operations import put, sudo
+    from fabric import tasks, utils
     from fabric.api import env, settings
-    from fabric import utils
+    from fabric.operations import put, sudo
 except SyntaxError:
     raise ImportError(
         "Fabric cannot be imported due to syntax errors. Are you using a supported version of python?"

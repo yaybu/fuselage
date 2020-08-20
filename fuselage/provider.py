@@ -14,8 +14,8 @@
 
 """ Core classes for providers """
 
-import logging
 from abc import ABCMeta, abstractmethod
+import logging
 
 import six
 
