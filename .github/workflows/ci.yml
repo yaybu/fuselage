@@ -53,15 +53,15 @@ jobs:
 
     - name: Run isort
       shell: bash
-      run: poetry run python -m isort touchdown
+      run: poetry run python -m isort fuselage
 
     - name: Run black
       shell: bash
-      run: poetry run python -m black touchdown
+      run: poetry run python -m black fuselage
 
     - name: Run flake8
       shell: bash
-      run: poetry run python -m flake8 touchdown
+      run: poetry run python -m flake8 fuselage
 
   tests:
     name: pytest/${{ matrix.os }}/${{ matrix.python-version }}
