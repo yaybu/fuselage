@@ -64,12 +64,10 @@ class Builder:
     def embed_fuselage_runtime(self):
         finder = modulefinder.ModuleFinder()
 
-        finder.load_module(
-            fqname="__main__",
-            fp=six.StringIO(MAIN_PY),
-            pathname="__main__.py",
-            file_info=("", "r", modulefinder.imp.PY_SOURCE),
-        )
+        co = compile(MAIN_PY, "__main__.py", "exec")
+        m = finder.add_module("__main__")
+        m.__file__ = "__main__.py"
+        finder.scan_code(co, m)
 
         for name, mod in finder.modules.items():
             mods = ("fuselage", "six")
