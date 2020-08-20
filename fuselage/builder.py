@@ -37,7 +37,7 @@ if __name__=="__main__":
 """
 
 
-class Builder(object):
+class Builder:
     def __init__(self, zfp):
         self.zipfile = zfp
 

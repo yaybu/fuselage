@@ -15,13 +15,11 @@
 import random
 import sys
 
-import six
-
 from fuselage import error
 from fuselage.utils import force_str
 
 
-class Argument(object):
+class Argument:
 
     """ Stores the argument value on the instance object. It's a bit fugly,
     neater ways of doing this that do not involve passing extra arguments to
@@ -81,7 +79,7 @@ class Boolean(Argument):
     to be True boolean values. Anything else is False. """
 
     def clean(self, instance, value):
-        if isinstance(value, six.text_type):
+        if isinstance(value, str):
             if value.lower() in ("1", "yes", "on", "true"):
                 value = True
             else:
@@ -139,11 +137,11 @@ class FullPath(String):
     '/'. """
 
     def clean(self, instance, value):
-        return super(FullPath, self).clean(instance, value)
+        return super().clean(instance, value)
 
     @classmethod
     def _generate_valid(self):
-        return "/" + super(FullPath, self)._generate_valid()
+        return "/" + super()._generate_valid()
 
 
 class Integer(Argument):
@@ -213,7 +211,7 @@ class PolicyTrigger:
                 resource = resources[self.on]
             except KeyError:
                 raise error.BindingError(
-                    "Cannot bind %r to missing resource named '%s'" % (target, self.on)
+                    f"Cannot bind {target!r} to missing resource named '{self.on}'"
                 )
 
         resource.register_observer("*", target, "*")
@@ -256,9 +254,7 @@ class PolicyArgument(Argument):
         try:
             value = instance.policies[value](instance)
         except KeyError:
-            raise error.ParseError(
-                "'%s' is not a valid policy for this resource" % (value,)
-            )
+            raise error.ParseError(f"'{value}' is not a valid policy for this resource")
         return value
 
     def get_default(self, instance):

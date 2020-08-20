@@ -18,7 +18,7 @@
 import abc
 
 
-class Change(object):
+class Change:
 
     """ Base class for changes """
 

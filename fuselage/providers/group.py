@@ -31,7 +31,7 @@ class Group(provider.Provider):
         try:
             info_tuple = platform.getgrnam(self.resource.name.encode("utf-8"))
         except KeyError:
-            info = dict((f, None) for f in fields)
+            info = {f: None for f in fields}
             info["exists"] = False
             return info
 

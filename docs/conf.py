@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # fuselage documentation build configuration file, created by
 # sphinx-quickstart on Tue Jun 28 13:27:09 2011.
@@ -45,8 +44,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'fuselage'
-copyright = u'2011, John Carr'
+project = 'fuselage'
+copyright = '2011, John Carr'
 
 # The full version, including alpha/beta/rc tags.
 release = pkg_resources.get_distribution('fuselage').version
@@ -177,8 +176,8 @@ htmlhelp_basename = 'fuselagedoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'fuselage.tex', u'fuselage documentation',
-   u'John Carr', 'manual'),
+  ('index', 'fuselage.tex', 'fuselage documentation',
+   'John Carr', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

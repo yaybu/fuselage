@@ -19,7 +19,7 @@ from fuselage.tests.base import TestCaseWithRunner
 
 class TestGit(TestCaseWithRunner):
     def setUp(self):
-        super(TestGit, self).setUp()
+        super().setUp()
         self.p = self.bundle.add(Package(name="git", policy="install"))
         self.c = self.bundle.add(
             Checkout(

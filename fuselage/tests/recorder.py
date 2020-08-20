@@ -64,7 +64,7 @@ struct_spwd = collections.namedtuple(
 logger = logging.getLogger(__name__)
 
 
-class Recorder(object):
+class Recorder:
     def __init__(self, path, id):
         self.path = path
         self.id = id
@@ -81,9 +81,7 @@ class Recorder(object):
             raise AttributeError(function_name)
 
         def _(*args, **kwargs):
-            logger.debug(
-                "fuselage.platform.%s(*%r, **%r)" % (function_name, args, kwargs)
-            )
+            logger.debug(f"fuselage.platform.{function_name}(*{args!r}, **{kwargs!r})")
 
             try:
                 results = attr(*args, **kwargs)
@@ -117,11 +115,11 @@ class Recorder(object):
             json.dump(existing, fp)
 
 
-class Player(object):
+class Player:
     def __init__(self, path, id):
         results = {}
         name = os.path.splitext(os.path.basename(path))[0]
-        payload = pkgutil.get_data("fuselage.tests", "%s.json" % (name,))
+        payload = pkgutil.get_data("fuselage.tests", f"{name}.json")
         if payload:
             results.update(json.loads(payload.decode()))
 
@@ -134,16 +132,11 @@ class Player(object):
     def __getattr__(self, function_name):
         def _(*args, **kwargs):
             f, results, exception = self.results.pop(0)
-            assert function_name == f, "'%s' != '%s', args=%r, kwargs=%r" % (
-                function_name,
-                f,
-                args,
-                kwargs,
+            assert function_name == f, "'{}' != '{}', args={!r}, kwargs={!r}".format(
+                function_name, f, args, kwargs,
             )
 
-            logger.debug(
-                "fuselage.platform.%s(*%r, **%r)" % (function_name, args, kwargs)
-            )
+            logger.debug(f"fuselage.platform.{function_name}(*{args!r}, **{kwargs!r})")
 
             if exception:
                 raise {

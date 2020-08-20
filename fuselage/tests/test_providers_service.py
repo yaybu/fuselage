@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
 class TestService(TestCaseWithRunner):
     def setUp(self):
-        super(TestService, self).setUp()
+        super().setUp()
         platform.put("/bin/simpleservice", simpleservice)
         platform.check_call(["chmod", "755", "/bin/simpleservice"])
 

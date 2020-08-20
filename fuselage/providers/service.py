@@ -16,7 +16,7 @@ from fuselage import error, platform, provider, resources
 from fuselage.changes import ShellCommand
 
 
-class _ServiceMixin(object):
+class _ServiceMixin:
     features = [
         "restart",
     ]
@@ -44,7 +44,7 @@ class _ServiceMixin(object):
             return "unknown"
 
         self.logger.debug(
-            "Using pidfile %r to determine service state" % (self.resource.pidfile,)
+            f"Using pidfile {self.resource.pidfile!r} to determine service state"
         )
 
         if not platform.exists(self.resource.pidfile):

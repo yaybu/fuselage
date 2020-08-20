@@ -74,7 +74,7 @@ class RemoveDirectory(provider.Provider):
 
         if platform.exists(name) and not platform.isdir(name):
             raise error.InvalidProviderError(
-                "%r: %s exists and is not a directory" % (self, name)
+                f"{self!r}: {name} exists and is not a directory"
             )
         if platform.exists(name):
             self.change(ShellCommand(["/bin/rmdir", self.resource.name]))
@@ -93,7 +93,7 @@ class RemoveDirectoryRecursive(provider.Provider):
 
         if platform.exists(name) and not platform.isdir(name):
             raise error.InvalidProviderError(
-                "%r: %s exists and is not a directory" % (self, name)
+                f"{self!r}: {name} exists and is not a directory"
             )
         if platform.exists(name):
             self.change(ShellCommand(["/bin/rm", "-rf", self.resource.name]))

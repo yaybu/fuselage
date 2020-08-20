@@ -19,7 +19,7 @@ from fuselage.changes import EnsureContents
 from fuselage.utils import force_bytes, force_str
 
 
-class _LineMixin(object):
+class _LineMixin:
     def apply(self):
         if not platform.exists(self.resource.name):
             self.raise_or_log(

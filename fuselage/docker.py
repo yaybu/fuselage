@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, print_function
 
 import json
 import tarfile
@@ -27,7 +26,7 @@ except ImportError:
     docker = None
 
 
-class DockerBuilder(object):
+class DockerBuilder:
     def __init__(
         self,
         bundle,
@@ -60,7 +59,7 @@ class DockerBuilder(object):
         df.append("")
 
         for k, v in self.env.items():
-            df.append("ENV %s %s" % (k, v))
+            df.append(f"ENV {k} {v}")
 
         if self.volumes:
             df.append("VOLUME %s" % json.dumps(self.volumes))

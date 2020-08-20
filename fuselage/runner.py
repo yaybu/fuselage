@@ -25,7 +25,7 @@ from fuselage.utils import force_str
 logger = logging.getLogger(__name__)
 
 
-class Runner(object):
+class Runner:
 
     state_path = "/var/run/yaybu"
 
@@ -114,7 +114,7 @@ class BundledRunner(Runner):
         loader = pkgutil.get_loader("fuselage")
         try:
             resources_json = loader.get_data("resources.json").decode("ascii")
-        except IOError:
+        except OSError:
             raise error.ParseError("Bundle is missing resources.json")
         b = bundle.ResourceBundle()
         b.loads(force_str(resources_json))

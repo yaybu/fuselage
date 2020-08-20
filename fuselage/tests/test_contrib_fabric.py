@@ -13,9 +13,8 @@
 # limitations under the License.
 
 import unittest
+from unittest import mock
 import zipfile
-
-import mock
 
 from fuselage import resources
 

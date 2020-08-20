@@ -42,16 +42,16 @@ class Execute(provider.Provider):
     def apply(self):
         creates = self.resource.creates
         if creates and platform.exists(creates):
-            self.logger.debug("%r exists, not executing" % (self.resource.creates,))
+            self.logger.debug(f"{self.resource.creates!r} exists, not executing")
             return False
 
         touch = self.resource.touch
         if touch and platform.exists(touch):
-            self.logger.debug("%r exists, not executing" % (self.resource.touch,))
+            self.logger.debug(f"{self.resource.touch!r} exists, not executing")
             return False
 
         if self.resource.unless and not self.check_unless():
-            self.logger.debug("%r passes, not executing" % (self.resource.unless,))
+            self.logger.debug(f"{self.resource.unless!r} passes, not executing")
             return False
 
         if self.resource.command:

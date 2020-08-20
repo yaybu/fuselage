@@ -27,7 +27,7 @@ def is_installed(resource):
             return False
         # if the return code is anything but zero or one, we have a problem
         raise error.PackageError(
-            "%s search failed with return code %s" % (resource, exc.returncode)
+            f"{resource} search failed with return code {exc.returncode}"
         )
 
     # if the return code is 0, dpkg is aware of the package

@@ -100,7 +100,7 @@ cmdtable = {
 def _inject_credentials(url, username=None, password=None):
     if username and password:
         p = urlparse(url)
-        netloc = "%s:%s@%s" % (quote(username, ""), quote(password, ""), p.hostname,)
+        netloc = "{}:{}@{}".format(quote(username, ""), quote(password, ""), p.hostname)
         if p.port:
             netloc += ":" + str(p.port)
         url = urlunparse((p.scheme, netloc, p.path, p.params, p.query, p.fragment))

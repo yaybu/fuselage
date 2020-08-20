@@ -14,8 +14,6 @@
 
 import logging
 
-import six
-
 from fuselage import error, log, policy
 from fuselage.argument import (
     Argument,
@@ -80,7 +78,7 @@ class AvailableResourcePolicies(dict):
             return policy.NullPolicy
 
 
-class Resource(six.with_metaclass(ResourceType)):
+class Resource(metaclass=ResourceType):
 
     """ A resource represents a resource that can be configured on the system.
     This might be as simple as a symlink or as complex as a database schema
@@ -147,7 +145,7 @@ class Resource(six.with_metaclass(ResourceType)):
         for key, value in kwargs.items():
             if key not in self.__args__:
                 raise error.ParseError(
-                    "'%s' is not a valid option for this resource" % (key,)
+                    f"'{key}' is not a valid option for this resource"
                 )
             setattr(self, key, value)
 
@@ -156,15 +154,14 @@ class Resource(six.with_metaclass(ResourceType)):
 
         if not self.id:
             raise error.ParseError(
-                ("{0} is not explicitly named and name cannot be implied").format(
+                ("{} is not explicitly named and name cannot be implied").format(
                     self.__resource_name__
                 )
             )
 
     @classmethod
     def get_argument_names(klass):
-        for key in klass.__args__:
-            yield key
+        yield from klass.__args__
 
     def serialize(self, builder=None):
         """ Return all argument names and values in a dictionary. If an
@@ -177,7 +174,7 @@ class Resource(six.with_metaclass(ResourceType)):
         return {self.__resource_name__: retval}
 
     def register_observer(self, when, resource, policy):
-        logger.debug("%r is being observed by %r for %s" % (self, resource, when))
+        logger.debug(f"{self!r} is being observed by {resource!r} for {when}")
         self.observers.append(resource)
 
     def apply(self, runner):
@@ -202,9 +199,9 @@ class Resource(six.with_metaclass(ResourceType)):
     def fire_event(self, context):
         """ Apply the appropriate policies on the resources that are observing
         this resource for the firing of a policy. """
-        logger.debug("Sending triggers from %s" % (self,))
+        logger.debug(f"Sending triggers from {self}")
         for resource in self.observers:
-            logger.debug("Sending trigger from %r to %r" % (self, resource,))
+            logger.debug(f"Sending trigger from {self!r} to {resource!r}")
             context.state.set_trigger(resource)
 
     def bind(self, resources):
@@ -228,7 +225,7 @@ class Resource(six.with_metaclass(ResourceType)):
         if not name:
             raise error.ParseError("Resource is not named")
         classname = getattr(self, "__resource_name__", self.__class__.__name__)
-        return "%s[%s]" % (classname, name)
+        return f"{classname}[{name}]"
 
     def __repr__(self):
         return self.typed_id

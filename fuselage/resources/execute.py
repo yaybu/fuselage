@@ -46,7 +46,7 @@ class Execute(Resource):
 
     @property
     def implicit_id(self):
-        implicit_id = super(Execute, self).implicit_id
+        implicit_id = super().implicit_id
         if not implicit_id:
             if self.command:
                 implicit_id = simple_str(self.command)

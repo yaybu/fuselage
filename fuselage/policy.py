@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import six
-
 from fuselage import error
 
 
@@ -29,7 +27,7 @@ class PolicyType(type):
         return cls
 
 
-class Policy(six.with_metaclass(PolicyType)):
+class Policy(metaclass=PolicyType):
 
     """
     A policy is a representation of a resource. A policy requires a
@@ -89,7 +87,7 @@ class NullPolicy(Policy):
     pass
 
 
-class ArgumentAssertion(object):
+class ArgumentAssertion:
 
     """ An assertion of the state of an argument """
 
@@ -107,7 +105,7 @@ class Present(ArgumentAssertion):
         return resource.__args__[self.name].present(resource)
 
     def describe(self, resource):
-        yield "'%s' must be present (%s)" % (self.name, self.test(resource))
+        yield "'{}' must be present ({})".format(self.name, self.test(resource))
 
 
 class Absent(Present):
@@ -116,10 +114,10 @@ class Absent(Present):
     value. An argument with a default value is always defined. """
 
     def test(self, resource):
-        return not super(Absent, self).test(resource)
+        return not super().test(resource)
 
     def describe(self, resource):
-        yield "'%s' must be absent (%s)" % (self.name, self.test(resource))
+        yield "'{}' must be absent ({})".format(self.name, self.test(resource))
 
 
 class AND(ArgumentAssertion):

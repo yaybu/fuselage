@@ -134,7 +134,7 @@ class Git(provider.Provider):
             raise error.CheckoutError("Could not query the remote repository")
 
         r = re.compile("([0-9a-f]{40})\t(.*)\n")
-        refs_to_shas = dict([(b, a) for (a, b) in r.findall(stdout)])
+        refs_to_shas = {b: a for (a, b) in r.findall(stdout)}
 
         # Revision takes precedent over branch
 
@@ -163,7 +163,7 @@ class Git(provider.Provider):
             as_branch = "refs/heads/%s" % branch
             if as_branch not in refs_to_shas.keys():
                 raise error.CheckoutError("Cannot find a branch called '%s'" % branch)
-            newref = "remotes/%s/%s" % (self.REMOTE_NAME, branch)
+            newref = f"remotes/{self.REMOTE_NAME}/{branch}"
             if head_sha != refs_to_shas.get(as_branch):
                 return newref
         else:

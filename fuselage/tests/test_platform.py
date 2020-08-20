@@ -17,8 +17,7 @@ import shutil
 import sys
 import tempfile
 import unittest
-
-import mock
+from unittest import mock
 
 from fuselage import error, platform
 from fuselage.tests.base import skipIf

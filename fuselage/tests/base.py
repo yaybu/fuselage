@@ -17,9 +17,9 @@ import logging
 import os
 import shlex
 import unittest
+from unittest import mock
 
 import fakechroot
-import mock
 
 from fuselage import bundle, error, log, platform, runner
 
@@ -58,7 +58,7 @@ class TestCaseWithBundle(unittest.TestCase):
 
 class TestCaseWithRealRunner(TestCaseWithBundle):
     def setUp(self):
-        super(TestCaseWithRealRunner, self).setUp()
+        super().setUp()
         log.configure(verbosity=logging.DEBUG, force=True)
         self.logger = logging.getLogger(__name__)
 
@@ -97,7 +97,7 @@ class TestCaseWithRealRunner(TestCaseWithBundle):
             self.fail("After 2nd apply() their were still pending changes")
 
 
-class Patch(object):
+class Patch:
     def __init__(self, module, param, value):
         self.module = module
         self.param = param

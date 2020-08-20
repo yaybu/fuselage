@@ -79,9 +79,7 @@ class Svn(provider.Provider):
         old_url = info["URL"]
         new_url = repo_info["URL"]
         if old_url != new_url:
-            self.changelog.info(
-                "Switching branch from '%s' to '%s'" % (old_url, new_url)
-            )
+            self.changelog.info(f"Switching branch from '{old_url}' to '{new_url}'")
             self.svn("switch", new_url, self.resource.name)
             changed = True
 
@@ -92,7 +90,7 @@ class Svn(provider.Provider):
         target_rev = repo_info["Last Changed Rev"]
         if current_rev != target_rev:
             self.changelog.info(
-                "Switching revision from %s to %s" % (current_rev, target_rev)
+                f"Switching revision from {current_rev} to {target_rev}"
             )
             self.svn("up", "-r", target_rev, self.resource.name)
             changed = True

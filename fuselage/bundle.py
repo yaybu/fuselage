@@ -21,7 +21,7 @@ from fuselage.resource import ResourceType
 logger = logging.getLogger(__name__)
 
 
-class ResourceBundle(object):
+class ResourceBundle:
 
     """ An ordered, indexed collection of resources. Pass in a specification
     that consists of scalars, lists and dictionaries and this class will
@@ -129,7 +129,7 @@ class ResourceBundle(object):
 
         # Create implicit File[] nodes for any watched files
         for watched in resource.changes:
-            w = self.create("File", **{"name": watched, "policy": "watched",})
+            w = self.create("File", **{"name": watched, "policy": "watched"})
             w._original_hash = None
             w._implicit = True
 
@@ -165,7 +165,7 @@ class ResourceBundle(object):
         mylen = len(self.resources)
         for i, resource in enumerate(self.resources, start=1):
             resource_log = log.LoggerAdapter(
-                logger, {"fuselage.resource": resource.typed_id,}
+                logger, {"fuselage.resource": resource.typed_id}
             )
 
             resource_log.debug(
@@ -174,11 +174,11 @@ class ResourceBundle(object):
             )
             try:
                 if resource.apply(runner):
-                    resource_log.debug("'%r' made changes" % (resource,))
+                    resource_log.debug(f"'{resource!r}' made changes")
                     something_changed = True
             finally:
                 resource_log.debug(
-                    "Finished applying '%r'" % (resource,),
+                    f"Finished applying '{resource!r}'",
                     extra={"fuselage.type": "resource-finish"},
                 )
 

@@ -98,43 +98,41 @@ class TestBundle(unittest.TestCase):
         self.assertRaises(error.ParseError, self.bundle._load_bundle, [])
 
     def test_load_bundle__no_version(self):
-        self.assertRaises(
-            error.ParseError, self.bundle._load_bundle, {"resources": [],}
-        )
+        self.assertRaises(error.ParseError, self.bundle._load_bundle, {"resources": []})
 
     def test_load_bundle__version_too_new(self):
         self.assertRaises(
             error.ParseError,
             self.bundle._load_bundle,
-            {"version": 9001, "resources": [],},
+            {"version": 9001, "resources": []},
         )
 
     def test_load_bundle__no_resources_key(self):
         self.assertRaises(
             error.ParseError,
             self.bundle._load_bundle,
-            {"version": 1, "resourcees": [],},
+            {"version": 1, "resourcees": []},
         )
 
     def test_load_bundle__resources_not_list(self):
         self.assertRaises(
             error.ParseError,
             self.bundle._load_bundle,
-            {"version": 1, "resources": "hello",},
+            {"version": 1, "resources": "hello"},
         )
 
     def test_load_bundle__resources_res_not_dict(self):
         self.assertRaises(
             error.ParseError,
             self.bundle._load_bundle,
-            {"version": 1, "resources": ["hello"],},
+            {"version": 1, "resources": ["hello"]},
         )
 
     def test_load_bundle__resources_too_few_keys(self):
         self.assertRaises(
             error.ParseError,
             self.bundle._load_bundle,
-            {"version": 1, "resources": [{}],},
+            {"version": 1, "resources": [{}]},
         )
 
     def test_load_bundle__resources_too_many_keys(self):
@@ -153,5 +151,5 @@ class TestBundle(unittest.TestCase):
         self.assertRaises(
             error.ParseError,
             self.bundle._load_bundle,
-            {"version": 1, "resources": [{"Director": {"name": "/tmp/baz"}},],},
+            {"version": 1, "resources": [{"Director": {"name": "/tmp/baz"}}]},
         )

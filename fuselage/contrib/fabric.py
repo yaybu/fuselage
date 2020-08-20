@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, print_function
 
 import inspect
 import os
@@ -33,7 +32,7 @@ except SyntaxError:
     )
 
 
-class Loader(object):
+class Loader:
     def __init__(self, dirname):
         self._dirname = dirname
 
@@ -80,9 +79,9 @@ class Loader(object):
         return stdout
 
 
-class Environment(ConfigParser.ConfigParser, object):
+class Environment(ConfigParser.ConfigParser):
     def __init__(self, environment, dirname=None):
-        super(Environment, self).__init__()
+        super().__init__()
         self.loader = Loader(
             dirname or os.path.join(os.path.dirname(env.real_fabfile), "environments")
         )
@@ -103,15 +102,16 @@ class Environment(ConfigParser.ConfigParser, object):
     def iter_sections_starting(self, starting):
         for section in self.sections():
             if section.startswith(starting):
-                yield section[len(starting) :], dict(self.items(section))
+                length = len(starting)
+                yield section[length:], dict(self.items(section))
 
 
-class FuselageMixin(object):
+class FuselageMixin:
 
     arguments = []
 
     def __init__(self, *args, **kwargs):
-        super(FuselageMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.arguments = list(self.arguments)
         for arg in inspect.getargspec(self.wrapped).args:
             if arg not in ("bundle",):

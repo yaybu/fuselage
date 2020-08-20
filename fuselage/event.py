@@ -19,7 +19,7 @@ from fuselage import error, platform
 from fuselage.utils import force_str
 
 
-class EventState(object):
+class EventState:
 
     """
     Represents the current state of events

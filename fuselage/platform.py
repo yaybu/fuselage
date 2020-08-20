@@ -19,8 +19,6 @@ import subprocess
 import sys
 import threading
 
-import six
-
 from fuselage import error
 from fuselage.utils import force_bytes, force_str
 
@@ -42,7 +40,7 @@ platform = sys.platform
 pathsep = os.pathsep
 
 
-class Handle(object):
+class Handle:
 
     LF = force_bytes(os.linesep)
     CR = b"\r"
@@ -123,7 +121,7 @@ class Process(subprocess.Popen):
             kwargs["stdout"] = subprocess.PIPE
         if "stderr" not in kwargs:
             kwargs["stderr"] = subprocess.PIPE
-        super(Process, self).__init__(command, **kwargs)
+        super().__init__(command, **kwargs)
 
     def preexec(self):
         if self.gid:
@@ -173,7 +171,7 @@ class Process(subprocess.Popen):
                 # one second so that we can poll (below) and check the process
                 # hasn't disappeared.
                 rlist, wlist, xlist = select.select(readlist, [], [], 1)
-            except select.error as e:
+            except OSError as e:
                 if e.args[0] == errno.EINTR:
                     continue
                 raise
@@ -202,7 +200,7 @@ class Process(subprocess.Popen):
             if input is not None:
                 try:
                     self.stdin.write(input)
-                except IOError as e:
+                except OSError as e:
                     if e.errno != errno.EPIPE:
                         raise
                 self.stdin.flush()
@@ -239,9 +237,9 @@ def check_call(command, *args, **kwargs):
         p.attach_callback(logger.info)
     stdout, stderr = p.communicate(input=stdin)
     p.wait()
-    if encoding and not isinstance(stdout, six.text_type):
+    if encoding and not isinstance(stdout, str):
         stdout = stdout.decode(encoding)
-    if encoding and not isinstance(stderr, six.text_type):
+    if encoding and not isinstance(stderr, str):
         stderr = stderr.decode(encoding)
     if expected is not None and p.returncode != expected:
         raise error.SystemError(p.returncode, stdout, stderr)

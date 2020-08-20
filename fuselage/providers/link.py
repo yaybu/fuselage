@@ -124,7 +124,7 @@ class RemoveLink(provider.Provider):
         if platform.lexists(name):
             if not platform.islink(name):
                 raise error.InvalidProvider(
-                    "%r: %s exists and is not a link" % (self, name)
+                    f"{self!r}: {name} exists and is not a link"
                 )
             self.change(ShellCommand(["/bin/rm", self.resource.name]))
             return True

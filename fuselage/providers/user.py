@@ -28,7 +28,7 @@ class User(provider.Provider):
         try:
             info_tuple = platform.getpwnam(username)
         except KeyError:
-            info = dict((f, None) for f in fields)
+            info = {f: None for f in fields}
             info["exists"] = False
             info["disabled-login"] = False
             info["disabled-password"] = False
@@ -110,9 +110,9 @@ class User(provider.Provider):
         groups = self.resource.groups
         if groups:
             desired_groups = set(groups)
-            current_groups = set(
+            current_groups = {
                 g.gr_name for g in platform.getgrall() if name in g.gr_mem
-            )
+            }
 
             append = self.resource.append
             if append and len(desired_groups - current_groups) > 0:

@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import six
-
 from fuselage import platform
 from fuselage.tests.base import TestCaseWithRunner
 
@@ -36,4 +34,4 @@ class TestFile(TestCaseWithRunner):
 
     def test_platform_get(self):
         debconf = platform.get("/etc/debconf.conf")
-        self.assertTrue(isinstance(debconf, six.binary_type))
+        self.assertTrue(isinstance(debconf, bytes))

@@ -15,8 +15,6 @@
 import os
 import shlex
 
-import six
-
 from fuselage import error, platform
 from fuselage.changes import base
 from fuselage.utils import force_str
@@ -43,14 +41,14 @@ class ShellCommand(base.Change):
     ):
         if isinstance(command, list):
             self.command = command
-        elif isinstance(command, six.string_types):
+        elif isinstance(command, str):
             self.command = shlex.split(command)
         else:
             raise RuntimeError("'command' must be a list or string")
 
         # Commands can be logged differently to what is executed, so that passwords aren't revealed
         if logas:
-            if isinstance(logas, six.string_types):
+            if isinstance(logas, str):
                 self.logas = shlex.split(self.command)
             else:
                 self.logas = logas
@@ -62,9 +60,7 @@ class ShellCommand(base.Change):
 
         self.env = {}
         if platform.platform == "win32":
-            self.env.update(
-                {"PATH": os.environ.get("PATH", ""),}
-            )
+            self.env.update({"PATH": os.environ.get("PATH", "")})
         else:
             self.env.update(
                 {
@@ -79,7 +75,7 @@ class ShellCommand(base.Change):
         self.umask = umask
         self.expected = expected
 
-    def _tounicode(self, l):
+    def _tounicode(self, value):
         """ Ensure all elements of the list are unicode """
 
         def uni(x):
@@ -87,7 +83,7 @@ class ShellCommand(base.Change):
                 return x
             return x.encode("utf-8")
 
-        return list(map(uni, l))
+        return list(map(uni, value))
 
     def command_exists(self, command):
         if command[0].startswith("./"):
@@ -105,7 +101,7 @@ class ShellCommand(base.Change):
     def apply(self, ctx):
         command, logas = self.command, self.logas
 
-        ctx.changelog.critical("# " + " ".join([force_str(l) for l in logas]))
+        ctx.changelog.critical("# " + " ".join([force_str(val) for val in logas]))
 
         if not self.command_exists(command):
             ctx.raise_or_log(error.BinaryMissing("Command '%s' not found" % command[0]))

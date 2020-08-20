@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
 
 import json
 import logging
@@ -54,9 +53,9 @@ class ResourceFormatter(logging.Formatter):
         return formatted
 
 
-class ConsoleHandler(logging.StreamHandler, object):
+class ConsoleHandler(logging.StreamHandler):
     def __init__(self, stream=sys.stdout, level=logging.INFO):
-        super(ConsoleHandler, self).__init__(stream)
+        super().__init__(stream)
         self._level = level
         self._resource = None
         self._needs_footer = False
@@ -64,7 +63,7 @@ class ConsoleHandler(logging.StreamHandler, object):
 
     def format(self, record):
         prefix = "| " if self._resource else ""
-        formatted = super(ConsoleHandler, self).format(record)
+        formatted = super().format(record)
         return "\n".join(prefix + line for line in formatted.splitlines())
 
     def _render_resource_header(self):
@@ -83,14 +82,14 @@ class ConsoleHandler(logging.StreamHandler, object):
             leftover = 0
 
         self.stream.write(
-            "/%s %s %s\n" % ("-" * minuses, header, "-" * (minuses + leftover))
+            "/{} {} {}\n".format("-" * minuses, header, "-" * (minuses + leftover))
         )
 
         self._needs_header = False
         self._needs_footer = True
 
     def _render_resource_footer(self):
-        self.stream.write("\\%s\n\n" % ("-" * 79,))
+        self.stream.write("\\{}\n\n".format("-" * 79))
         self._needs_footer = False
 
     def handle(self, record):
@@ -104,7 +103,7 @@ class ConsoleHandler(logging.StreamHandler, object):
         if record.levelno >= self._level:
             if self._resource and self._needs_header:
                 self._render_resource_header()
-            super(ConsoleHandler, self).handle(record)
+            super().handle(record)
 
         if record_type == "resource-finish":
             if self._needs_footer:

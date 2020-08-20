@@ -25,7 +25,7 @@ def is_installed(resource):
             return False
 
         raise error.PackageError(
-            "%s search failed with return code %s" % (resource, exc.returncode)
+            f"{resource} search failed with return code {exc.returncode}"
         )
 
     return True
