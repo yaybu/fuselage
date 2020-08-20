@@ -18,16 +18,17 @@ from fuselage import error, resource
 
 
 class TestResource(unittest.TestCase):
-
     def test_redefinition(self):
         # Two classes of resource can't have the same __resource_name__
         raised = False
         try:
+
             class Dummy(resource.Resource):
                 __resource_name__ = "Dummy"
 
             class Dummy2(resource.Resource):
                 __resource_name__ = "Dummy"
+
         except error.ParseError:
             raised = True
         self.assertEqual(raised, True)

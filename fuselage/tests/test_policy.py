@@ -25,7 +25,6 @@ class DummyResource(resource.Resource):
 
 
 class TestPolicy(unittest.TestCase):
-
     def test_validate_true(self):
         r = DummyResource(id="hello", arg1="hello")
         p = policy.Policy(r)
@@ -45,7 +44,6 @@ class TestPolicy(unittest.TestCase):
 
 
 class TestPresent(unittest.TestCase):
-
     def test_is_not_present(self):
         r = DummyResource(id="hello")
         p = policy.Present("arg1")
@@ -60,7 +58,6 @@ class TestPresent(unittest.TestCase):
 
 
 class TestAbsent(unittest.TestCase):
-
     def test_is_not_present(self):
         r = DummyResource(id="hello")
         p = policy.Absent("arg1")
@@ -75,13 +72,12 @@ class TestAbsent(unittest.TestCase):
 
 
 class TestAND(unittest.TestCase):
-
     def setUpAnd(self, arg1=None, arg2=None):
         kwargs = {"id": "hello"}
         if arg1:
-            kwargs['arg1'] = arg1
+            kwargs["arg1"] = arg1
         if arg2:
-            kwargs['arg2'] = arg2
+            kwargs["arg2"] = arg2
         r = DummyResource(**kwargs)
         p = policy.AND(policy.Present("arg1"), policy.Present("arg2"))
         return p.test(r), list(p.describe(r))
@@ -104,13 +100,12 @@ class TestAND(unittest.TestCase):
 
 
 class TestNAND(unittest.TestCase):
-
     def setUpAnd(self, arg1=None, arg2=None):
         kwargs = {"id": "hello"}
         if arg1:
-            kwargs['arg1'] = arg1
+            kwargs["arg1"] = arg1
         if arg2:
-            kwargs['arg2'] = arg2
+            kwargs["arg2"] = arg2
         r = DummyResource(**kwargs)
         p = policy.NAND(policy.Present("arg1"), policy.Present("arg2"))
         return p.test(r), list(p.describe(r))
@@ -133,13 +128,12 @@ class TestNAND(unittest.TestCase):
 
 
 class TestOR(unittest.TestCase):
-
     def setUpAnd(self, arg1=None, arg2=None):
         kwargs = {"id": "hello"}
         if arg1:
-            kwargs['arg1'] = arg1
+            kwargs["arg1"] = arg1
         if arg2:
-            kwargs['arg2'] = arg2
+            kwargs["arg2"] = arg2
         r = DummyResource(**kwargs)
         p = policy.OR(policy.Present("arg1"), policy.Present("arg2"))
         return p.test(r), list(p.describe(r))

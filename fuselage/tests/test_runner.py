@@ -19,7 +19,6 @@ from fuselage import bundle, error, runner
 
 
 class TestRunner(unittest.TestCase):
-
     def test_init(self):
         r = runner.Runner(bundle.ResourceBundle())
         self.assertEqual(r.simulate, False)
@@ -39,4 +38,6 @@ class TestRunner(unittest.TestCase):
         self.assertEqual(r.state.simulate, True)
 
     def test_resume_and_not_resume(self):
-        self.assertRaises(error.ParseError, runner.Runner, [], resume=True, no_resume=True)
+        self.assertRaises(
+            error.ParseError, runner.Runner, [], resume=True, no_resume=True
+        )

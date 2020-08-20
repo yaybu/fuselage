@@ -27,8 +27,7 @@ class ProviderType(ABCMeta):
     """ Registers the provider with the resource which it provides """
 
     def __new__(meta, class_name, bases, new_attrs):
-        cls = super(ProviderType, meta).__new__(
-            meta, class_name, bases, new_attrs)
+        cls = super(ProviderType, meta).__new__(meta, class_name, bases, new_attrs)
         for p in getattr(cls, "policies", []):
             p.providers.append(cls)
         return cls
@@ -47,15 +46,16 @@ class Provider(six.with_metaclass(ProviderType)):
         self.runner = runner
 
         logger = logging.getLogger(self.__module__)
-        self.logger = log.LoggerAdapter(logger, {
-            "fuselage.resource": resource.id,
-        })
+        self.logger = log.LoggerAdapter(logger, {"fuselage.resource": resource.id,})
 
         # logger = logging.getLogger("fuselage.audit")
-        self.changelog = log.LoggerAdapter(self.logger, {
-            # "resource": resource.id,
-            "fuselage.changelog": True,
-        })
+        self.changelog = log.LoggerAdapter(
+            self.logger,
+            {
+                # "resource": resource.id,
+                "fuselage.changelog": True,
+            },
+        )
 
     @property
     def simulate(self):

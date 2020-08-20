@@ -18,15 +18,11 @@ from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestMount(TestCaseWithRunner):
-
     def test_existing_group(self):
         platform.put("/bin/mount", "#! /usr/bin/env python")
         platform.check_call(["chmod", "755", "/bin/mount"])
 
-        self.bundle.add(Mount(
-            name="/mnt",
-            fs_type="bind",
-            device="/bin",
-            options="hello",
-        ))
+        self.bundle.add(
+            Mount(name="/mnt", fs_type="bind", device="/bin", options="hello",)
+        )
         self.apply()

@@ -20,10 +20,11 @@ from fuselage.utils import force_bytes, force_str
 
 
 class _LineMixin(object):
-
     def apply(self):
         if not platform.exists(self.resource.name):
-            self.raise_or_log(error.PathComponentMissing("File '%s' is missing" % self.resource.name))
+            self.raise_or_log(
+                error.PathComponentMissing("File '%s' is missing" % self.resource.name)
+            )
             return
 
         lines = force_str(platform.get(self.resource.name)).splitlines()

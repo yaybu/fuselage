@@ -18,37 +18,42 @@ from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestSubversion(TestCaseWithRunner):
-
     def test_checkout(self):
         self.bundle.add(Package(name="subversion"))
-        self.bundle.add(Checkout(
-            name="/subversion",
-            repository='https://github.com/isotoma/isotoma.recipe.django',
-            branch='trunk',
-            scm='subversion'
-        ))
+        self.bundle.add(
+            Checkout(
+                name="/subversion",
+                repository="https://github.com/isotoma/isotoma.recipe.django",
+                branch="trunk",
+                scm="subversion",
+            )
+        )
         self.check_apply()
         self.failUnlessExists("/subversion/setup.py")
 
     def test_checkout_branch(self):
         self.bundle.add(Package(name="subversion"))
-        self.bundle.add(Checkout(
-            name="/subversion",
-            repository='https://github.com/isotoma/isotoma.recipe.django',
-            branch='branches/version3',
-            scm='subversion'
-        ))
+        self.bundle.add(
+            Checkout(
+                name="/subversion",
+                repository="https://github.com/isotoma/isotoma.recipe.django",
+                branch="branches/version3",
+                scm="subversion",
+            )
+        )
         self.check_apply()
         self.failUnlessExists("/subversion/setup.py")
 
     def test_checkout_tag(self, tag="3.0.2"):
         self.bundle.add(Package(name="subversion"))
-        self.bundle.add(Checkout(
-            name="/subversion",
-            repository='https://github.com/isotoma/isotoma.recipe.django',
-            tag=tag,
-            scm='subversion'
-        ))
+        self.bundle.add(
+            Checkout(
+                name="/subversion",
+                repository="https://github.com/isotoma/isotoma.recipe.django",
+                tag=tag,
+                scm="subversion",
+            )
+        )
         self.check_apply()
         self.failUnlessExists("/subversion/setup.py")
 
@@ -73,10 +78,9 @@ class TestSubversion(TestCaseWithRunner):
 
     def test_missing_svn(self):
         self.bundle.add(Package(name="subversion", policy="uninstall"))
-        self.bundle.add(Checkout(
-            name="/dest",
-            repository='/source',
-            branch='trunk',
-            scm='subversion'
-        ))
+        self.bundle.add(
+            Checkout(
+                name="/dest", repository="/source", branch="trunk", scm="subversion"
+            )
+        )
         self.assertRaises(error.MissingDependency, self.apply)

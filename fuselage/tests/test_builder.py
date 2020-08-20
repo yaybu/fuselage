@@ -21,7 +21,6 @@ from fuselage import builder, bundle, resources
 
 
 class TestBuilder(unittest.TestCase):
-
     def test_build_no_resources(self):
         fp = six.BytesIO()
         b = builder.Builder.write_to(fp)

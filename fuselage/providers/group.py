@@ -21,11 +21,15 @@ class Group(provider.Provider):
     policies = (resources.group.GroupApplyPolicy,)
 
     def get_group_info(self):
-        fields = ("name", "passwd", "gid", "members",)
+        fields = (
+            "name",
+            "passwd",
+            "gid",
+            "members",
+        )
 
         try:
-            info_tuple = platform.getgrnam(
-                self.resource.name.encode("utf-8"))
+            info_tuple = platform.getgrnam(self.resource.name.encode("utf-8"))
         except KeyError:
             info = dict((f, None) for f in fields)
             info["exists"] = False
@@ -59,8 +63,10 @@ class Group(provider.Provider):
         try:
             self.change(ShellCommand(command))
         except error.SystemError as exc:
-            raise error.InvalidGroup("%s on %s failed with return code %d" %
-                                     (command[0], self.resource, exc.returncode))
+            raise error.InvalidGroup(
+                "%s on %s failed with return code %d"
+                % (command[0], self.resource, exc.returncode)
+            )
 
         return True
 
@@ -82,6 +88,8 @@ class GroupRemove(provider.Provider):
             self.change(ShellCommand(command))
         except error.SystemError as exc:
             raise error.InvalidGroup(
-                "groupdel on %s failed with return code %d" % (self.resource, exc.returncode))
+                "groupdel on %s failed with return code %d"
+                % (self.resource, exc.returncode)
+            )
 
         return True

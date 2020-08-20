@@ -17,12 +17,9 @@ from fuselage.tests.base import TestCaseWithBundle, fuzz_resource
 
 
 class TestUser(TestCaseWithBundle):
-
     def test_minimal(self):
-        r = self.bundle.add(User(
-            name='myuser',
-        ))
-        self.assertEqual(r.name, 'myuser')
+        r = self.bundle.add(User(name="myuser",))
+        self.assertEqual(r.name, "myuser")
 
     def test_fuzz(self):
         fuzz_resource(User)

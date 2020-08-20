@@ -51,40 +51,39 @@ class AttributeChanger(base.Change):
             try:
                 owner = platform.getpwnam(self.user)
             except KeyError:
-                context.raise_or_log(error.InvalidUser("User '%s' not found" % self.user))
+                context.raise_or_log(
+                    error.InvalidUser("User '%s' not found" % self.user)
+                )
                 owner = None
 
             if not owner or owner.pw_uid != uid:
-                context.change(
-                    ShellCommand(["chown", self.user, self.filename]))
+                context.change(ShellCommand(["chown", self.user, self.filename]))
                 self.changed = True
 
         if self.group is not None:
             try:
                 group = platform.getgrnam(self.group)
             except KeyError:
-                context.raise_or_log(error.InvalidGroup("No such group '%s'" % self.group))
+                context.raise_or_log(
+                    error.InvalidGroup("No such group '%s'" % self.group)
+                )
                 group = None
 
             if not group or group.gr_gid != gid:
-                context.change(
-                    ShellCommand(["chgrp", self.group, self.filename]))
+                context.change(ShellCommand(["chgrp", self.group, self.filename]))
                 self.changed = True
 
         if self.mode is not None and mode is not None:
             if mode != self.mode:
-                context.change(
-                    ShellCommand(["chmod", "%o" % self.mode, self.filename]))
+                context.change(ShellCommand(["chmod", "%o" % self.mode, self.filename]))
 
                 # Clear the user and group bits
                 # We don't need to set them as chmod will *set* this bits with an octal
                 # but won't clear them without a symbolic mode
                 if mode & stat.S_ISGID and not self.mode & stat.S_ISGID:
-                    context.change(
-                        ShellCommand(["chmod", "g-s", self.filename]))
+                    context.change(ShellCommand(["chmod", "g-s", self.filename]))
                 if mode & stat.S_ISUID and not self.mode & stat.S_ISUID:
-                    context.change(
-                        ShellCommand(["chmod", "u-s", self.filename]))
+                    context.change(ShellCommand(["chmod", "u-s", self.filename]))
 
                 self.changed = True
 

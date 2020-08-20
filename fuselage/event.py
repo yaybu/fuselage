@@ -45,7 +45,7 @@ class EventState(object):
         self.overrides = {}
         self.simulate = simulate
 
-        #FIXME
+        # FIXME
         self.resume = True
         self.no_resume = False
 
@@ -58,7 +58,7 @@ class EventState(object):
 
     def set_trigger(self, resource):
         self.load()
-        self.overrides[resource.id] = '*'
+        self.overrides[resource.id] = "*"
         self.save()
 
     def unset_trigger(self, resource):
@@ -73,8 +73,7 @@ class EventState(object):
 
     def open(self):
         if not self.simulate:
-            save_parent = os.path.realpath(
-                os.path.join(self.save_file, os.path.pardir))
+            save_parent = os.path.realpath(os.path.join(self.save_file, os.path.pardir))
             if not platform.exists(save_parent):
                 platform.makedirs(save_parent)
 

@@ -48,9 +48,11 @@ class ResourceType(type):
 
         cls.policies = AvailableResourcePolicies()
 
-        if class_name != 'Resource':
+        if class_name != "Resource":
             if cls.__resource_name__ in meta.resources:
-                raise error.ParseError("Redefinition of resource %s" % cls.__resource_name__)
+                raise error.ParseError(
+                    "Redefinition of resource %s" % cls.__resource_name__
+                )
             else:
                 meta.resources[cls.__resource_name__] = cls
 
@@ -144,17 +146,20 @@ class Resource(six.with_metaclass(ResourceType)):
 
         for key, value in kwargs.items():
             if key not in self.__args__:
-                raise error.ParseError("'%s' is not a valid option for this resource" % (key, ))
+                raise error.ParseError(
+                    "'%s' is not a valid option for this resource" % (key,)
+                )
             setattr(self, key, value)
 
         self.policy.validate()
         self.policy.get_provider()
 
         if not self.id:
-            raise error.ParseError((
-                "{0} is not explicitly named and name cannot be implied").format(
+            raise error.ParseError(
+                ("{0} is not explicitly named and name cannot be implied").format(
                     self.__resource_name__
-            ))
+                )
+            )
 
     @classmethod
     def get_argument_names(klass):
@@ -182,7 +187,9 @@ class Resource(six.with_metaclass(ResourceType)):
         adapter = log.LoggerAdapter(logger, {"fuselage.resource": self.id})
 
         if self.watches and not runner.state.is_trigger_set(self):
-            adapter.debug("Skipping resource apply as subscribed to triggers that are not set")
+            adapter.debug(
+                "Skipping resource apply as subscribed to triggers that are not set"
+            )
             return False
 
         provider = self.policy.get_provider()(self, runner)
@@ -195,9 +202,9 @@ class Resource(six.with_metaclass(ResourceType)):
     def fire_event(self, context):
         """ Apply the appropriate policies on the resources that are observing
         this resource for the firing of a policy. """
-        logger.debug("Sending triggers from %s" % (self, ))
+        logger.debug("Sending triggers from %s" % (self,))
         for resource in self.observers:
-            logger.debug("Sending trigger from %r to %r" % (self, resource, ))
+            logger.debug("Sending trigger from %r to %r" % (self, resource,))
             context.state.set_trigger(resource)
 
     def bind(self, resources):
@@ -220,7 +227,7 @@ class Resource(six.with_metaclass(ResourceType)):
         name = self.id
         if not name:
             raise error.ParseError("Resource is not named")
-        classname = getattr(self, '__resource_name__', self.__class__.__name__)
+        classname = getattr(self, "__resource_name__", self.__class__.__name__)
         return "%s[%s]" % (classname, name)
 
     def __repr__(self):

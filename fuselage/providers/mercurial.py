@@ -99,15 +99,10 @@ cmdtable = {
 def _inject_credentials(url, username=None, password=None):
     if username and password:
         p = urlparse(url)
-        netloc = '%s:%s@%s' % (
-            quote(username, ''),
-            quote(password, ''),
-            p.hostname,
-        )
+        netloc = "%s:%s@%s" % (quote(username, ""), quote(password, ""), p.hostname,)
         if p.port:
             netloc += ":" + str(p.port)
-        url = urlunparse(
-            (p.scheme, netloc, p.path, p.params, p.query, p.fragment))
+        url = urlunparse((p.scheme, netloc, p.path, p.params, p.query, p.fragment))
     return url
 
 
@@ -154,24 +149,31 @@ class Mercurial(provider.Provider):
         return False
 
     def action(self, action, *args):
-        self.change(ShellCommand(
-            self.get_hg_command(action, *args),
-            user=self.resource.user,
-            cwd=self.resource.name,
-        ))
+        self.change(
+            ShellCommand(
+                self.get_hg_command(action, *args),
+                user=self.resource.user,
+                cwd=self.resource.name,
+            )
+        )
 
     def apply(self):
         if not platform.exists("/usr/bin/hg"):
-            self.raise_or_log(error.MissingDependency(
-                "'/usr/bin/hg' is not available; update your configuration to install mercurial?"
-            ))
+            self.raise_or_log(
+                error.MissingDependency(
+                    "'/usr/bin/hg' is not available; update your configuration to install mercurial?"
+                )
+            )
             return
 
         created = False
         changed = False
 
-        self.change(EnsureDirectory(self.resource.name,
-                       self.resource.user, self.resource.group, 0o755))
+        self.change(
+            EnsureDirectory(
+                self.resource.name, self.resource.user, self.resource.group, 0o755
+            )
+        )
 
         if not platform.exists(os.path.join(self.resource.name, ".hg")):
             try:
@@ -180,37 +182,42 @@ class Mercurial(provider.Provider):
                 raise error.CheckoutError("Cannot initialise local repository.")
             created = True
 
-        url = _inject_credentials(self.resource.repository,
-                                  self.resource.scm_username, self.resource.scm_password)
+        url = _inject_credentials(
+            self.resource.repository,
+            self.resource.scm_username,
+            self.resource.scm_password,
+        )
 
         try:
-            self.change(EnsureFile(
-                os.path.join(self.resource.name, ".hg", "hgrc"),
-                contents=force_bytes(hgrc % {
-                    "repository": url,
-                    "path": self.resource.name
-                }),
-                user=self.resource.user,
-                group=self.resource.group,
-                mode=0o600,
-                sensitive=bool(self.resource.scm_password),
-            ))
+            self.change(
+                EnsureFile(
+                    os.path.join(self.resource.name, ".hg", "hgrc"),
+                    contents=force_bytes(
+                        hgrc % {"repository": url, "path": self.resource.name}
+                    ),
+                    user=self.resource.user,
+                    group=self.resource.group,
+                    mode=0o600,
+                    sensitive=bool(self.resource.scm_password),
+                )
+            )
             # changed = changed or f.changed
         except error.SystemError:
             raise error.CheckoutError("Could not set the remote repository.")
 
         try:
-            self.change(EnsureFile(
-                os.path.join(self.resource.name, ".hg", "should.py"),
-                contents=mercurial_ext,
-                user=self.resource.user,
-                group=self.resource.group,
-                mode=0o600,
-            ))
+            self.change(
+                EnsureFile(
+                    os.path.join(self.resource.name, ".hg", "should.py"),
+                    contents=mercurial_ext,
+                    user=self.resource.user,
+                    group=self.resource.group,
+                    mode=0o600,
+                )
+            )
             # changed = changed or f.changed
         except error.SystemError:
-            raise error.CheckoutError(
-                "Could not setup mercurial idempotence extension")
+            raise error.CheckoutError("Could not setup mercurial idempotence extension")
 
         should_args = []
         if self.resource.branch:
@@ -239,8 +246,6 @@ class Mercurial(provider.Provider):
                 self.action("update", *args)
                 changed = True
             except error.SystemError:
-                raise error.CheckoutError(
-                    "Could not update working copy."
-                )
+                raise error.CheckoutError("Could not update working copy.")
 
         return created or changed

@@ -19,10 +19,10 @@ from fuselage.changes import EnsureDirectory, ShellCommand
 
 
 def dirname(p):
-    i = p.rfind('/') + 1
+    i = p.rfind("/") + 1
     head = p[:i]
-    if head and head != '/' * len(head):
-        head = head.rstrip('/')
+    if head and head != "/" * len(head):
+        head = head.rstrip("/")
     return head
 
 
@@ -54,13 +54,15 @@ class Directory(provider.Provider):
         # simple behaviour on posix and nt
         self.check_path(dirname(name))
 
-        return self.change(EnsureDirectory(
-            name,
-            self.resource.owner,
-            self.resource.group,
-            self.resource.mode,
-            self.resource.parents,
-        ))
+        return self.change(
+            EnsureDirectory(
+                name,
+                self.resource.owner,
+                self.resource.group,
+                self.resource.mode,
+                self.resource.parents,
+            )
+        )
 
 
 class RemoveDirectory(provider.Provider):
@@ -72,7 +74,8 @@ class RemoveDirectory(provider.Provider):
 
         if platform.exists(name) and not platform.isdir(name):
             raise error.InvalidProviderError(
-                "%r: %s exists and is not a directory" % (self, name))
+                "%r: %s exists and is not a directory" % (self, name)
+            )
         if platform.exists(name):
             self.change(ShellCommand(["/bin/rmdir", self.resource.name]))
             changed = True
@@ -90,10 +93,10 @@ class RemoveDirectoryRecursive(provider.Provider):
 
         if platform.exists(name) and not platform.isdir(name):
             raise error.InvalidProviderError(
-                "%r: %s exists and is not a directory" % (self, name))
+                "%r: %s exists and is not a directory" % (self, name)
+            )
         if platform.exists(name):
-            self.change(
-                ShellCommand(["/bin/rm", "-rf", self.resource.name]))
+            self.change(ShellCommand(["/bin/rm", "-rf", self.resource.name]))
             changed = True
         else:
             changed = False

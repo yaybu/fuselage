@@ -19,7 +19,6 @@ from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestFile(TestCaseWithRunner):
-
     def test_platform_exists(self):
         self.assertEqual(True, platform.exists("/etc/debconf.conf"))
 

@@ -58,19 +58,24 @@ class Git(provider.Provider):
         return returncode, stdout, stderr
 
     def action(self, action, *args):
-        self.change(ShellCommand(
-            self.get_git_command(action, *args),
-            user=self.resource.user,
-            cwd=self.resource.name,
-        ))
+        self.change(
+            ShellCommand(
+                self.get_git_command(action, *args),
+                user=self.resource.user,
+                cwd=self.resource.name,
+            )
+        )
 
     def action_clone(self):
         """Adds resource.repository as a remote, but unlike a
         typical clone, does not check it out
 
         """
-        self.change(EnsureDirectory(self.resource.name,
-                       self.resource.user, self.resource.group, 0o755))
+        self.change(
+            EnsureDirectory(
+                self.resource.name, self.resource.user, self.resource.group, 0o755
+            )
+        )
 
         try:
             self.action("init", self.resource.name)
@@ -81,8 +86,7 @@ class Git(provider.Provider):
 
     def action_set_remote(self):
         try:
-            self.action("remote", "add", self.REMOTE_NAME,
-                        self.resource.repository)
+            self.action("remote", "add", self.REMOTE_NAME, self.resource.repository)
         except error.SystemError:
             raise error.CheckoutError("Could not set the remote repository.")
 
@@ -98,7 +102,8 @@ class Git(provider.Provider):
                     self.action("remote", "rm", self.REMOTE_NAME)
                 except error.SystemError:
                     raise error.CheckoutError(
-                        "Could not delete remote '%s'" % self.REMOTE_NAME)
+                        "Could not delete remote '%s'" % self.REMOTE_NAME
+                    )
                 self.action_set_remote()
                 return True
         else:
@@ -112,23 +117,23 @@ class Git(provider.Provider):
             try:
                 rv, stdout, stderr = self.info("rev-parse", "--verify", "HEAD")
             except error.SystemError:
-                head_sha = '0' * 40
+                head_sha = "0" * 40
             else:
                 head_sha = stdout[:40]
                 log.info("Current HEAD sha: %s" % head_sha)
         else:
-            head_sha = '0' * 40
+            head_sha = "0" * 40
 
         try:
             stdout, stderr = platform.check_call(
                 command=["git", "ls-remote", self.resource.repository],
                 user=self.resource.user,
-                cwd="/tmp"
+                cwd="/tmp",
             )
         except error.SystemError:
             raise error.CheckoutError("Could not query the remote repository")
 
-        r = re.compile('([0-9a-f]{40})\t(.*)\n')
+        r = re.compile("([0-9a-f]{40})\t(.*)\n")
         refs_to_shas = dict([(b, a) for (a, b) in r.findall(stdout)])
 
         # Revision takes precedent over branch
@@ -157,24 +162,20 @@ class Git(provider.Provider):
         elif branch:
             as_branch = "refs/heads/%s" % branch
             if as_branch not in refs_to_shas.keys():
-                raise error.CheckoutError(
-                    "Cannot find a branch called '%s'" % branch)
-            newref = "remotes/%s/%s" % (
-                self.REMOTE_NAME,
-                branch
-            )
+                raise error.CheckoutError("Cannot find a branch called '%s'" % branch)
+            newref = "remotes/%s/%s" % (self.REMOTE_NAME, branch)
             if head_sha != refs_to_shas.get(as_branch):
                 return newref
         else:
             raise error.CheckoutError(
-                "You must specify either a revision, tag or branch")
+                "You must specify either a revision, tag or branch"
+            )
 
     def action_checkout(self, newref):
         try:
             self.action("fetch", self.REMOTE_NAME)
         except error.SystemError:
-            raise error.CheckoutError("Could not fetch '%s'" %
-                                self.resource.repository)
+            raise error.CheckoutError("Could not fetch '%s'" % self.resource.repository)
 
         try:
             self.action("checkout", newref)
@@ -183,9 +184,11 @@ class Git(provider.Provider):
 
     def apply(self):
         if not platform.exists("/usr/bin/git"):
-            self.raise_or_log(error.MissingDependency(
-                "'/usr/bin/git' is not available; update your configuration to install git?"
-            ))
+            self.raise_or_log(
+                error.MissingDependency(
+                    "'/usr/bin/git' is not available; update your configuration to install git?"
+                )
+            )
             return
 
         # If necessary, clone the repository

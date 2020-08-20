@@ -23,14 +23,10 @@ from fuselage.tests.base import TestCaseWithRealRunner, TestCaseWithRunner
 
 
 class TestFileIntegration(TestCaseWithRealRunner):
-
     def test_file_apply(self):
         with tempfile.NamedTemporaryFile(delete=True) as fp:
             fp.close()
-            self.bundle.add(File(
-                name=fp.name,
-                contents="hello",
-            ))
+            self.bundle.add(File(name=fp.name, contents="hello",))
             self.check_apply()
             self.assertTrue(os.path.exists(fp.name))
             self.assertEqual(open(fp.name, "rb").read(), b"hello")
@@ -39,16 +35,12 @@ class TestFileIntegration(TestCaseWithRealRunner):
         with tempfile.NamedTemporaryFile(delete=False) as fp:
             fp.write(b"HELLO")
 
-        self.bundle.add(File(
-            name=fp.name,
-            policy="remove",
-        ))
+        self.bundle.add(File(name=fp.name, policy="remove",))
         self.check_apply()
         self.assertFalse(os.path.exists(fp.name))
 
 
 class TestFile(TestCaseWithRunner):
-
     def test_not_directory(self):
         self.bundle.add(File(name="/etc/missing"))
         self.bundle.add(File(name="/etc/missing/filename"))
@@ -77,73 +69,51 @@ class TestFile(TestCaseWithRunner):
         self.failUnlessExists("/etc/test_create_file_☃")
 
     def test_attributes(self):
-        self.bundle.add(File(
-            name="/etc/somefile",
-            owner="nobody",
-            group="nogroup",
-            mode=0o666,
-        ))
+        self.bundle.add(
+            File(name="/etc/somefile", owner="nobody", group="nogroup", mode=0o666,)
+        )
         self.check_apply()
         self.failUnlessExists("/etc/somefile")
 
         st = platform.stat("/etc/somefile")
-        self.assertEqual(platform.getpwuid(st.st_uid)[0], 'nobody')
-        self.assertEqual(platform.getgrgid(st.st_gid)[0], 'nogroup')
+        self.assertEqual(platform.getpwuid(st.st_uid)[0], "nobody")
+        self.assertEqual(platform.getgrgid(st.st_gid)[0], "nogroup")
         mode = stat.S_IMODE(st.st_mode)
         self.assertEqual(mode, 0o666)
 
     def test_contents(self):
-        self.bundle.add(File(
-            name="/etc/somefile",
-            contents="test contents",
-        ))
+        self.bundle.add(File(name="/etc/somefile", contents="test contents",))
         self.check_apply()
         self.assertEqual(platform.get("/etc/somefile"), b"test contents")
 
     def test_modify_file(self):
         platform.put("/etc/test_modify_file", "foo\nbar\baz")
 
-        self.bundle.add(File(
-            name="/etc/test_modify_file",
-            contents="test contents",
-        ))
+        self.bundle.add(File(name="/etc/test_modify_file", contents="test contents",))
         self.check_apply()
         self.assertEqual(platform.get("/etc/test_modify_file"), b"test contents")
 
     def test_empty_file(self):
         platform.put("/etc/test_empty_file", "foo\nbar\baz")
 
-        self.bundle.add(File(
-            name="/etc/test_empty_file",
-            contents="",
-        ))
+        self.bundle.add(File(name="/etc/test_empty_file", contents="",))
         self.check_apply()
         self.assertEqual(platform.get("/etc/test_empty_file"), b"")
 
 
 class TestFileRemove(TestCaseWithRunner):
-
     def test_remove_file(self):
         platform.put("/etc/test_remove_file", "foo\nbar\baz")
-        self.bundle.add(File(
-            name="/etc/test_remove_file",
-            policy="remove",
-        ))
+        self.bundle.add(File(name="/etc/test_remove_file", policy="remove",))
         self.check_apply()
         self.failIfExists("/etc/test_remove_file")
 
     def test_remove_missing(self):
         self.failIfExists("/etc/test_remove_missing")
-        self.bundle.add(File(
-            name="/etc/test_remove_missing",
-            policy="remove",
-        ))
+        self.bundle.add(File(name="/etc/test_remove_missing", policy="remove",))
         self.assertRaises(error.NothingChanged, self.apply)
 
     def test_remove_notafile(self):
         platform.makedirs("/etc/test_remove_notafile")
-        self.bundle.add(File(
-            name="/etc/test_remove_notafile",
-            policy="remove",
-        ))
+        self.bundle.add(File(name="/etc/test_remove_notafile", policy="remove",))
         self.assertRaises(error.InvalidProvider, self.apply)

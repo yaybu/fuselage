@@ -32,8 +32,8 @@ except ImportError:
 
 
 __all__ = [
-    'skipIf',
-    'TestCaseWithBundle',
+    "skipIf",
+    "TestCaseWithBundle",
 ]
 
 
@@ -52,13 +52,11 @@ def fuzz_resource(klass, iterations=100):
 
 
 class TestCaseWithBundle(unittest.TestCase):
-
     def setUp(self):
         self.bundle = bundle.ResourceBundle()
 
 
 class TestCaseWithRealRunner(TestCaseWithBundle):
-
     def setUp(self):
         super(TestCaseWithRealRunner, self).setUp()
         log.configure(verbosity=logging.DEBUG, force=True)
@@ -100,7 +98,6 @@ class TestCaseWithRealRunner(TestCaseWithBundle):
 
 
 class Patch(object):
-
     def __init__(self, module, param, value):
         self.module = module
         self.param = param
@@ -150,34 +147,59 @@ class TestCaseWithRunner(TestCaseWithBundle):
             patch.side_effect = getattr(self.cassette, name)
             return p
 
-        for meth in ("isfile", "islink", "lexists", "get", "put", "makedirs", "unlink", "exists", "isdir", "readlink", "stat", "lstat", "getgrall", "getgrnam", "getgrgid", "getpwall", "getpwnam", "getpwuid", "getspall", "getspnam"):
+        for meth in (
+            "isfile",
+            "islink",
+            "lexists",
+            "get",
+            "put",
+            "makedirs",
+            "unlink",
+            "exists",
+            "isdir",
+            "readlink",
+            "stat",
+            "lstat",
+            "getgrall",
+            "getgrnam",
+            "getgrgid",
+            "getpwall",
+            "getpwnam",
+            "getpwuid",
+            "getspall",
+            "getspnam",
+        ):
             patch(meth, getattr(self.chroot, meth))
 
         orig_check_call = platform.check_call
 
         def check_call(command, *args, **kwargs):
-            env = kwargs.pop('env', {})
+            env = kwargs.pop("env", {})
             env.update(self.chroot.get_env())
-            kwargs['env'] = env
+            kwargs["env"] = env
 
-            gid = kwargs.pop('gid', None)
-            group = kwargs.pop('group', None)
+            gid = kwargs.pop("gid", None)
+            group = kwargs.pop("group", None)
             if group:
                 gid = self.chroot.getgrnam(group).gr_gid
             if gid:
-                env['FAKEROOTGID'] = env['FAKEROOTEGID'] = str(gid)
-                env['FAKEROOTSGID'] = env['FAKEROOTFGID'] = str(gid)
+                env["FAKEROOTGID"] = env["FAKEROOTEGID"] = str(gid)
+                env["FAKEROOTSGID"] = env["FAKEROOTFGID"] = str(gid)
 
-            uid = kwargs.pop('uid', None)
-            user = kwargs.pop('user', None)
+            uid = kwargs.pop("uid", None)
+            user = kwargs.pop("user", None)
             if user:
                 uid = self.chroot.getpwnam(user).pw_uid
             if uid:
-                env['FAKEROOTUID'] = env['FAKEROOTEUID'] = str(uid)
-                env['FAKEROOTSUID'] = env['FAKEROOTFUID'] = str(uid)
+                env["FAKEROOTUID"] = env["FAKEROOTEUID"] = str(uid)
+                env["FAKEROOTSUID"] = env["FAKEROOTFUID"] = str(uid)
 
-            cwd = kwargs.get('cwd', None)
-            kwargs['cwd'] = os.path.join(self.chroot.chroot_path, cwd.lstrip("/")) if cwd else self.chroot.chroot_path
+            cwd = kwargs.get("cwd", None)
+            kwargs["cwd"] = (
+                os.path.join(self.chroot.chroot_path, cwd.lstrip("/"))
+                if cwd
+                else self.chroot.chroot_path
+            )
 
             if isinstance(command, str):
                 command = shlex.split(command)
@@ -185,7 +207,9 @@ class TestCaseWithRunner(TestCaseWithBundle):
                 command = list(command)
 
             paths = [self.chroot.overlay_dir]
-            for p in env.get("PATH", "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin").split(":"):
+            for p in env.get(
+                "PATH", "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ).split(":"):
                 paths.append(os.path.join(env["FAKECHROOT_BASE"], p.lstrip("/")))
 
             for p in paths:

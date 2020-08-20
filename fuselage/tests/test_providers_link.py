@@ -19,51 +19,35 @@ from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestLink(TestCaseWithRunner):
-
     def symlink(self, a, b):
         platform.check_call(["ln", "-s", a, b])
 
     def test_create_link(self):
-        self.bundle.add(Link(
-            name="/etc/create_link",
-            to="/etc",
-        ))
+        self.bundle.add(Link(name="/etc/create_link", to="/etc",))
         self.check_apply()
         self.assertTrue(platform.islink("/etc/create_link"))
 
     def test_unicode(self):
-        self.bundle.add(Link(
-            name="/etc/☃",
-            to="/etc",
-        ))
+        self.bundle.add(Link(name="/etc/☃", to="/etc",))
         self.check_apply()
         self.failUnlessExists("/etc/☃")
 
     def test_remove_link(self):
         self.symlink("/", "/etc/remove_link")
-        self.bundle.add(Link(
-            name="/etc/remove_link",
-            policy="remove",
-        ))
+        self.bundle.add(Link(name="/etc/remove_link", policy="remove",))
         self.check_apply()
         self.failIfExists("/etc/remove_link")
 
     def test_already_exists(self):
         self.symlink("/", "/etc/already_exists")
-        self.bundle.add(Link(
-            name="/etc/already_exists",
-            to="/",
-        ))
+        self.bundle.add(Link(name="/etc/already_exists", to="/",))
         self.assertRaises(error.NothingChanged, self.apply)
         self.assertEqual(platform.readlink("/etc/already_exists"), "/")
 
     def test_already_exists_notalink(self):
         platform.put("/etc_already_exists_notalink", "")
         platform.put("/foo", "")
-        self.bundle.add(Link(
-            name="/etc/already_exists_notalink",
-            to="/foo",
-        ))
+        self.bundle.add(Link(name="/etc/already_exists_notalink", to="/foo",))
         self.check_apply()
         self.assertEqual(platform.readlink("/etc/already_exists_notalink"), "/foo")
 
@@ -71,16 +55,10 @@ class TestLink(TestCaseWithRunner):
         platform.put("/baz", "")
         platform.put("/foo", "")
         self.symlink("/baz", "/bar_elsewhere")
-        self.bundle.add(Link(
-            name="/etc/bar_elsewhere",
-            to="/foo",
-        ))
+        self.bundle.add(Link(name="/etc/bar_elsewhere", to="/foo",))
         self.check_apply()
         self.assertEqual(platform.readlink("/etc/bar_elsewhere"), "/foo")
 
     def test_dangling(self):
-        self.bundle.add(Link(
-            name="/etc/dangling",
-            to="/etc/not/there",
-        ))
+        self.bundle.add(Link(name="/etc/dangling", to="/etc/not/there",))
         self.assertRaises(error.DanglingSymlink, self.apply)

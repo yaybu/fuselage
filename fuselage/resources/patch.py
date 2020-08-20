@@ -72,5 +72,4 @@ class PatchApplyPolicy(Policy):
     resource = Patch
     name = "apply"
     default = True
-    signature = (Present("name"),
-                 )
+    signature = (Present("name"),)

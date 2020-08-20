@@ -27,7 +27,8 @@ def is_installed(resource):
             return False
         # if the return code is anything but zero or one, we have a problem
         raise error.PackageError(
-            "%s search failed with return code %s" % (resource, exc.returncode))
+            "%s search failed with return code %s" % (resource, exc.returncode)
+        )
 
     # if the return code is 0, dpkg is aware of the package
     if "install ok installed" in stdout:
@@ -65,16 +66,18 @@ class AptInstall(provider.Provider):
             if exc.returncode == 100:
                 try:
                     self.change(
-                        ShellCommand(["apt-get", "update", "-q", "-y"], env=env))
+                        ShellCommand(["apt-get", "update", "-q", "-y"], env=env)
+                    )
                     self.change(ShellCommand(command, env=env))
                 except error.SystemError as exc:
                     raise error.PackageError(
-                        "%s with what looked like a recoverable error, but it wasn't (return code %d)" %
-                        (self.resource, exc.returncode))
+                        "%s with what looked like a recoverable error, but it wasn't (return code %d)"
+                        % (self.resource, exc.returncode)
+                    )
             else:
                 raise error.PackageError(
-                    "%s failed with return code %d" %
-                    (self.resource, exc.returncode))
+                    "%s failed with return code %d" % (self.resource, exc.returncode)
+                )
 
         return True
 
@@ -91,7 +94,10 @@ class AptUninstall(provider.Provider):
 
     def apply(self):
         if not is_installed(self.resource):
-            self.logger.debug("Package '%s' is already uninstalled, not removing." % self.resource.name)
+            self.logger.debug(
+                "Package '%s' is already uninstalled, not removing."
+                % self.resource.name
+            )
             return False
 
         env = {
@@ -107,6 +113,8 @@ class AptUninstall(provider.Provider):
             self.change(ShellCommand(command, env=env))
         except error.SystemError as exc:
             raise error.PackageError(
-                "%s failed to uninstall with return code %d" % (self.resource, exc.returncode))
+                "%s failed to uninstall with return code %d"
+                % (self.resource, exc.returncode)
+            )
 
         return True

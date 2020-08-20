@@ -26,15 +26,14 @@ from fuselage.utils import force_bytes
 
 
 class TestPlatform(unittest.TestCase):
-
     @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_check_call(self):
-        stdout, stderr = platform.check_call(['echo', 'hello'])
-        self.assertEqual(stdout.strip(), 'hello')
+        stdout, stderr = platform.check_call(["echo", "hello"])
+        self.assertEqual(stdout.strip(), "hello")
 
     @skipIf(sys.platform.startswith("win"), "requires *nix")
     def test_check_call_FAIL(self):
-        self.assertRaises(error.SystemError, platform.check_call, ['false'])
+        self.assertRaises(error.SystemError, platform.check_call, ["false"])
 
     def test_exists_file(self):
         self.assertEqual(True, platform.exists(__file__))
@@ -179,7 +178,6 @@ class TestPlatform(unittest.TestCase):
 
 
 class TestHandle(unittest.TestCase):
-
     def setUp(self):
         self.stdout = platform.Handle(mock.Mock(), mock.Mock())
 

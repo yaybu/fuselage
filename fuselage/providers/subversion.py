@@ -25,8 +25,8 @@ class Svn(provider.Provider):
     @classmethod
     def isvalid(self, policy, resource):
         identities = [
-            'svn',
-            'subversion',
+            "svn",
+            "subversion",
         ]
 
         return resource.scm.lower() in identities
@@ -40,11 +40,17 @@ class Svn(provider.Provider):
 
     def apply(self):
         if not platform.exists("/usr/bin/svn"):
-            self.raise_or_log(error.MissingDependency(
-                "'/usr/bin/svn' is not available; update your configuration to install subversion?"
-            ))
+            self.raise_or_log(
+                error.MissingDependency(
+                    "'/usr/bin/svn' is not available; update your configuration to install subversion?"
+                )
+            )
 
-        self.change(EnsureDirectory(self.resource.name, self.resource.user, self.resource.group, 0o755))
+        self.change(
+            EnsureDirectory(
+                self.resource.name, self.resource.user, self.resource.group, 0o755
+            )
+        )
 
         if not platform.exists(os.path.join(self.resource.name, ".svn")):
             self.svn("co", self.url, self.resource.name)
@@ -60,16 +66,22 @@ class Svn(provider.Provider):
         old_repo_root = info["Repository Root"]
         new_repo_root = repo_info["Repository Root"]
         if old_repo_root != new_repo_root:
-            self.changelog.info("Switching repository root from '%s' to '%s'" % (old_repo_root, new_repo_root))
-            self.svn("switch", "--relocate",
-                     old_repo_root, new_repo_root, self.resource.name)
+            self.changelog.info(
+                "Switching repository root from '%s' to '%s'"
+                % (old_repo_root, new_repo_root)
+            )
+            self.svn(
+                "switch", "--relocate", old_repo_root, new_repo_root, self.resource.name
+            )
             changed = True
 
         # If we have changed branch, switch
         old_url = info["URL"]
         new_url = repo_info["URL"]
         if old_url != new_url:
-            self.changelog.info("Switching branch from '%s' to '%s'" % (old_url, new_url))
+            self.changelog.info(
+                "Switching branch from '%s' to '%s'" % (old_url, new_url)
+            )
             self.svn("switch", new_url, self.resource.name)
             changed = True
 
@@ -79,7 +91,9 @@ class Svn(provider.Provider):
         current_rev = info["Last Changed Rev"]
         target_rev = repo_info["Last Changed Rev"]
         if current_rev != target_rev:
-            self.changelog.info("Switching revision from %s to %s" % (current_rev, target_rev))
+            self.changelog.info(
+                "Switching revision from %s to %s" % (current_rev, target_rev)
+            )
             self.svn("up", "-r", target_rev, self.resource.name)
             changed = True
 

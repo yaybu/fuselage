@@ -60,9 +60,9 @@ class Link(provider.Provider):
         isalink = False
 
         if not platform.exists(to):
-            self.raise_or_log(error.DanglingSymlink(
-                "Destination of symlink %r does not exist" % to
-            ))
+            self.raise_or_log(
+                error.DanglingSymlink("Destination of symlink %r does not exist" % to)
+            )
 
         owner = self._get_owner()
         group = self._get_group()
@@ -75,11 +75,11 @@ class Link(provider.Provider):
 
         if not isalink or linkto != to:
             if platform.lexists(name):
-                self.change(
-                    ShellCommand(["/bin/rm", "-rf", self.resource.name]))
+                self.change(ShellCommand(["/bin/rm", "-rf", self.resource.name]))
 
             self.change(
-                ShellCommand(["/bin/ln", "-s", self.resource.to, self.resource.name]))
+                ShellCommand(["/bin/ln", "-s", self.resource.to, self.resource.name])
+            )
             changed = True
 
         try:
@@ -97,12 +97,18 @@ class Link(provider.Provider):
 
         if owner and owner != uid:
             self.change(
-                ShellCommand(["/bin/chown", "-h", self.resource.owner, self.resource.name]))
+                ShellCommand(
+                    ["/bin/chown", "-h", self.resource.owner, self.resource.name]
+                )
+            )
             changed = True
 
         if group and group != gid:
             self.change(
-                ShellCommand(["/bin/chgrp", "-h", self.resource.group, self.resource.name]))
+                ShellCommand(
+                    ["/bin/chgrp", "-h", self.resource.group, self.resource.name]
+                )
+            )
             changed = True
 
         return changed
@@ -118,7 +124,8 @@ class RemoveLink(provider.Provider):
         if platform.lexists(name):
             if not platform.islink(name):
                 raise error.InvalidProvider(
-                    "%r: %s exists and is not a link" % (self, name))
+                    "%r: %s exists and is not a link" % (self, name)
+                )
             self.change(ShellCommand(["/bin/rm", self.resource.name]))
             return True
         return False

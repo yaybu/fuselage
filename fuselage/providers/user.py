@@ -30,36 +30,37 @@ class User(provider.Provider):
         except KeyError:
             info = dict((f, None) for f in fields)
             info["exists"] = False
-            info['disabled-login'] = False
-            info['disabled-password'] = False
+            info["disabled-login"] = False
+            info["disabled-password"] = False
             return info
 
-        info = {"exists": True,
-                "disabled-login": False,
-                "disabled-password": False,
-                }
+        info = {
+            "exists": True,
+            "disabled-login": False,
+            "disabled-password": False,
+        }
         for i, field in enumerate(fields):
             info[field] = info_tuple[i]
 
         try:
             shadow = platform.getspnam(username)
-            info['passwd'] = shadow.sp_pwd
+            info["passwd"] = shadow.sp_pwd
             if shadow.sp_pwd == "!":
-                info['disabled-login'] = True
+                info["disabled-login"] = True
         except KeyError:
-            info['passwd'] = ''
-            info['disabled-login'] = False
+            info["passwd"] = ""
+            info["disabled-login"] = False
 
         return info
 
     def apply(self):
         info = self.get_user_info()
 
-        if info['exists']:
-            command = ['usermod']
+        if info["exists"]:
+            command = ["usermod"]
             changed = False  # we may not change anything yet
         else:
-            command = ['useradd', '-N']
+            command = ["useradd", "-N"]
             changed = True  # we definitely make a change
 
         name = self.resource.name
@@ -97,7 +98,9 @@ class User(provider.Provider):
                 try:
                     gid = platform.getgrnam(group).gr_gid
                 except KeyError:
-                    self.raise_or_log(error.InvalidGroup('Group "%s" is not valid' % group))
+                    self.raise_or_log(
+                        error.InvalidGroup('Group "%s" is not valid' % group)
+                    )
                     gid = "GID_CURRENTLY_UNASSIGNED"
 
                 if gid != info["gid"]:
@@ -108,7 +111,8 @@ class User(provider.Provider):
         if groups:
             desired_groups = set(groups)
             current_groups = set(
-                g.gr_name for g in platform.getgrall() if name in g.gr_mem)
+                g.gr_name for g in platform.getgrall() if name in g.gr_mem
+            )
 
             append = self.resource.append
             if append and len(desired_groups - current_groups) > 0:
@@ -141,7 +145,9 @@ class User(provider.Provider):
             try:
                 self.change(ShellCommand(command))
             except error.SystemError as exc:
-                raise error.UserAddError("useradd returned error code %d" % exc.returncode)
+                raise error.UserAddError(
+                    "useradd returned error code %d" % exc.returncode
+                )
         return changed
 
 
@@ -161,6 +167,9 @@ class UserRemove(provider.Provider):
         try:
             self.change(ShellCommand(command))
         except error.SystemError as exc:
-            raise error.UserAddError("Removing user %s failed with return code %d" % (self.resource, exc.returncode))
+            raise error.UserAddError(
+                "Removing user %s failed with return code %d"
+                % (self.resource, exc.returncode)
+            )
 
         return True

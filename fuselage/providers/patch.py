@@ -42,17 +42,24 @@ class Patch(provider.Provider):
         try:
             stdout, stderr = platform.check_call(
                 command=[
-                    'patch', '-t', '--dry-run', '-N', '--silent',
-                    '-r', '-', '-o', '-', self.resource.source, '-'
+                    "patch",
+                    "-t",
+                    "--dry-run",
+                    "-N",
+                    "--silent",
+                    "-r",
+                    "-",
+                    "-o",
+                    "-",
+                    self.resource.source,
+                    "-",
                 ],
                 stdin=patch,
             )
         except error.SystemError as e:
             self.logger.error("Patch does not apply cleanly")
-            self.logger.error(
-                "Patch file used was %s" % self.resource.patch)
-            self.logger.error(
-                "File to patch was %s" % self.resource.source)
+            self.logger.error("Patch file used was %s" % self.resource.patch)
+            self.logger.error("File to patch was %s" % self.resource.source)
 
             self.logger.error("")
             self.logger.error("Reported error was:")
@@ -69,8 +76,14 @@ class Patch(provider.Provider):
 
         contents = force_bytes(self.apply_patch())
 
-        fc = EnsureFile(name, contents, self.resource.owner,
-                        self.resource.group, self.resource.mode, sensitive=self.resource.sensitive)
+        fc = EnsureFile(
+            name,
+            contents,
+            self.resource.owner,
+            self.resource.group,
+            self.resource.mode,
+            sensitive=self.resource.sensitive,
+        )
         self.change(fc)
 
         return fc.changed

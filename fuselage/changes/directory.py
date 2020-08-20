@@ -21,7 +21,6 @@ from .execute import ShellCommand
 
 
 class EnsureDirectory(base.Change):
-
     def __init__(self, path, owner, group, mode, recursive=False):
         self.path = path
         self.owner = owner
@@ -39,12 +38,9 @@ class EnsureDirectory(base.Change):
             context.change(ShellCommand(command))
             self.changed = True
 
-        ac = context.change(AttributeChanger(
-            self.path,
-            self.owner,
-            self.group,
-            self.mode
-        ))
+        ac = context.change(
+            AttributeChanger(self.path, self.owner, self.group, self.mode)
+        )
 
         self.changed = self.changed or ac.changed
 

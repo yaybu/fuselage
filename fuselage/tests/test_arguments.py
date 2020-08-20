@@ -19,10 +19,10 @@ from fuselage import argument, error, resource
 
 
 class TestArguments(unittest.TestCase):
-
     def test_octal(self):
         class R_test_octal(resource.Resource):
             a = argument.Octal()
+
         self.assertTrue(isinstance(R_test_octal.a, argument.Octal))
         r = R_test_octal(id="test")
         r.a = "666"
@@ -33,16 +33,18 @@ class TestArguments(unittest.TestCase):
     def test_string(self):
         class R_test_string(resource.Resource):
             a = argument.String()
+
         self.assertTrue(isinstance(R_test_string.a, argument.String))
         r = R_test_string(id="test")
         r.a = "foo"
         self.assertEqual(r.a, "foo")
-        r.a = u"foo"
+        r.a = "foo"
         self.assertEqual(r.a, "foo")
 
     def test_integer(self):
         class R_test_integer(resource.Resource):
             a = argument.Integer()
+
         self.assertTrue(isinstance(R_test_integer.a, argument.Integer))
         r = R_test_integer(id="test")
         r.a = 10
@@ -57,6 +59,7 @@ class TestArguments(unittest.TestCase):
     def test_boolean(self):
         class R_test_bool(resource.Resource):
             a = argument.Boolean()
+
         self.assertTrue(isinstance(R_test_bool.a, argument.Boolean))
         r = R_test_bool(id="test")
         r.a = True
@@ -69,10 +72,10 @@ class TestArguments(unittest.TestCase):
         self.assertEqual(r.a, True)
         r.a = "1"
         self.assertEqual(r.a, True)
-        #r.a = "off"
-        #self.assertEqual(r.a, False)
+        # r.a = "off"
+        # self.assertEqual(r.a, False)
 
-    #def test_full_path(self):
+    # def test_full_path(self):
     #    class R_test_full_path(resource.Resource):
     #        a = argument.FullPath()
     #    self.assertTrue(isinstance(R_test_full_path.a, argument.FullPath))

@@ -30,10 +30,12 @@ class Mounted(provider.Provider):
 
         for path in self.resource.changes:
             if platform.exists(path):
-                self.logger.debug("Faking changes to %s" % (path, ))
+                self.logger.debug("Faking changes to %s" % (path,))
                 self.change(ShellCommand(["touch", "-ac", path]))
             else:
-                self.logger.debug("Not faking changes to %s (file not present)" % (path, ))
+                self.logger.debug(
+                    "Not faking changes to %s (file not present)" % (path,)
+                )
 
         self.logger.debug("Faking that checkout changed")
         return True

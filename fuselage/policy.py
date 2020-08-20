@@ -61,8 +61,10 @@ class Policy(six.with_metaclass(PolicyType)):
             return
 
         msg = [
-            "The resource '%s' is using the policy '%s' but doesn't confirm to that policy" %
-            (self.resource, self.name), ""]
+            "The resource '%s' is using the policy '%s' but doesn't confirm to that policy"
+            % (self.resource, self.name),
+            "",
+        ]
         msg.extend(a.describe(self.resource))
         raise error.NonConformingPolicy("\n".join(msg))
 
@@ -70,11 +72,16 @@ class Policy(six.with_metaclass(PolicyType)):
         """ Get the one and only one provider that is valid for this resource,
         policy and overall context """
         import fuselage.providers  # noqa
+
         valid = [p.isvalid(self, self.resource) for p in self.providers]
         if valid.count(True) > 1:
-            raise error.TooManyProviders("Too many matching providers for %s" % self.resource)
+            raise error.TooManyProviders(
+                "Too many matching providers for %s" % self.resource
+            )
         if valid.count(True) == 0:
-            raise error.NoSuitableProviders("Could not find a provider to setup %s" % self.resource)
+            raise error.NoSuitableProviders(
+                "Could not find a provider to setup %s" % self.resource
+            )
         return self.providers[valid.index(True)]
 
 
@@ -116,7 +123,6 @@ class Absent(Present):
 
 
 class AND(ArgumentAssertion):
-
     def __init__(self, *args):
         self.args = args
 
@@ -135,7 +141,6 @@ class AND(ArgumentAssertion):
 
 
 class NAND(ArgumentAssertion):
-
     def __init__(self, *args):
         self.args = args
 
@@ -154,7 +159,6 @@ class NAND(ArgumentAssertion):
 
 
 class XOR(ArgumentAssertion):
-
     def __init__(self, *args):
         self.args = args
 
@@ -176,7 +180,6 @@ class XOR(ArgumentAssertion):
 
 
 class OR(ArgumentAssertion):
-
     def __init__(self, *args):
         self.args = args
 

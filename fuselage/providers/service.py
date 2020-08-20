@@ -17,25 +17,35 @@ from fuselage.changes import ShellCommand
 
 
 class _ServiceMixin(object):
-    features = ["restart", ]
+    features = [
+        "restart",
+    ]
 
     def status(self):
         if self.resource.running:
-            self.logger.debug("Running %r to determine if already running" % self.resource.running)
+            self.logger.debug(
+                "Running %r to determine if already running" % self.resource.running
+            )
             try:
                 platform.check_call(self.resource.running)
             except error.SystemError as e:
-                self.logger.debug("Got exit code %d. Assuming not running." % (e.returncode, ))
+                self.logger.debug(
+                    "Got exit code %d. Assuming not running." % (e.returncode,)
+                )
                 return "not-running"
             else:
                 self.logger.debug("Got exit code 0. Assuming running.")
                 return "running"
 
         if not self.resource.pidfile:
-            self.logger.debug("Neither 'pidfile' nor 'running' option is set. Cannot determine service state.")
+            self.logger.debug(
+                "Neither 'pidfile' nor 'running' option is set. Cannot determine service state."
+            )
             return "unknown"
 
-        self.logger.debug("Using pidfile %r to determine service state" % (self.resource.pidfile, ))
+        self.logger.debug(
+            "Using pidfile %r to determine service state" % (self.resource.pidfile,)
+        )
 
         if not platform.exists(self.resource.pidfile):
             self.logger.debug("The pidfile does not exist, service not running")
@@ -44,7 +54,9 @@ class _ServiceMixin(object):
         try:
             pid = int(platform.get(self.resource.pidfile).strip())
         except Exception:
-            self.logger.debug("The pidfile could not be understood (should just contain a single int). Cannot determine service state.")
+            self.logger.debug(
+                "The pidfile could not be understood (should just contain a single int). Cannot determine service state."
+            )
             return "unknown"
 
         # if platform.exists("/proc/%s" % pid):
@@ -55,7 +67,9 @@ class _ServiceMixin(object):
             self.logger.debug("Service is running.")
             return "running"
         except error.SystemError:
-            self.logger.debug("Unable to kill(0) pid %d - service is not running." % pid)
+            self.logger.debug(
+                "Unable to kill(0) pid %d - service is not running." % pid
+            )
             return "not-running"
 
     def do(self, action):
@@ -63,7 +77,8 @@ class _ServiceMixin(object):
             self.change(ShellCommand(self.get_command(action)))
         except error.SystemError as exc:
             raise error.CommandError(
-                "%s failed with return code %d" % (action, exc.returncode))
+                "%s failed with return code %d" % (action, exc.returncode)
+            )
 
     def ensure_enabled(self):
         pass

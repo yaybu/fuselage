@@ -25,20 +25,23 @@ EMPTY_FILE_DIFF = """
 
 
 class TestPatch(TestCaseWithRunner):
-
     def test_path_missing_component(self):
-        self.bundle.add(Patch(
-            name="/etc/missing/filename",
-            source="/etc/missing/filename",
-            patch=EMPTY_FILE_DIFF,
-        ))
+        self.bundle.add(
+            Patch(
+                name="/etc/missing/filename",
+                source="/etc/missing/filename",
+                patch=EMPTY_FILE_DIFF,
+            )
+        )
         self.assertRaises(error.PathComponentMissing, self.apply)
 
     def test_simple_patch(self):
         platform.put("/etc/simple_patch", "")
-        self.bundle.add(Patch(
-            name="/etc/simple_patch.out",
-            source="/etc/simple_patch",
-            patch=EMPTY_FILE_DIFF,
-        ))
+        self.bundle.add(
+            Patch(
+                name="/etc/simple_patch.out",
+                source="/etc/simple_patch",
+                patch=EMPTY_FILE_DIFF,
+            )
+        )
         self.check_apply()

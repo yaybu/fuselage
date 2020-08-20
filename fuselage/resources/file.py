@@ -80,6 +80,7 @@ class File(Resource):
 
     def hash(self):
         from fuselage import platform
+
         try:
             return platform.stat(self.name).st_mtime
         except OSError:
@@ -98,13 +99,7 @@ class FileApplyPolicy(Policy):
     resource = File
     name = "apply"
     default = True
-    signature = (
-        Present("name"),
-        NAND(
-            Present("contents"),
-            Present("source")
-        )
-    )
+    signature = (Present("name"), NAND(Present("contents"), Present("source")))
 
 
 class FileRemovePolicy(Policy):
@@ -115,11 +110,12 @@ class FileRemovePolicy(Policy):
     resource = File
     name = "remove"
     default = False
-    signature = (Present("name"),
-                 Absent("owner"),
-                 Absent("group"),
-                 Absent("mode"),
-                 )
+    signature = (
+        Present("name"),
+        Absent("owner"),
+        Absent("group"),
+        Absent("mode"),
+    )
 
 
 class FileWatchedPolicy(Policy):

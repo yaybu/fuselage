@@ -51,7 +51,7 @@ class Execute(provider.Provider):
             return False
 
         if self.resource.unless and not self.check_unless():
-            self.logger.debug("%r passes, not executing" % (self.resource.unless, ))
+            self.logger.debug("%r passes, not executing" % (self.resource.unless,))
             return False
 
         if self.resource.command:
@@ -60,15 +60,17 @@ class Execute(provider.Provider):
             commands = self.resource.commands
 
         for command in commands:
-            self.change(ShellCommand(
-                command=command,
-                cwd=self.resource.cwd or None,
-                env=self.resource.env or None,
-                user=self.resource.user or None,
-                group=self.resource.group or None,
-                umask=self.resource.umask,
-                expected=self.resource.returncode,
-            ))
+            self.change(
+                ShellCommand(
+                    command=command,
+                    cwd=self.resource.cwd or None,
+                    env=self.resource.env or None,
+                    user=self.resource.user or None,
+                    group=self.resource.group or None,
+                    umask=self.resource.umask,
+                    expected=self.resource.returncode,
+                )
+            )
 
         if self.resource.touch:
             self.change(ShellCommand(["touch", self.resource.touch]))

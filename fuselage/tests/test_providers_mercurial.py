@@ -24,16 +24,17 @@ deb http://security.ubuntu.com/ubuntu precise-security main restricted universe 
 
 
 class TestHg(TestCaseWithRunner):
-
     def setUp(self):
         super(TestHg, self).setUp()
         self.bundle.add(File(name="/etc/apt/sources.list", contents=MIRRORS))
         self.p = self.bundle.add(Package(name="mercurial", policy="install"))
-        self.c = self.bundle.add(Checkout(
-            scm='mercurial',
-            name="/dest",
-            repository='https://bitbucket.org/Jc2k/pkl/',
-        ))
+        self.c = self.bundle.add(
+            Checkout(
+                scm="mercurial",
+                name="/dest",
+                repository="https://bitbucket.org/Jc2k/pkl/",
+            )
+        )
 
     def test_missing_hg(self):
         self.p.policy = "uninstall"

@@ -66,7 +66,7 @@ class ResourceBundle(object):
 
     def _serialize_bundle(self, builder):
         obj = {"version": self.BUNDLE_VERSION}
-        resources = obj['resources'] = []
+        resources = obj["resources"] = []
         for r in self.resources:
             if not getattr(r, "_implicit", False):
                 resources.append(r.serialize(builder))
@@ -84,10 +84,10 @@ class ResourceBundle(object):
         if not isinstance(obj, dict):
             raise error.ParseError("Bundle is not a dictionary")
 
-        if 'version' not in obj:
+        if "version" not in obj:
             raise error.ParseError("Bundle version is invalid")
 
-        if obj['version'] > self.BUNDLE_VERSION:
+        if obj["version"] > self.BUNDLE_VERSION:
             raise error.ParseError("Bundle version is too new")
 
         if "resources" not in obj:
@@ -101,7 +101,9 @@ class ResourceBundle(object):
                 raise error.ParseError("Not a valid resource definition")
 
             if len(resource) != 1:
-                raise error.ParseError("Wrong number of keys in outer resource definition")
+                raise error.ParseError(
+                    "Wrong number of keys in outer resource definition"
+                )
 
             typename = list(resource.keys())[0]
             instances = resource[typename]
@@ -127,10 +129,7 @@ class ResourceBundle(object):
 
         # Create implicit File[] nodes for any watched files
         for watched in resource.changes:
-            w = self.create("File", **{
-                "name": watched,
-                "policy": "watched",
-            })
+            w = self.create("File", **{"name": watched, "policy": "watched",})
             w._original_hash = None
             w._implicit = True
 
@@ -149,7 +148,7 @@ class ResourceBundle(object):
             try:
                 self.add(resource)
             except Exception as e:
-                throw = getattr(iterator, 'throw', None)
+                throw = getattr(iterator, "throw", None)
                 if callable(throw):
                     throw(e)
                 else:
@@ -165,17 +164,23 @@ class ResourceBundle(object):
         something_changed = False
         mylen = len(self.resources)
         for i, resource in enumerate(self.resources, start=1):
-            resource_log = log.LoggerAdapter(logger, {
-                "fuselage.resource": resource.typed_id,
-            })
+            resource_log = log.LoggerAdapter(
+                logger, {"fuselage.resource": resource.typed_id,}
+            )
 
-            resource_log.debug("Started applying '%r' (%d of %d)" % (resource, i, mylen), extra={"fuselage.type": "resource-start"})
+            resource_log.debug(
+                "Started applying '%r' (%d of %d)" % (resource, i, mylen),
+                extra={"fuselage.type": "resource-start"},
+            )
             try:
                 if resource.apply(runner):
-                    resource_log.debug("'%r' made changes" % (resource, ))
+                    resource_log.debug("'%r' made changes" % (resource,))
                     something_changed = True
             finally:
-                resource_log.debug("Finished applying '%r'" % (resource, ), extra={"fuselage.type": "resource-finish"})
+                resource_log.debug(
+                    "Finished applying '%r'" % (resource,),
+                    extra={"fuselage.type": "resource-finish"},
+                )
 
         if not something_changed:
             raise error.NothingChanged()

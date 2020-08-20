@@ -18,15 +18,16 @@ from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestGit(TestCaseWithRunner):
-
     def setUp(self):
         super(TestGit, self).setUp()
         self.p = self.bundle.add(Package(name="git", policy="install"))
-        self.c = self.bundle.add(Checkout(
-            scm='git',
-            name="/dest",
-            repository='git://github.com/isotoma/isotoma.recipe.django.git',
-        ))
+        self.c = self.bundle.add(
+            Checkout(
+                scm="git",
+                name="/dest",
+                repository="git://github.com/isotoma/isotoma.recipe.django.git",
+            )
+        )
 
     def test_missing_git(self):
         self.p.policy = "uninstall"

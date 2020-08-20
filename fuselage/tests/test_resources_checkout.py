@@ -17,14 +17,15 @@ from fuselage.tests.base import TestCaseWithBundle, fuzz_resource
 
 
 class TestCheckout(TestCaseWithBundle):
-
     def test_minimal(self):
-        r = self.bundle.add(Checkout(
-            name='/tmp/my-checkout',
-            repository='https://svn.github.com/yaybu/example',
-            scm='git',
-        ))
-        self.assertEqual(r.name, '/tmp/my-checkout')
+        r = self.bundle.add(
+            Checkout(
+                name="/tmp/my-checkout",
+                repository="https://svn.github.com/yaybu/example",
+                scm="git",
+            )
+        )
+        self.assertEqual(r.name, "/tmp/my-checkout")
 
     def test_fuzz(self):
         fuzz_resource(Checkout)

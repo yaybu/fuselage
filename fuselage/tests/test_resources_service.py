@@ -17,12 +17,9 @@ from fuselage.tests.base import TestCaseWithBundle, fuzz_resource
 
 
 class TestService(TestCaseWithBundle):
-
     def test_minimal(self):
-        r = self.bundle.add(Service(
-            name='myservice',
-        ))
-        self.assertEqual(r.name, 'myservice')
+        r = self.bundle.add(Service(name="myservice",))
+        self.assertEqual(r.name, "myservice")
 
     def test_fuzz(self):
         fuzz_resource(Service)

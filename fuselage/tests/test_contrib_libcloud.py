@@ -23,13 +23,12 @@ from fuselage.contrib.libcloud import FuselageDeployment
 
 
 class MockClient(BaseSSHClient):
-
     def __init__(self, *args, **kwargs):
-        self.stdout = ''
-        self.stderr = ''
+        self.stdout = ""
+        self.stderr = ""
         self.exit_status = 0
 
-    def put(self, path, contents, chmod=755, mode='w'):
+    def put(self, path, contents, chmod=755, mode="w"):
         return contents
 
     def run(self, name):
@@ -40,7 +39,6 @@ class MockClient(BaseSSHClient):
 
 
 class TestLibcloud(unittest.TestCase):
-
     def test_simple_deployment(self):
         f = FuselageDeployment(bundle=None, resources=[])
         f.run(mock.Mock(), MockClient())

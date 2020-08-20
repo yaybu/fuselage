@@ -18,7 +18,6 @@ from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestGroup(TestCaseWithRunner):
-
     def test_existing_group(self):
         platform.getgrnam("users")
         self.bundle.add(Group(name="users"))
@@ -40,7 +39,6 @@ class TestGroup(TestCaseWithRunner):
 
 
 class TestGroupRemove(TestCaseWithRunner):
-
     def test_remove_existing(self):
         self.assertTrue(platform.getgrnam("users"))
         self.bundle.add(Group(name="users", policy="remove"))

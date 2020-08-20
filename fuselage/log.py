@@ -36,8 +36,8 @@ class LoggerAdapter(logging.LoggerAdapter):
         return self.logger.isEnabledFor(level)
 
     def process(self, msg, kwargs):
-        if not 'extra' in kwargs:
-            kwargs['extra'] = {}
+        if not "extra" in kwargs:
+            kwargs["extra"] = {}
         kwargs["extra"].update(self.extra)
         return msg, kwargs
 
@@ -55,7 +55,6 @@ class ResourceFormatter(logging.Formatter):
 
 
 class ConsoleHandler(logging.StreamHandler, object):
-
     def __init__(self, stream=sys.stdout, level=logging.INFO):
         super(ConsoleHandler, self).__init__(stream)
         self._level = level
@@ -83,15 +82,15 @@ class ConsoleHandler(logging.StreamHandler, object):
             minuses = 4
             leftover = 0
 
-        self.stream.write("/%s %s %s\n" % ("-" * minuses,
-                                 header,
-                                 "-" * (minuses + leftover)))
+        self.stream.write(
+            "/%s %s %s\n" % ("-" * minuses, header, "-" * (minuses + leftover))
+        )
 
         self._needs_header = False
         self._needs_footer = True
 
     def _render_resource_footer(self):
-        self.stream.write("\\%s\n\n" % ("-" * 79, ))
+        self.stream.write("\\%s\n\n" % ("-" * 79,))
         self._needs_footer = False
 
     def handle(self, record):
@@ -154,4 +153,4 @@ def configure(verbosity=logging.INFO, json=False, force=False):
         handler.setFormatter(ResourceFormatter())
         root.addHandler(handler)
 
-    #root.addHandler(SysLogHandler())
+    # root.addHandler(SysLogHandler())

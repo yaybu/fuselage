@@ -46,8 +46,10 @@ def force_bytes(s):
 
 def simple_str(s):
     """ 'Normalize' a string - lowercase, strip unicode, replace whitespace, etc """
-    s = force_str(unicodedata.normalize('NFKD', force_unicode(s)).encode('ascii', 'ignore'))
+    s = force_str(
+        unicodedata.normalize("NFKD", force_unicode(s)).encode("ascii", "ignore")
+    )
     s = s.lower().strip()
-    s = re.sub(r'[^\w\s-]', '', s)
-    s = re.sub(r'[-\s]+', '-', s)
+    s = re.sub(r"[^\w\s-]", "", s)
+    s = re.sub(r"[-\s]+", "-", s)
     return s

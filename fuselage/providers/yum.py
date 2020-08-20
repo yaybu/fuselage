@@ -17,14 +17,16 @@ from fuselage.changes import ShellCommand
 
 
 def is_installed(resource):
-    command = ['rpm', '-q', resource.name]
+    command = ["rpm", "-q", resource.name]
     try:
         stdout, stderr = platform.check_call(command)
     except error.SystemError as exc:
         if exc.returncode == 1:
             return False
 
-        raise error.PackageError("%s search failed with return code %s" % (resource, exc.returncode))
+        raise error.PackageError(
+            "%s search failed with return code %s" % (resource, exc.returncode)
+        )
 
     return True
 
@@ -49,8 +51,8 @@ class YumInstall(provider.Provider):
             self.change(ShellCommand(command))
         except error.SystemError as exc:
             raise error.PackageError(
-                "%s failed with return code %d" %
-                (self.resource, exc.returncode))
+                "%s failed with return code %d" % (self.resource, exc.returncode)
+            )
 
         return True
 
@@ -75,6 +77,8 @@ class YumUninstall(provider.Provider):
             self.change(ShellCommand(command))
         except error.SystemError as exc:
             raise error.PackageError(
-                "%s failed to uninstall with return code %d" % (self.resource, exc.returncode))
+                "%s failed to uninstall with return code %d"
+                % (self.resource, exc.returncode)
+            )
 
         return True

@@ -60,8 +60,7 @@ class DirectoryAppliedPolicy(Policy):
     resource = Directory
     name = "apply"
     default = True
-    signature = (Present("name"),
-                 )
+    signature = (Present("name"),)
 
 
 class DirectoryRemovedPolicy(Policy):
@@ -78,11 +77,12 @@ class DirectoryRemovedPolicy(Policy):
     resource = Directory
     name = "remove"
     default = False
-    signature = (Present("name"),
-                 Absent("owner"),
-                 Absent("group"),
-                 Absent("mode"),
-                 )
+    signature = (
+        Present("name"),
+        Absent("owner"),
+        Absent("group"),
+        Absent("mode"),
+    )
 
 
 class DirectoryRemovedRecursivePolicy(Policy):
@@ -97,8 +97,9 @@ class DirectoryRemovedRecursivePolicy(Policy):
     resource = Directory
     name = "remove-recursive"
     default = False
-    signature = (Present("name"),
-                 Absent("owner"),
-                 Absent("group"),
-                 Absent("mode"),
-                 )
+    signature = (
+        Present("name"),
+        Absent("owner"),
+        Absent("group"),
+        Absent("mode"),
+    )

@@ -17,12 +17,9 @@ from fuselage.tests.base import TestCaseWithBundle, fuzz_resource
 
 
 class TestPatch(TestCaseWithBundle):
-
     def test_minimal(self):
-        r = self.bundle.add(Patch(
-            name='/tmp/my-patch',
-        ))
-        self.assertEqual(r.name, '/tmp/my-patch')
+        r = self.bundle.add(Patch(name="/tmp/my-patch",))
+        self.assertEqual(r.name, "/tmp/my-patch")
 
     def test_fuzz(self):
         fuzz_resource(Patch)

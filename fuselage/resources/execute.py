@@ -64,7 +64,7 @@ class Execute(Resource):
     commands = List()
     """ If you wish to run multiple commands, provide a list """
 
-    cwd = FullPath(default='/')
+    cwd = FullPath(default="/")
     """ The current working directory in which to execute the command. """
 
     env = Dict()
@@ -119,6 +119,4 @@ class ExecutePolicy(Policy):
     resource = Execute
     name = "execute"
     default = True
-    signature = (
-        XOR(Present("command"), Present("commands")),
-    )
+    signature = (XOR(Present("command"), Present("commands")),)

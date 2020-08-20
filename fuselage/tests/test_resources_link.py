@@ -17,13 +17,9 @@ from fuselage.tests.base import TestCaseWithBundle, fuzz_resource
 
 
 class TestLink(TestCaseWithBundle):
-
     def test_minimal(self):
-        r = self.bundle.add(Link(
-            name='/tmp/my-link',
-            to='/dev',
-        ))
-        self.assertEqual(r.name, '/tmp/my-link')
+        r = self.bundle.add(Link(name="/tmp/my-link", to="/dev",))
+        self.assertEqual(r.name, "/tmp/my-link")
 
     def test_fuzz(self):
         fuzz_resource(Link)

@@ -50,9 +50,7 @@ class GroupApplyPolicy(Policy):
     resource = Group
     name = "apply"
     default = True
-    signature = (
-        Present("name"),
-    )
+    signature = (Present("name"),)
 
 
 class GroupRemovePolicy(Policy):

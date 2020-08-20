@@ -63,14 +63,15 @@ class SpecialAppliedPolicy(Policy):
 
     name = "apply"
     default = True
-    signature = (Present("name"),
-                 Present("owner"),
-                 Present("group"),
-                 Present("mode"),
-                 Present("type"),
-                 Present("major"),
-                 Present("minor"),
-                 )
+    signature = (
+        Present("name"),
+        Present("owner"),
+        Present("group"),
+        Present("mode"),
+        Present("type"),
+        Present("major"),
+        Present("minor"),
+    )
 
 
 class SpecialRemovedPolicy(Policy):
@@ -82,11 +83,12 @@ class SpecialRemovedPolicy(Policy):
 
     name = "remove"
     default = False
-    signature = (Present("name"),
-                 Absent("owner"),
-                 Absent("group"),
-                 Absent("mode"),
-                 Absent("type"),
-                 Absent("major"),
-                 Absent("minor"),
-                 )
+    signature = (
+        Present("name"),
+        Absent("owner"),
+        Absent("group"),
+        Absent("mode"),
+        Absent("type"),
+        Absent("major"),
+        Absent("minor"),
+    )

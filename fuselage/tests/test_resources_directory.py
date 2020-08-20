@@ -17,12 +17,9 @@ from fuselage.tests.base import TestCaseWithBundle, fuzz_resource
 
 
 class TestDirectory(TestCaseWithBundle):
-
     def test_minimal(self):
-        r = self.bundle.add(Directory(
-            name='/tmp/my-directory',
-        ))
-        self.assertEqual(r.name, '/tmp/my-directory')
+        r = self.bundle.add(Directory(name="/tmp/my-directory",))
+        self.assertEqual(r.name, "/tmp/my-directory")
 
     def test_fuzz(self):
         fuzz_resource(Directory)

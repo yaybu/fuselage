@@ -28,7 +28,19 @@ class ShellCommand(base.Change):
 
     changed = True
 
-    def __init__(self, command, shell=None, stdin=None, cwd=None, env=None, user="root", group=None, umask=None, expected=0, logas=None):
+    def __init__(
+        self,
+        command,
+        shell=None,
+        stdin=None,
+        cwd=None,
+        env=None,
+        user="root",
+        group=None,
+        umask=None,
+        expected=0,
+        logas=None,
+    ):
         if isinstance(command, list):
             self.command = command
         elif isinstance(command, six.string_types):
@@ -50,13 +62,15 @@ class ShellCommand(base.Change):
 
         self.env = {}
         if platform.platform == "win32":
-            self.env.update({
-                "PATH": os.environ.get("PATH", ""),
-            })
+            self.env.update(
+                {"PATH": os.environ.get("PATH", ""),}
+            )
         else:
-            self.env.update({
-                "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-            })
+            self.env.update(
+                {
+                    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                }
+            )
         if env:
             self.env.update(env)
 
@@ -67,10 +81,12 @@ class ShellCommand(base.Change):
 
     def _tounicode(self, l):
         """ Ensure all elements of the list are unicode """
+
         def uni(x):
-            if isinstance(x, type(u"")):
+            if isinstance(x, type("")):
                 return x
             return x.encode("utf-8")
+
         return list(map(uni, l))
 
     def command_exists(self, command):
@@ -89,7 +105,7 @@ class ShellCommand(base.Change):
     def apply(self, ctx):
         command, logas = self.command, self.logas
 
-        ctx.changelog.critical('# ' + ' '.join([force_str(l) for l in logas]))
+        ctx.changelog.critical("# " + " ".join([force_str(l) for l in logas]))
 
         if not self.command_exists(command):
             ctx.raise_or_log(error.BinaryMissing("Command '%s' not found" % command[0]))
@@ -108,7 +124,9 @@ class ShellCommand(base.Change):
 
         if self.cwd:
             if not platform.isdir(self.cwd):
-                ctx.raise_or_log(error.PathComponentNotDirectory("%r not a directory" % self.cwd))
+                ctx.raise_or_log(
+                    error.PathComponentNotDirectory("%r not a directory" % self.cwd)
+                )
 
         if ctx.simulate:
             self.returncode = 0

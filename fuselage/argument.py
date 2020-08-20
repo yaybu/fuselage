@@ -108,24 +108,28 @@ class String(Argument):
     def _generate_valid(self):
         glyphs = []
         for i in range(random.randint(0, 1024)):
-            glyphs.append(random.choice([
-                u"\u2603",
-                u"\U0001F42D",
-                "/",
-                "1",
-                "+",
-                "-",
-                ".",
-                "`",
-                "\"",
-                "'",
-                "a",
-                "b",
-                "c",
-                "d",
-                "E",
-                "F",
-            ]))
+            glyphs.append(
+                random.choice(
+                    [
+                        "\u2603",
+                        "\U0001F42D",
+                        "/",
+                        "1",
+                        "+",
+                        "-",
+                        ".",
+                        "`",
+                        '"',
+                        "'",
+                        "a",
+                        "b",
+                        "c",
+                        "d",
+                        "E",
+                        "F",
+                    ]
+                )
+            )
         return "".join(glyphs)
 
 
@@ -172,23 +176,20 @@ class Octal(Integer):
 
 
 class Dict(Argument):
-
     @classmethod
     def _generate_valid(self):
         return {}
 
 
 class List(Argument):
-
     @classmethod
     def _generate_valid(self):
         return []
 
 
 class File(Argument):
-
     def _generate_valid(self):
-        return '/tmp/foo'
+        return "/tmp/foo"
 
     def serialize(self, instance, builder=None):
         assert builder
@@ -201,7 +202,6 @@ class File(Argument):
 
 
 class PolicyTrigger:
-
     def __init__(self, on):
         self.on = on
 
@@ -212,9 +212,11 @@ class PolicyTrigger:
             try:
                 resource = resources[self.on]
             except KeyError:
-                raise error.BindingError("Cannot bind %r to missing resource named '%s'" % (target, self.on))
+                raise error.BindingError(
+                    "Cannot bind %r to missing resource named '%s'" % (target, self.on)
+                )
 
-        resource.register_observer('*', target, '*')
+        resource.register_observer("*", target, "*")
         return resource
 
 
@@ -254,7 +256,9 @@ class PolicyArgument(Argument):
         try:
             value = instance.policies[value](instance)
         except KeyError:
-            raise error.ParseError("'%s' is not a valid policy for this resource" % (value, ))
+            raise error.ParseError(
+                "'%s' is not a valid policy for this resource" % (value,)
+            )
         return value
 
     def get_default(self, instance):

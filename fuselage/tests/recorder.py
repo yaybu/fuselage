@@ -21,26 +21,50 @@ import pkgutil
 from fuselage import error
 from fuselage.utils import force_bytes
 
-stat_result = collections.namedtuple("stat_result",
-                                     ("st_mode", "st_ino", "st_dev", "st_nlink", "st_uid", "st_gid",
-                                      "st_size", "st_atime", "st_mtime", "st_ctime"))
+stat_result = collections.namedtuple(
+    "stat_result",
+    (
+        "st_mode",
+        "st_ino",
+        "st_dev",
+        "st_nlink",
+        "st_uid",
+        "st_gid",
+        "st_size",
+        "st_atime",
+        "st_mtime",
+        "st_ctime",
+    ),
+)
 
-struct_group = collections.namedtuple("struct_group",
-                                      ("gr_name", "gr_passwd", "gr_gid", "gr_mem"))
+struct_group = collections.namedtuple(
+    "struct_group", ("gr_name", "gr_passwd", "gr_gid", "gr_mem")
+)
 
-struct_passwd = collections.namedtuple("struct_passwd",
-                                       ("pw_name", "pw_passwd", "pw_uid", "pw_gid", "pw_gecos", "pw_dir",
-                                        "pw_shell"))
+struct_passwd = collections.namedtuple(
+    "struct_passwd",
+    ("pw_name", "pw_passwd", "pw_uid", "pw_gid", "pw_gecos", "pw_dir", "pw_shell"),
+)
 
-struct_spwd = collections.namedtuple("struct_spwd",
-                                     ("sp_nam", "sp_pwd", "sp_lastchg", "sp_min", "sp_max", "sp_warn",
-                                      "sp_inact", "sp_expire", "sp_flag", ))
+struct_spwd = collections.namedtuple(
+    "struct_spwd",
+    (
+        "sp_nam",
+        "sp_pwd",
+        "sp_lastchg",
+        "sp_min",
+        "sp_max",
+        "sp_warn",
+        "sp_inact",
+        "sp_expire",
+        "sp_flag",
+    ),
+)
 
 logger = logging.getLogger(__name__)
 
 
 class Recorder(object):
-
     def __init__(self, path, id):
         self.path = path
         self.id = id
@@ -57,7 +81,9 @@ class Recorder(object):
             raise AttributeError(function_name)
 
         def _(*args, **kwargs):
-            logger.debug("fuselage.platform.%s(*%r, **%r)" % (function_name, args, kwargs))
+            logger.debug(
+                "fuselage.platform.%s(*%r, **%r)" % (function_name, args, kwargs)
+            )
 
             try:
                 results = attr(*args, **kwargs)
@@ -79,6 +105,7 @@ class Recorder(object):
                 self.results.append((function_name, results, exception))
                 raise e
             return results
+
         return _
 
     def save(self):
@@ -91,11 +118,10 @@ class Recorder(object):
 
 
 class Player(object):
-
     def __init__(self, path, id):
         results = {}
         name = os.path.splitext(os.path.basename(path))[0]
-        payload = pkgutil.get_data("fuselage.tests", "%s.json" % (name, ))
+        payload = pkgutil.get_data("fuselage.tests", "%s.json" % (name,))
         if payload:
             results.update(json.loads(payload.decode()))
 
@@ -108,9 +134,16 @@ class Player(object):
     def __getattr__(self, function_name):
         def _(*args, **kwargs):
             f, results, exception = self.results.pop(0)
-            assert function_name == f, "'%s' != '%s', args=%r, kwargs=%r" % (function_name, f, args, kwargs)
+            assert function_name == f, "'%s' != '%s', args=%r, kwargs=%r" % (
+                function_name,
+                f,
+                args,
+                kwargs,
+            )
 
-            logger.debug("fuselage.platform.%s(*%r, **%r)" % (function_name, args, kwargs))
+            logger.debug(
+                "fuselage.platform.%s(*%r, **%r)" % (function_name, args, kwargs)
+            )
 
             if exception:
                 raise {
@@ -131,6 +164,7 @@ class Player(object):
                 "getspnam": lambda x: struct_spwd(*x),
                 "get": lambda x: force_bytes(x),
             }.get(f, lambda x: x)(results)
+
         return _
 
     def save(self):

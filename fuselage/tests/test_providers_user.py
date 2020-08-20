@@ -18,7 +18,6 @@ from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestUser(TestCaseWithRunner):
-
     def test_simple_user(self):
         self.bundle.add(User(name="test"))
         self.check_apply()
@@ -62,7 +61,9 @@ class TestUser(TestCaseWithRunner):
     def test_user_with_group(self):
         self.bundle.add(User(name="test", group="nogroup"))
         self.check_apply()
-        self.assertEqual(platform.getpwnam("test").pw_gid, platform.getgrnam("nogroup").gr_gid)
+        self.assertEqual(
+            platform.getpwnam("test").pw_gid, platform.getgrnam("nogroup").gr_gid
+        )
 
     def test_user_with_groups(self):
         self.bundle.add(User(name="test", groups=["nogroup"]))
@@ -76,7 +77,6 @@ class TestUser(TestCaseWithRunner):
 
 
 class TestUserRemove(TestCaseWithRunner):
-
     def test_remove_existing(self):
         self.assertTrue(platform.getpwnam("nobody"))
         self.bundle.add(User(name="nobody", policy="remove"))

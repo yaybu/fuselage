@@ -21,63 +21,42 @@ from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestDirectory(TestCaseWithRunner):
-
     def test_create_directory(self):
-        self.bundle.add(Directory(
-            name="/etc/somedir",
-            owner="root",
-            group="root",
-        ))
+        self.bundle.add(Directory(name="/etc/somedir", owner="root", group="root",))
         self.check_apply()
         self.assertTrue(platform.isdir("/etc/somedir"))
 
     def test_create_directory_and_parents(self):
-        self.bundle.add(Directory(
-            name="/etc/foo/bar/baz",
-            parents=True,
-        ))
+        self.bundle.add(Directory(name="/etc/foo/bar/baz", parents=True,))
         self.check_apply()
         self.assertTrue(platform.isdir("/etc/foo/bar/baz"))
 
     def test_remove_directory(self):
         platform.makedirs("/etc/somedir")
-        self.bundle.add(Directory(
-            name="/etc/somedir",
-            policy="remove",
-        ))
+        self.bundle.add(Directory(name="/etc/somedir", policy="remove",))
         self.check_apply()
         self.failIfExists("/etc/somedir")
 
     def test_remove_directory_recursive(self):
         platform.makedirs("/etc/somedir")
         platform.put("/etc/somedir/child", "")
-        self.bundle.add(Directory(
-            name="/etc/somedir",
-            policy="remove-recursive",
-        ))
+        self.bundle.add(Directory(name="/etc/somedir", policy="remove-recursive",))
         self.check_apply()
         self.failIfExists("/etc/somedir")
 
     def test_unicode(self):
-        self.bundle.add(Directory(
-            name="/etc/☃",
-            owner="root",
-            group="root",
-        ))
+        self.bundle.add(Directory(name="/etc/☃", owner="root", group="root",))
         self.check_apply()
         self.failUnlessExists("/etc/☃")
 
     def test_attributes(self):
-        self.bundle.add(Directory(
-            name="/etc/somedir",
-            owner="nobody",
-            group="nogroup",
-            mode=0o777,
-        ))
+        self.bundle.add(
+            Directory(name="/etc/somedir", owner="nobody", group="nogroup", mode=0o777,)
+        )
         self.check_apply()
         self.failUnlessExists("/etc/somedir")
         st = platform.stat("/etc/somedir")
-        self.assertEqual(platform.getpwuid(st.st_uid)[0], 'nobody')
-        self.assertEqual(platform.getgrgid(st.st_gid)[0], 'nogroup')
+        self.assertEqual(platform.getpwuid(st.st_uid)[0], "nobody")
+        self.assertEqual(platform.getgrgid(st.st_gid)[0], "nogroup")
         mode = stat.S_IMODE(st.st_mode)
         self.assertEqual(mode, 0o777)

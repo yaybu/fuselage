@@ -29,7 +29,16 @@ class Runner(object):
 
     state_path = "/var/run/yaybu"
 
-    def __init__(self, resources, resume=False, no_resume=False, no_changes_ok=False, simulate=False, verbosity=logging.INFO, state_path=None):
+    def __init__(
+        self,
+        resources,
+        resume=False,
+        no_resume=False,
+        no_changes_ok=False,
+        simulate=False,
+        verbosity=logging.INFO,
+        state_path=None,
+    ):
         if resume and no_resume:
             raise error.ParseError("'resume' and 'no_resume' cannot both be True")
 
@@ -93,19 +102,18 @@ class Runner(object):
                 raise
             changed = []
 
-        #FIXME: Do we get here if no change has occured??
+        # FIXME: Do we get here if no change has occured??
         self.state.success()
 
         return changed
 
 
 class BundledRunner(Runner):
-
     @classmethod
     def get_resources(self):
         loader = pkgutil.get_loader("fuselage")
         try:
-            resources_json = loader.get_data("resources.json").decode('ascii')
+            resources_json = loader.get_data("resources.json").decode("ascii")
         except IOError:
             raise error.ParseError("Bundle is missing resources.json")
         b = bundle.ResourceBundle()

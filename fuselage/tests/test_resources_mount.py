@@ -17,14 +17,11 @@ from fuselage.tests.base import TestCaseWithBundle, fuzz_resource
 
 
 class TestMount(TestCaseWithBundle):
-
     def test_minimal(self):
-        r = self.bundle.add(Mount(
-            name='/tmp/my-mount',
-            fs_type='ext3',
-            device='/dev/sda1',
-        ))
-        self.assertEqual(r.name, '/tmp/my-mount')
+        r = self.bundle.add(
+            Mount(name="/tmp/my-mount", fs_type="ext3", device="/dev/sda1",)
+        )
+        self.assertEqual(r.name, "/tmp/my-mount")
 
     def test_fuzz(self):
         fuzz_resource(Mount)

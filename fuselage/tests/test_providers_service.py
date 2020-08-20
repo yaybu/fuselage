@@ -50,19 +50,20 @@ if __name__ == "__main__":
 
 
 class TestService(TestCaseWithRunner):
-
     def setUp(self):
         super(TestService, self).setUp()
         platform.put("/bin/simpleservice", simpleservice)
         platform.check_call(["chmod", "755", "/bin/simpleservice"])
 
     def test_start(self):
-        self.bundle.add(Service(
-            name="test",
-            policy="start",
-            start="python /bin/simpleservice",
-            pidfile="/simple_daemon.pid",
-        ))
+        self.bundle.add(
+            Service(
+                name="test",
+                policy="start",
+                start="python /bin/simpleservice",
+                pidfile="/simple_daemon.pid",
+            )
+        )
         try:
             self.check_apply()
         finally:
@@ -70,41 +71,45 @@ class TestService(TestCaseWithRunner):
             platform.check_call(["kill", str(pid)])
 
     def test_start_running(self):
-        self.bundle.add(Service(
-            name="test",
-            policy="start",
-            start="touch /test_start_running",
-            running="/bin/sh -c 'true'",
-        ))
+        self.bundle.add(
+            Service(
+                name="test",
+                policy="start",
+                start="touch /test_start_running",
+                running="/bin/sh -c 'true'",
+            )
+        )
         self.assertRaises(error.NothingChanged, self.apply)
         self.failIfExists("/test_start_running")
 
     def test_start_not_running(self):
-        self.bundle.add(Service(
-            name="test",
-            policy="start",
-            start="touch /test_start_not_running",
-            running="test -e /test_start_not_running",
-        ))
+        self.bundle.add(
+            Service(
+                name="test",
+                policy="start",
+                start="touch /test_start_not_running",
+                running="test -e /test_start_not_running",
+            )
+        )
         self.check_apply()
         self.failUnlessExists("/test_start_not_running")
 
     def test_stop(self):
         platform.check_call(["python", "/bin/simpleservice"])
 
-        self.bundle.add(Service(
-            name="test",
-            policy="stop",
-            stop="sh -c 'kill $(cat /simple_daemon.pid)'",
-            pidfile="/simple_daemon.pid",
-        ))
+        self.bundle.add(
+            Service(
+                name="test",
+                policy="stop",
+                stop="sh -c 'kill $(cat /simple_daemon.pid)'",
+                pidfile="/simple_daemon.pid",
+            )
+        )
         self.check_apply()
 
     def test_restart(self):
-        self.bundle.add(Service(
-            name="test",
-            policy="restart",
-            restart="touch /restarted",
-        ))
+        self.bundle.add(
+            Service(name="test", policy="restart", restart="touch /restarted",)
+        )
         self.apply()
         self.failUnlessExists("/restarted")

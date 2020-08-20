@@ -84,7 +84,5 @@ class Mount(provider.Provider):
             if options:
                 command.extend(("-o", options))
 
-            self.change(ShellCommand(
-                command=command,
-            ))
+            self.change(ShellCommand(command=command,))
             return True

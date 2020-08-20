@@ -18,7 +18,6 @@ from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestApt(TestCaseWithRunner):
-
     def test_already_installed(self):
         self.bundle.add(Package(name="python"))
         self.assertRaises(error.NothingChanged, self.apply)
@@ -47,7 +46,6 @@ class TestApt(TestCaseWithRunner):
 
 
 class TestPackageRemoval(TestCaseWithRunner):
-
     def test_installed(self):
         self.bundle.add(Package(name="python", policy="uninstall"))
         self.check_apply()

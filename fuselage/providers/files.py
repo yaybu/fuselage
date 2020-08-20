@@ -34,9 +34,13 @@ class File(provider.Provider):
         for i in frags:
             path = os.path.join(path, i)
             if not platform.exists(path):
-                self.raise_or_log(error.PathComponentMissing("Directory '%s' is missing" % path))
+                self.raise_or_log(
+                    error.PathComponentMissing("Directory '%s' is missing" % path)
+                )
             elif not platform.isdir(path):
-                raise error.PathComponentNotDirectory("Path '%s' is not a directory" % path)
+                raise error.PathComponentNotDirectory(
+                    "Path '%s' is not a directory" % path
+                )
 
     def apply(self):
         name = self.resource.name
@@ -46,6 +50,7 @@ class File(provider.Provider):
         if self.resource.source:
             if self.resource.source.startswith("bundle://"):
                 import pkgutil
+
                 loader = pkgutil.get_loader("fuselage")
                 contents = loader.get_data("assets/" + self.resource.source[9:])
             else:
@@ -91,7 +96,7 @@ class RemoveFile(provider.Provider):
 
 
 class WatchFile(provider.Provider):
-    policies = (resources.file.FileWatchedPolicy, )
+    policies = (resources.file.FileWatchedPolicy,)
 
     def apply(self):
         """ Watched files don't have any policy applied to them """

@@ -18,22 +18,20 @@ from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestDummyCheckout(TestCaseWithRunner):
-
     def test_dummy_checkout(self):
         self.bundle.add(Directory(name="/dummy"))
-        self.bundle.add(Checkout(
-            name="/dummy",
-            repository="",
-            scm='dummy',
-            changes=['/dummy/foo'],
-        ))
-        self.bundle.add(File(name="/dummy/change_detected", watches=['Checkout[/dummy]']))
+        self.bundle.add(
+            Checkout(name="/dummy", repository="", scm="dummy", changes=["/dummy/foo"],)
+        )
+        self.bundle.add(
+            File(name="/dummy/change_detected", watches=["Checkout[/dummy]"])
+        )
         self.apply()
-        self.failUnlessExists('/dummy/change_detected')
+        self.failUnlessExists("/dummy/change_detected")
 
         # This step shouldn't be idempotent - its meant to be used with
         # vagrant's /vagrant - every 'vagrant provision' should re-run
         # migrations
-        platform.unlink('/dummy/change_detected')
+        platform.unlink("/dummy/change_detected")
         self.apply()
-        self.failUnlessExists('/dummy/change_detected')
+        self.failUnlessExists("/dummy/change_detected")

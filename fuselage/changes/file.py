@@ -30,8 +30,10 @@ PRINTABLE = string.printable.encode("utf-8")
 def binary_buffers(*buffers):
     """ Check all of the passed buffers to see if any of them are binary. If
     any of them are binary this will return True. """
+
     def is_printable(value):
         return len(buff) == sum(1 for c in buff if c in PRINTABLE)
+
     for buff in buffers:
         if not buff:
             continue
@@ -56,14 +58,16 @@ class EnsureContents(base.Change):
     def diff(self, context, note, previous, replacement):
         extra = {}
         if self.sensitive:
-            extra['fuselage.diff'] = 'No diff; sensitive file contents'
+            extra["fuselage.diff"] = "No diff; sensitive file contents"
         elif not binary_buffers(previous, replacement):
             previous = force_str(previous)
             replacement = force_str(replacement)
-            diff = "".join(difflib.unified_diff(previous.splitlines(1), replacement.splitlines(1)))
-            extra['fuselage.diff'] = diff
+            diff = "".join(
+                difflib.unified_diff(previous.splitlines(1), replacement.splitlines(1))
+            )
+            extra["fuselage.diff"] = diff
         else:
-            extra['fuselage.diff'] = 'No diff; binary files'
+            extra["fuselage.diff"] = "No diff; binary files"
         context.changelog.critical(note, extra=extra)
 
     def empty_file(self, context):
@@ -107,7 +111,6 @@ class EnsureContents(base.Change):
 
 
 class EnsureFile(base.Change):
-
     def __init__(self, filename, contents, user, group, mode, sensitive=False):
         self.filename = filename
         self.contents = contents

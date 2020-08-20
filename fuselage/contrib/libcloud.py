@@ -24,7 +24,6 @@ from fuselage.bundle import ResourceBundle
 
 
 class FuselageDeployment(deployment.Deployment):
-
     def __init__(self, bundle=None, resources=None):
         self.bundle = bundle
 
@@ -35,8 +34,8 @@ class FuselageDeployment(deployment.Deployment):
             self.bundle.extend(resources)
 
     def run(self, node, client):
-        random_string = binascii.hexlify(os.urandom(4)).decode('ascii')
-        name = 'fuselage_%s' % (random_string)
+        random_string = binascii.hexlify(os.urandom(4)).decode("ascii")
+        name = "fuselage_%s" % (random_string)
 
         bu = builder.build(self.bundle)
 

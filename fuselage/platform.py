@@ -45,13 +45,13 @@ pathsep = os.pathsep
 class Handle(object):
 
     LF = force_bytes(os.linesep)
-    CR = b'\r'
+    CR = b"\r"
 
     def __init__(self, handle, callback=None):
         self.handle = handle
         self.callback = callback
         self._output = []
-        self._buffer = b''
+        self._buffer = b""
 
     def fileno(self):
         return self.handle.fileno()
@@ -68,10 +68,10 @@ class Handle(object):
         self.feed(self.handle.read())
 
     def flush(self):
-        self.feed(b'')
+        self.feed(b"")
         if self._buffer:
             self.feed_line(self._buffer)
-            self._buffer = b''
+            self._buffer = b""
 
     def feed(self, data):
         data = self._buffer + data
@@ -105,8 +105,9 @@ class Handle(object):
 
 
 class Process(subprocess.Popen):
-
-    def __init__(self, command, user=None, uid=None, gid=None, group=None, umask=None, **kwargs):
+    def __init__(
+        self, command, user=None, uid=None, gid=None, group=None, umask=None, **kwargs
+    ):
         self.callback = None
         self.uid = uid
         self.gid = gid
@@ -116,12 +117,12 @@ class Process(subprocess.Popen):
             self.gid = grp.getgrnam(group).gr_gid
         self.umask = umask
 
-        if platform != 'win32':
-            kwargs['preexec_fn'] = self.preexec
-        if 'stdout' not in kwargs:
-            kwargs['stdout'] = subprocess.PIPE
-        if 'stderr' not in kwargs:
-            kwargs['stderr'] = subprocess.PIPE
+        if platform != "win32":
+            kwargs["preexec_fn"] = self.preexec
+        if "stdout" not in kwargs:
+            kwargs["stdout"] = subprocess.PIPE
+        if "stderr" not in kwargs:
+            kwargs["stderr"] = subprocess.PIPE
         super(Process, self).__init__(command, **kwargs)
 
     def preexec(self):
@@ -145,16 +146,12 @@ class Process(subprocess.Popen):
 
     def communicate_win32(self, stdout, stderr):
         if self.stdout:
-            stdout_thread = threading.Thread(
-                target=stdout.read_win32,
-            )
+            stdout_thread = threading.Thread(target=stdout.read_win32,)
             stdout_thread.setDaemon(True)
             stdout_thread.start()
 
         if self.stderr:
-            stderr_thread = threading.Thread(
-                target=stderr.read_win32,
-            )
+            stderr_thread = threading.Thread(target=stderr.read_win32,)
             stderr_thread.setDaemon(True)
             stderr_thread.start()
 
@@ -220,20 +217,22 @@ class Process(subprocess.Popen):
 
 
 def check_call(command, *args, **kwargs):
-    logger = kwargs.pop('logger', None)
-    expected = kwargs.pop('expected', 0)
-    encoding = kwargs.pop('encoding', 'UTF-8')
-    stdin = kwargs.pop('stdin', None)
-    kwargs['stdin'] = subprocess.PIPE if stdin else None
-    kwargs.setdefault('shell', not isinstance(command, list))
+    logger = kwargs.pop("logger", None)
+    expected = kwargs.pop("expected", 0)
+    encoding = kwargs.pop("encoding", "UTF-8")
+    stdin = kwargs.pop("stdin", None)
+    kwargs["stdin"] = subprocess.PIPE if stdin else None
+    kwargs.setdefault("shell", not isinstance(command, list))
 
     env = {}
     if platform == "posix":
-        env.update({"PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"})
+        env.update(
+            {"PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"}
+        )
     if "SSH_AUTH_SOCK" in os.environ:
         env["SSH_AUTH_SOCK"] = os.environ["SSH_AUTH_SOCK"]
     env.update(kwargs.get("env", {}))
-    kwargs['env'] = env
+    kwargs["env"] = env
 
     p = Process(command, *args, **kwargs)
     if logger:
@@ -317,6 +316,7 @@ def spwd_supported():
 
 
 if gr_supported():
+
     def getgrall():
         return list(grp.getgrall())
 
@@ -325,6 +325,8 @@ if gr_supported():
 
     def getgrgid(gid):
         return grp.getgrgid(gid)
+
+
 else:
     getgrall = None
     getgrnam = None
@@ -332,6 +334,7 @@ else:
 
 
 if pwd_supported():
+
     def getpwall():
         return list(pwd.getpwall())
 
@@ -340,6 +343,8 @@ if pwd_supported():
 
     def getpwuid(uid):
         return pwd.getpwuid(uid)
+
+
 else:
     getpwall = None
     getpwnam = None
@@ -347,11 +352,14 @@ else:
 
 
 if spwd_supported():
+
     def getspall():
         return list(spwd.getspall())
 
     def getspnam(name):
         return spwd.getspnam(name)
+
+
 else:
     getspall = None
     getspnam = None

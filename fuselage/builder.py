@@ -38,7 +38,6 @@ if __name__=="__main__":
 
 
 class Builder(object):
-
     def __init__(self, zfp):
         self.zipfile = zfp
 
@@ -69,7 +68,7 @@ class Builder(object):
             fqname="__main__",
             fp=six.StringIO(MAIN_PY),
             pathname="__main__.py",
-            file_info=("", "r", modulefinder.imp.PY_SOURCE)
+            file_info=("", "r", modulefinder.imp.PY_SOURCE),
         )
 
         for name, mod in finder.modules.items():

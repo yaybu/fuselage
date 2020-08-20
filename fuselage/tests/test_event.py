@@ -18,7 +18,6 @@ from fuselage.tests.base import TestCaseWithRunner
 
 
 class TestEvent(TestCaseWithRunner):
-
     def test_nochange(self):
         self.bundle.add(Directory(name="/etc/wibble"))
         self.check_apply()
