@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from fuselage import platform
+
 from tests.base import TestCaseWithRunner
 
 

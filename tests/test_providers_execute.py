@@ -16,6 +16,7 @@ import stat
 
 from fuselage import error, platform
 from fuselage.resources import Execute
+
 from tests.base import TestCaseWithRunner
 
 

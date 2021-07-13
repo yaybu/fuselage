@@ -18,6 +18,7 @@ import tempfile
 
 from fuselage import error, platform
 from fuselage.resources import File
+
 from tests.base import TestCaseWithRealRunner, TestCaseWithRunner
 
 

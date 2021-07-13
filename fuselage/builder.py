@@ -13,12 +13,11 @@
 # limitations under the License.
 
 import hashlib
+import io
 import modulefinder
 import os
 import pkgutil
 import zipfile
-
-import six
 
 MAIN_PY = """
 import logging
@@ -70,7 +69,7 @@ class Builder:
         finder.scan_code(co, m)
 
         for name, mod in finder.modules.items():
-            mods = ("fuselage", "six")
+            mods = "fuselage"
             for m in mods:
                 if name.startswith(m):
                     break
@@ -102,7 +101,7 @@ class Builder:
 
 
 def build(bundle, name="payload.pex"):
-    buffer = six.BytesIO()
+    buffer = io.BytesIO()
     buffer.name = name
 
     bu = Builder.write_to(buffer)

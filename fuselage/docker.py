@@ -13,10 +13,9 @@
 # limitations under the License.
 
 
+import io
 import json
 import tarfile
-
-import six
 
 from fuselage.builder import build
 
@@ -88,7 +87,7 @@ class DockerBuilder:
         return "\n".join(df)
 
     def build(self):
-        tar_buffer = six.BytesIO()
+        tar_buffer = io.BytesIO()
         tar = tarfile.open(mode="w:gz", fileobj=tar_buffer)
 
         def add(name, buf, mode=0o644):
@@ -98,7 +97,7 @@ class DockerBuilder:
             tar.addfile(tarinfo=ti, fileobj=buf)
 
         add("payload.pex", build(self.bundle), mode=0o755)
-        add("Dockerfile", six.BytesIO(self.get_dockerfile()))
+        add("Dockerfile", io.BytesIO(self.get_dockerfile()))
 
         tar.close()
         tar_buffer.seek(0)

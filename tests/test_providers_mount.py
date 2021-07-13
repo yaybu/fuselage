@@ -14,6 +14,7 @@
 
 from fuselage import platform
 from fuselage.resources import Mount
+
 from tests.base import TestCaseWithRunner
 
 

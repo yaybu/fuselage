@@ -14,6 +14,7 @@
 
 from fuselage import error
 from fuselage.resources import Package
+
 from tests.base import TestCaseWithRunner
 
 

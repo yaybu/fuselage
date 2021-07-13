@@ -20,8 +20,9 @@ import unittest
 from unittest import mock
 
 from fuselage import error, platform
-from tests.base import skipIf
 from fuselage.utils import force_bytes
+
+from tests.base import skipIf
 
 
 class TestPlatform(unittest.TestCase):

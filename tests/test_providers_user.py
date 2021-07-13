@@ -14,6 +14,7 @@
 
 from fuselage import error, platform
 from fuselage.resources import Group, User
+
 from tests.base import TestCaseWithRunner
 
 

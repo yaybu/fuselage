@@ -14,6 +14,7 @@
 
 from fuselage import platform
 from fuselage.resources import Checkout, Directory, File
+
 from tests.base import TestCaseWithRunner
 
 

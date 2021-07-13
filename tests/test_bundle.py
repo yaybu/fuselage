@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import io
 import unittest
-
-import six
 
 from fuselage import bundle, error, resources
 
@@ -78,7 +77,7 @@ class TestBundle(unittest.TestCase):
 
     def test_load(self):
         self.bundle.load(
-            six.StringIO(
+            io.StringIO(
                 """
         {"version": 1, "resources": [{"File": {"name": "/tmp"}}]}
         """

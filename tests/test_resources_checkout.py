@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from fuselage.resources import Checkout
+
 from tests.base import TestCaseWithBundle, fuzz_resource
 
 

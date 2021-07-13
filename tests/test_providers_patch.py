@@ -14,6 +14,7 @@
 
 from fuselage import error, platform
 from fuselage.resources import Patch
+
 from tests.base import TestCaseWithRunner
 
 EMPTY_FILE_DIFF = """

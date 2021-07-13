@@ -12,33 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import io
 import unittest
 import zipfile
-
-import six
 
 from fuselage import builder, bundle, resources
 
 
 class TestBuilder(unittest.TestCase):
     def test_build_no_resources(self):
-        fp = six.BytesIO()
+        fp = io.BytesIO()
         b = builder.Builder.write_to(fp)
         b.embed_fuselage_runtime()
         b.close()
 
-        z = zipfile.ZipFile(six.BytesIO(fp.getvalue()))
+        z = zipfile.ZipFile(io.BytesIO(fp.getvalue()))
         self.assertEqual(z.getinfo("__main__.py").file_size, len(builder.MAIN_PY))
 
     def test_build_resources(self):
         rb = bundle.ResourceBundle()
         rb.add(resources.User(name="matt"))
-        fp = six.BytesIO()
+        fp = io.BytesIO()
         b = builder.Builder.write_to(fp)
         b.embed_fuselage_runtime()
         b.embed_resource_bundle(rb)
         b.close()
 
-        z = zipfile.ZipFile(six.BytesIO(fp.getvalue()))
+        z = zipfile.ZipFile(io.BytesIO(fp.getvalue()))
         # This will raise a KeyError if there is no resources.json..
         z.getinfo("resources.json")

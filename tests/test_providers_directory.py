@@ -16,6 +16,7 @@ import stat
 
 from fuselage import platform
 from fuselage.resources import Directory
+
 from tests.base import TestCaseWithRunner
 
 

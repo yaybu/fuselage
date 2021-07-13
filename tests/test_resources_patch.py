@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from fuselage.resources import Patch
+
 from tests.base import TestCaseWithBundle, fuzz_resource
 
 
