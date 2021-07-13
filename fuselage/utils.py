@@ -19,8 +19,6 @@ import unicodedata
 def force_str(s):
     if isinstance(s, str):
         return s
-    elif isinstance(s, str):
-        return s.encode("utf-8")
     elif isinstance(s, bytes):
         return s.decode("utf-8")
     raise ValueError("Not a string")
