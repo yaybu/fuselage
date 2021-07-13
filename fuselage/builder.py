@@ -69,14 +69,8 @@ class Builder:
         finder.scan_code(co, m)
 
         for name, mod in finder.modules.items():
-            mods = "fuselage"
-            for m in mods:
-                if name.startswith(m):
-                    break
-            else:
+            if not name.startswith("fuselage"):
                 continue
-
-            assert not name.startswith("tests.")
 
             # Use pkgutil to get the code - this is zipsafe so will work even if
             # running from a py2exe type binary installation.
