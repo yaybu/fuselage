@@ -8,13 +8,12 @@ To use fuselage:
 * Transfer that payload to your server.
 * Run it.
 
-It's fast. Unlike some configuration management tools the entire process runs on the target. It doesn't rely on a round trip between every step.
+Should you use fuselage? Probably not. But if you are wondering why:
 
-It's small. It's only dependency is a python3 interpreter on the target systemm plus some common posix binaries.
-
-It's secure. It doesn't bring it's on control plane that you need to understand in detail to properly secure.
-
-It's simple. It provides the absolute minimum, and tries to get out the way for the stuff where it doesn't need to have an opinion. Bring your own template engine, or don't use one at all.  Bring your own control plane. Run it from a deamonset, run it via fabric or even just use scp and run it by hand.
+* It's **fast**. Unlike some configuration management tools the entire process runs on the target. It doesn't rely on a round trip between every step.
+* It's **small**. It's only dependency is a python3 interpreter on the target systemm plus some common posix binaries.
+* It's **secure**. It doesn't bring it's onw control plane that you need to understand in detail to properly secure.
+* It's **simple**. It provides the absolute minimum, and tries to get out the way for the stuff where it doesn't need to have an opinion. Bring your own template engine, or don't use one at all.  Bring your own control plane. Run it from a deamonset, run it via fabric or even just use scp and run it by hand.
 
 
 ## Using with fabric
