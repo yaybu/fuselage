@@ -16,7 +16,7 @@ import json
 import logging
 
 from fuselage import error, log
-from fuselage.resource import ResourceType
+from fuselage.resource import ResourceType, Resource
 
 logger = logging.getLogger(__name__)
 
@@ -123,7 +123,7 @@ class ResourceBundle:
 
         return self.add(resource)
 
-    def add(self, resource):
+    def add(self, resource: Resource):
         if resource.typed_id in self._index_by_id:
             raise error.ParseError("Resources cannot be defined multiple times")
 
