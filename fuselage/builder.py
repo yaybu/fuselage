@@ -77,7 +77,7 @@ class Builder:
             else:
                 continue
 
-            assert not name.startswith("fuselage.tests.")
+            assert not name.startswith("tests.")
 
             # Use pkgutil to get the code - this is zipsafe so will work even if
             # running from a py2exe type binary installation.
