@@ -16,7 +16,7 @@ import json
 import logging
 
 from fuselage import error, log
-from fuselage.resource import ResourceType, Resource
+from fuselage.resource import Resource, ResourceType
 
 logger = logging.getLogger(__name__)
 
