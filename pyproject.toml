@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fuselage"
-version = "3.0.0"
+version = "3.1.0"
 description = "Orchestration and configuration management in Python"
 authors = ["Isotoma Limited <support@isotoma.com>"]
 license = "Apache-2.0"
