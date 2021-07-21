@@ -19,6 +19,8 @@ import os
 import pkgutil
 import zipfile
 
+from fuselage.bundle import ResourceBundle
+
 MAIN_PY = """
 import logging
 import sys
@@ -56,7 +58,7 @@ class Builder:
         self.zipfile.writestr(os.path.join("assets", name), payload)
         return "bundle://" + name
 
-    def embed_resource_bundle(self, bundle):
+    def embed_resource_bundle(self, bundle: ResourceBundle):
         data = bundle.dumps(self)
         self.zipfile.writestr("resources.json", data)
 
@@ -94,7 +96,7 @@ class Builder:
         self.zipfile.close()
 
 
-def build(bundle, name="payload.pex"):
+def build(bundle: ResourceBundle, name: str="payload.pex") -> io.BytesIO:
     buffer = io.BytesIO()
     buffer.name = name
 
