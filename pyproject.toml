@@ -16,8 +16,12 @@ classifiers = [
     "Programming Language :: Python :: 3.9"
 ]
 
+[tool.poetry.extras]
+ssh = ["paramiko"]
+
 [tool.poetry.dependencies]
 python = "^3.7"
+paramiko = {version = "^2.7.2", optional = true}
 
 [tool.poetry.dev-dependencies]
 fakechroot = ">=0.2.1"
