@@ -531,10 +531,13 @@ python-versions = ">=3.6"
 docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
+[extras]
+ssh = ["paramiko"]
+
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "258bb8978fed05f84433f8f1f0d99dedf0a20e6262acf2d4d6fa452fb6c39821"
+content-hash = "b2691d572cb6b423ca4c806c6004d59b90a42b059eb450143937e02d629007e4"
 
 [metadata.files]
 apache-libcloud = [

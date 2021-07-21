@@ -16,6 +16,39 @@ Should you use fuselage? Probably not. But if you are wondering why:
 * It's **simple**. It provides the absolute minimum, and tries to get out the way for the stuff where it doesn't need to have an opinion. Bring your own template engine, or don't use one at all.  Bring your own control plane. Run it from a deamonset, run it via fabric or even just use scp and run it by hand.
 
 
+## Using with paramiko
+
+```python
+import paramiko
+
+from fuselage.bundle import ResourceBundle
+from fuselage.resources import *
+from fuselage.ssh import execute_via_ssh
+
+
+bundle = ResourceBundle()
+
+bundle.add(File(
+    name="/tmp/hello.txt",
+    contents="A test file!!",
+))
+
+transport = paramiko.Transport(("localhost", 22))
+transport.connect(
+    username="john",
+    password="my super sekrit password",
+)
+
+# Compile the bundle, scp it to target server, execute it via sudo
+execute_via_ssh(
+    transport,
+    bundle,
+    "root",
+    sudo_password="my super sekrit password"
+)
+```
+
+
 ## Using with fabric
 
 You will need to install fabric explicitly. Fuselage does not depend on fabric.

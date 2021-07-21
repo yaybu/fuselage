@@ -96,7 +96,7 @@ class Builder:
         self.zipfile.close()
 
 
-def build(bundle: ResourceBundle, name: str="payload.pex") -> io.BytesIO:
+def build(bundle: ResourceBundle, name: str = "payload.pex") -> io.BytesIO:
     buffer = io.BytesIO()
     buffer.name = name
 
