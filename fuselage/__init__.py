@@ -12,5 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-__homepage__ = "http://docs.yaybu.com/projects/fuselage"
-__docformat__ = "restructuredtext"
+from .bundle import ResourceBundle
+from .resources import (
+    Checkout,
+    Directory,
+    Execute,
+    File,
+    Group,
+    Line,
+    Link,
+    Mount,
+    Package,
+    Patch,
+    Service,
+    Special,
+    User,
+)
+
+__all__ = [
+    "ResourceBundle",
+    "Checkout",
+    "Directory",
+    "Execute",
+    "File",
+    "Group",
+    "Line",
+    "Link",
+    "Mount",
+    "Package",
+    "Patch",
+    "Service",
+    "Special",
+    "User",
+]
