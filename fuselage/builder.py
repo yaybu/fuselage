@@ -42,7 +42,7 @@ class Builder:
 
     @classmethod
     def write_to(cls, fp):
-        fp.write(b"#!/usr/bin/env python\n")
+        fp.write(b"#!/usr/bin/env python3\n")
         obj = cls(zipfile.ZipFile(fp, "w", compression=zipfile.ZIP_DEFLATED))
         obj.fp = fp
         return obj
