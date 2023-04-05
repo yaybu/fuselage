@@ -58,7 +58,16 @@ class AptInstall(provider.Provider):
 
         # the search returned 1, package is not installed, continue and install
         # it
-        command = ["apt-get", "install", "-q", "-y", "--force-yes", self.resource.name]
+        command = [
+            "apt-get",
+            "install",
+            "-q",
+            "-y",
+            "--force-yes",
+            "-o",
+            "DPkg::Options::=--force-confdef",
+            self.resource.name
+        ]
 
         try:
             self.change(ShellCommand(command, env=env))
