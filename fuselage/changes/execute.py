@@ -79,7 +79,7 @@ class ShellCommand(base.Change):
         """ Ensure all elements of the list are unicode """
 
         def uni(x):
-            if isinstance(x, type("")):
+            if isinstance(x, str):
                 return x
             return x.encode("utf-8")
 

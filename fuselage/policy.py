@@ -105,7 +105,7 @@ class Present(ArgumentAssertion):
         return resource.__args__[self.name].present(resource)
 
     def describe(self, resource):
-        yield "'{}' must be present ({})".format(self.name, self.test(resource))
+        yield f"'{self.name}' must be present ({self.test(resource)})"
 
 
 class Absent(Present):
@@ -117,7 +117,7 @@ class Absent(Present):
         return not super().test(resource)
 
     def describe(self, resource):
-        yield "'{}' must be absent ({})".format(self.name, self.test(resource))
+        yield f"'{self.name}' must be absent ({self.test(resource)})"
 
 
 class AND(ArgumentAssertion):
