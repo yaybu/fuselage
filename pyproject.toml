@@ -20,7 +20,7 @@ classifiers = [
 ssh = ["paramiko"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8.1"
 paramiko = {version = "^2.7.2", optional = true}
 
 [tool.poetry.dev-dependencies]
@@ -28,7 +28,7 @@ fakechroot = ">=0.2.1"
 unittest2 = "^1.1.0"
 isort = "^5.4.0"
 black = "^22.3.0"
-flake8 = "^3.0.0"
+flake8 = "^6.0.0"
 pytest = "^6.0.0"
 coverage = "^5.0.3"
 codecov = "^2.0.15"
