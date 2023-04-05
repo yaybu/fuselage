@@ -20,7 +20,7 @@ from fuselage.resource import Resource
 
 class Checkout(Resource):
 
-    """ This represents a "working copy" from a Source Code Management system.
+    """This represents a "working copy" from a Source Code Management system.
     This could be provided by, for example, Subversion or Git remote
     repositories.
 
@@ -69,11 +69,11 @@ class Checkout(Resource):
 
 class CheckoutSyncPolicy(Policy):
 
-    """ Synchronise the working copy with the remote SCM location. This is
+    """Synchronise the working copy with the remote SCM location. This is
     done by performing appropriate "switch" and "update" operations such that
     the working copy ends up in the correct state. This will never commit
     changes from the working copy - it is intended to track a remote location
-    only. """
+    only."""
 
     resource = Checkout
     name = "sync"
@@ -87,9 +87,9 @@ class CheckoutSyncPolicy(Policy):
 
 class CheckoutExportPolicy(Policy):
 
-    """ Perform an export of the remote location, as for example "svn export".
+    """Perform an export of the remote location, as for example "svn export".
     This means this is not a working copy of the remote location, it is
-    instead a clean copy of the specified source material. """
+    instead a clean copy of the specified source material."""
 
     resource = Checkout
     name = "export"

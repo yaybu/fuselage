@@ -22,7 +22,7 @@ from fuselage.utils import force_str
 
 class ShellCommand(base.Change):
 
-    """ Execute and log a change """
+    """Execute and log a change"""
 
     changed = True
 
@@ -76,7 +76,7 @@ class ShellCommand(base.Change):
         self.expected = expected
 
     def _tounicode(self, value):
-        """ Ensure all elements of the list are unicode """
+        """Ensure all elements of the list are unicode"""
 
         def uni(x):
             if isinstance(x, str):

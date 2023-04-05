@@ -24,6 +24,11 @@ class TestMount(TestCaseWithRunner):
         platform.check_call(["chmod", "755", "/bin/mount"])
 
         self.bundle.add(
-            Mount(name="/mnt", fs_type="bind", device="/bin", options="hello",)
+            Mount(
+                name="/mnt",
+                fs_type="bind",
+                device="/bin",
+                options="hello",
+            )
         )
         self.apply()

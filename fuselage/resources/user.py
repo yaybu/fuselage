@@ -19,7 +19,7 @@ from fuselage.resource import Resource
 
 class User(Resource):
 
-    """ A resource representing a UNIX user in the password database. The underlying implementation currently uses the "useradd" and "usermod" commands to implement this resource.
+    """A resource representing a UNIX user in the password database. The underlying implementation currently uses the "useradd" and "usermod" commands to implement this resource.
 
     This resource can be used to create, change or delete UNIX users.
 
@@ -82,7 +82,7 @@ class User(Resource):
 
 class UserApplyPolicy(Policy):
 
-    """ Create or change the specified user.
+    """Create or change the specified user.
 
     It might not be possible to apply some changes to existing users, for example
     the systeam attribute only makes sense at the point a user is created.
@@ -100,9 +100,9 @@ class UserApplyPolicy(Policy):
 
 class UserRemovePolicy(Policy):
 
-    """ Remove an existing user. This is not recommended in general - you
+    """Remove an existing user. This is not recommended in general - you
     should lock existing accounts instead to preserve file ownership metadata
-    information. """
+    information."""
 
     resource = User
     name = "remove"

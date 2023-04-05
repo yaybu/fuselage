@@ -19,7 +19,11 @@ from tests.base import TestCaseWithBundle, fuzz_resource
 
 class TestGroup(TestCaseWithBundle):
     def test_minimal(self):
-        r = self.bundle.add(Group(name="somegroup",))
+        r = self.bundle.add(
+            Group(
+                name="somegroup",
+            )
+        )
         self.assertEqual(r.name, "somegroup")
 
     def test_fuzz(self):

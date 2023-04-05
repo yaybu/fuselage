@@ -158,7 +158,11 @@ class TestExecute(TestCaseWithRunner):
 
     def test_unless_true(self):
         self.bundle.add(
-            Execute(name="test", command="touch /test_unless_true", unless="/bin/true",)
+            Execute(
+                name="test",
+                command="touch /test_unless_true",
+                unless="/bin/true",
+            )
         )
         self.assertRaises(error.NothingChanged, self.apply)
 
@@ -214,23 +218,53 @@ class TestExecute(TestCaseWithRunner):
         self.assertRaises(error.BinaryMissing, self.apply)
 
     def test_implicit_name(self):
-        self.bundle.add(Execute(command="touch /foo", creates="/foo",))
+        self.bundle.add(
+            Execute(
+                command="touch /foo",
+                creates="/foo",
+            )
+        )
         self.check_apply()
         self.failUnlessExists("/foo")
 
     def test_implicit_name_for_commands(self):
-        self.bundle.add(Execute(commands=["touch /foo"], creates="/foo",))
+        self.bundle.add(
+            Execute(
+                commands=["touch /foo"],
+                creates="/foo",
+            )
+        )
         self.check_apply()
         self.failUnlessExists("/foo")
 
     def test_implicit_name_watch_positive(self):
-        self.bundle.add(Execute(command="touch /foo", creates="/foo",))
-        self.bundle.add(Execute(command="touch /bar", watches=["touch-foo"],))
+        self.bundle.add(
+            Execute(
+                command="touch /foo",
+                creates="/foo",
+            )
+        )
+        self.bundle.add(
+            Execute(
+                command="touch /bar",
+                watches=["touch-foo"],
+            )
+        )
         self.check_apply()
         self.failUnlessExists("/bar")
 
     def test_implicit_name_watch_negative(self):
-        self.bundle.add(Execute(command="touch /foo", creates="/bin/false",))
-        self.bundle.add(Execute(command="touch /bar", watches=["touch-foo"],))
+        self.bundle.add(
+            Execute(
+                command="touch /foo",
+                creates="/bin/false",
+            )
+        )
+        self.bundle.add(
+            Execute(
+                command="touch /bar",
+                watches=["touch-foo"],
+            )
+        )
         self.assertRaises(error.NothingChanged, self.check_apply)
         self.failIfExists("/bar")

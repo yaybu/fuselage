@@ -21,7 +21,7 @@ from fuselage.utils import simple_str
 
 class Execute(Resource):
 
-    """ Execute a command. This command is not executed in a shell - if you
+    """Execute a command. This command is not executed in a shell - if you
     want a shell, run it (for example bash -c).
 
     For example::
@@ -112,7 +112,7 @@ class Execute(Resource):
 
 class ExecutePolicy(Policy):
 
-    """ Execute the the command or commands provided.
+    """Execute the the command or commands provided.
 
     If user or group attributes are provided the command will be run using sudo."""
 

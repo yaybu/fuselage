@@ -43,8 +43,8 @@ class LoggerAdapter(logging.LoggerAdapter):
 
 class ResourceFormatter(logging.Formatter):
 
-    """ Automatically add a header and footer to log messages about particular
-    resources """
+    """Automatically add a header and footer to log messages about particular
+    resources"""
 
     def format(self, record):
         formatted = logging.Formatter.format(self, record)

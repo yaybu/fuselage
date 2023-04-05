@@ -59,7 +59,7 @@ class Line(Resource):
 
 class LineApplyPolicy(Policy):
 
-    """ Create a file and populate it's contents if required.
+    """Create a file and populate it's contents if required.
 
     You must provide a name.
 

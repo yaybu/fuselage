@@ -21,7 +21,7 @@ from fuselage.utils import force_bytes
 
 class File(provider.Provider):
 
-    """ Provides file creation using templates or static files. """
+    """Provides file creation using templates or static files."""
 
     policies = (resources.file.FileApplyPolicy,)
 
@@ -99,5 +99,5 @@ class WatchFile(provider.Provider):
     policies = (resources.file.FileWatchedPolicy,)
 
     def apply(self):
-        """ Watched files don't have any policy applied to them """
+        """Watched files don't have any policy applied to them"""
         return self.resource.hash() != self.resource._original_hash

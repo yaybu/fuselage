@@ -21,9 +21,9 @@ from fuselage.utils import force_str
 
 class Argument:
 
-    """ Stores the argument value on the instance object. It's a bit fugly,
+    """Stores the argument value on the instance object. It's a bit fugly,
     neater ways of doing this that do not involve passing extra arguments to
-    Argument are welcome. """
+    Argument are welcome."""
 
     argument_id = 0
     default = None
@@ -65,7 +65,7 @@ class Argument:
         return value
 
     def __set__(self, instance, value):
-        """ Set the property. The value will be a UTF-8 encoded string read from the yaml source file. """
+        """Set the property. The value will be a UTF-8 encoded string read from the yaml source file."""
         value = self.clean(instance, value)
         self.save(instance, value)
 
@@ -75,8 +75,8 @@ class Argument:
 
 class Boolean(Argument):
 
-    """ Represents a boolean. "1", "yes", "on" and "true" are all considered
-    to be True boolean values. Anything else is False. """
+    """Represents a boolean. "1", "yes", "on" and "true" are all considered
+    to be True boolean values. Anything else is False."""
 
     def clean(self, instance, value):
         if isinstance(value, str):
@@ -95,7 +95,7 @@ class Boolean(Argument):
 
 class String(Argument):
 
-    """ Represents a string. """
+    """Represents a string."""
 
     def clean(self, instance, value):
         if value is not None:
@@ -133,8 +133,8 @@ class String(Argument):
 
 class FullPath(String):
 
-    """ Represents a full path on the filesystem. This should start with a
-    '/'. """
+    """Represents a full path on the filesystem. This should start with a
+    '/'."""
 
     def clean(self, instance, value):
         return super().clean(instance, value)
@@ -146,9 +146,9 @@ class FullPath(String):
 
 class Integer(Argument):
 
-    """ Represents an integer argument taken from the source file. This can
+    """Represents an integer argument taken from the source file. This can
     throw an :py:exc:error.ParseError if the passed in value cannot represent
-    a base-10 integer. """
+    a base-10 integer."""
 
     def clean(self, instance, value):
         if not isinstance(value, int):
@@ -165,7 +165,7 @@ class Integer(Argument):
 
 class Octal(Integer):
 
-    """ An octal integer.  This is specifically used for file permission modes. """
+    """An octal integer.  This is specifically used for file permission modes."""
 
     def clean(self, instance, value):
         if not isinstance(value, int):
@@ -220,7 +220,7 @@ class PolicyTrigger:
 
 class SubscriptionArgument(Argument):
 
-    """ Parses the policy: argument for resources, including triggers etc. """
+    """Parses the policy: argument for resources, including triggers etc."""
 
     def clean(self, instance, value):
         triggers = []
@@ -247,10 +247,10 @@ class SubscriptionArgument(Argument):
 
 class PolicyArgument(Argument):
 
-    """ Parses the policy: argument for resources, including triggers etc. """
+    """Parses the policy: argument for resources, including triggers etc."""
 
     def clean(self, instance, value):
-        """ Set either a default policy or a set of triggers on the policy collection """
+        """Set either a default policy or a set of triggers on the policy collection"""
         try:
             value = instance.policies[value](instance)
         except KeyError:

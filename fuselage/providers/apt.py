@@ -66,7 +66,7 @@ class AptInstall(provider.Provider):
             "--force-yes",
             "-o",
             "DPkg::Options::=--force-confdef",
-            self.resource.name
+            self.resource.name,
         ]
 
         try:

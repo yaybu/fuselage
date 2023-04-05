@@ -144,12 +144,16 @@ class Process(subprocess.Popen):
 
     def communicate_win32(self, stdout, stderr):
         if self.stdout:
-            stdout_thread = threading.Thread(target=stdout.read_win32,)
+            stdout_thread = threading.Thread(
+                target=stdout.read_win32,
+            )
             stdout_thread.setDaemon(True)
             stdout_thread.start()
 
         if self.stderr:
-            stderr_thread = threading.Thread(target=stderr.read_win32,)
+            stderr_thread = threading.Thread(
+                target=stderr.read_win32,
+            )
             stderr_thread.setDaemon(True)
             stderr_thread.start()
 
@@ -324,7 +328,6 @@ if gr_supported():
     def getgrgid(gid):
         return grp.getgrgid(gid)
 
-
 else:
     getgrall = None
     getgrnam = None
@@ -342,7 +345,6 @@ if pwd_supported():
     def getpwuid(uid):
         return pwd.getpwuid(uid)
 
-
 else:
     getpwall = None
     getpwnam = None
@@ -356,7 +358,6 @@ if spwd_supported():
 
     def getspnam(name):
         return spwd.getspnam(name)
-
 
 else:
     getspall = None

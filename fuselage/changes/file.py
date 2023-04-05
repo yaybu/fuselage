@@ -28,8 +28,8 @@ PRINTABLE = string.printable.encode("utf-8")
 
 
 def binary_buffers(*buffers):
-    """ Check all of the passed buffers to see if any of them are binary. If
-    any of them are binary this will return True. """
+    """Check all of the passed buffers to see if any of them are binary. If
+    any of them are binary this will return True."""
 
     def is_printable(value):
         return len(buff) == sum(1 for c in buff if c in PRINTABLE)
@@ -44,9 +44,9 @@ def binary_buffers(*buffers):
 
 class EnsureContents(base.Change):
 
-    """ Apply a content change to a file in a managed way. Simulation mode is
+    """Apply a content change to a file in a managed way. Simulation mode is
     catered for. Additionally the minimum changes required to the contents are
-    applied, and logs of the changes made are recorded. """
+    applied, and logs of the changes made are recorded."""
 
     def __init__(self, filename, contents, sensitive=False):
         self.filename = filename
@@ -71,14 +71,14 @@ class EnsureContents(base.Change):
         context.changelog.critical(note, extra=extra)
 
     def empty_file(self, context):
-        """ Write an empty file if none exists"""
+        """Write an empty file if none exists"""
         if not platform.exists(self.filename):
             context.changelog.debug("Creating empty file %r" % self.filename)
             context.change(ShellCommand(["touch", self.filename]))
             self.changed = True
 
     def overwrite_existing_file(self, context):
-        """ Change the content of an existing file """
+        """Change the content of an existing file"""
         self.current = platform.get(self.filename)
         if self.current != self.contents:
             self.diff(context, "Changing existing file", self.current, self.contents)
@@ -89,14 +89,14 @@ class EnsureContents(base.Change):
             context.logger.debug("Not changing content of file %r" % self.filename)
 
     def write_new_file(self, context):
-        """ Write contents to a new file. """
+        """Write contents to a new file."""
         self.diff(context, "Writing new file", b"", self.contents)
         if not context.simulate:
             platform.put(self.filename, self.contents)
         self.changed = True
 
     def write_file(self, context):
-        """ Write to either an existing or new file """
+        """Write to either an existing or new file"""
         if platform.exists(self.filename):
             self.overwrite_existing_file(context)
         else:
@@ -121,7 +121,7 @@ class EnsureFile(base.Change):
         self.sensitive = sensitive
 
     def apply(self, context):
-        """ Apply the changes necessary to the file contents. """
+        """Apply the changes necessary to the file contents."""
         fc = EnsureContents(self.filename, self.contents, sensitive=self.sensitive)
         context.change(fc)
 

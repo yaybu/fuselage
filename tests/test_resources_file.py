@@ -19,7 +19,11 @@ from tests.base import TestCaseWithBundle, fuzz_resource
 
 class TestFile(TestCaseWithBundle):
     def test_minimal(self):
-        r = self.bundle.add(File(name="/tmp/my-file",))
+        r = self.bundle.add(
+            File(
+                name="/tmp/my-file",
+            )
+        )
         self.assertEqual(r.name, "/tmp/my-file")
 
     def test_fuzz(self):

@@ -22,7 +22,7 @@ from .execute import ShellCommand
 
 class AttributeChanger(base.Change):
 
-    """ Make the changes required to a file's attributes """
+    """Make the changes required to a file's attributes"""
 
     def __init__(self, filename, user=None, group=None, mode=None):
         self.filename = filename
@@ -32,7 +32,7 @@ class AttributeChanger(base.Change):
         self.changed = False
 
     def apply(self, context):
-        """ Apply the changes """
+        """Apply the changes"""
 
         if not platform.getpwnam or not platform.getgrnam:
             return self

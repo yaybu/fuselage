@@ -21,7 +21,12 @@ from tests.base import TestCaseWithRunner
 class TestLine(TestCaseWithRunner):
     def test_target_doesnt_exist(self):
         self.bundle.add(
-            Line(name="/target_doesnt_exist", match="^FOO", line="FOO 2", linesep="\n",)
+            Line(
+                name="/target_doesnt_exist",
+                match="^FOO",
+                line="FOO 2",
+                linesep="\n",
+            )
         )
         self.assertRaises(error.PathComponentMissing, self.apply)
 
@@ -101,13 +106,28 @@ class TestLine(TestCaseWithRunner):
     def test_multiple_lines(self):
         platform.put("/multiple_lines", "FOO 1\nBAR 2\nBAZ 3")
         self.bundle.add(
-            Line(name="/multiple_lines", match="^BAR", line="BAR 3", linesep="\n",)
+            Line(
+                name="/multiple_lines",
+                match="^BAR",
+                line="BAR 3",
+                linesep="\n",
+            )
         )
         self.bundle.add(
-            Line(name="/multiple_lines", match="^BAZ", line="BAZ 4", linesep="\n",)
+            Line(
+                name="/multiple_lines",
+                match="^BAZ",
+                line="BAZ 4",
+                linesep="\n",
+            )
         )
         self.bundle.add(
-            Line(name="/multiple_lines", match="^FOO", line="FOO 2", linesep="\n",)
+            Line(
+                name="/multiple_lines",
+                match="^FOO",
+                line="FOO 2",
+                linesep="\n",
+            )
         )
         self.check_apply()
         self.assertEqual(platform.get("/multiple_lines"), b"FOO 2\nBAR 3\nBAZ 4")

@@ -23,8 +23,8 @@ class Link(provider.Provider):
     policies = (resources.link.LinkAppliedPolicy,)
 
     def _get_owner(self):
-        """ Return the uid for the resource owner, or None if no owner is
-        specified. """
+        """Return the uid for the resource owner, or None if no owner is
+        specified."""
         owner = self.resource.owner
         if owner:
             try:
@@ -33,8 +33,8 @@ class Link(provider.Provider):
                 raise error.InvalidUser()
 
     def _get_group(self):
-        """ Return the gid for the resource group, or None if no group is
-        specified. """
+        """Return the gid for the resource group, or None if no group is
+        specified."""
         group = self.resource.group
         if group:
             try:
@@ -43,7 +43,7 @@ class Link(provider.Provider):
                 raise error.InvalidGroup()
 
     def _stat(self):
-        """ Extract stat information for the resource. """
+        """Extract stat information for the resource."""
         st = platform.lstat(self.resource.name)
         uid = st.st_uid
         gid = st.st_gid

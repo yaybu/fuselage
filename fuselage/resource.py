@@ -29,8 +29,8 @@ logger = logging.getLogger(__name__)
 
 class ResourceType(type):
 
-    """ Keeps a registry of resources as they are created, and provides some
-    simple access to their arguments. """
+    """Keeps a registry of resources as they are created, and provides some
+    simple access to their arguments."""
 
     resources = {}
 
@@ -67,8 +67,8 @@ class ResourceType(type):
 
 class AvailableResourcePolicies(dict):
 
-    """ A collection of the policies available for a resource, with some logic
-    to work out which of them is the one and only default policy. """
+    """A collection of the policies available for a resource, with some logic
+    to work out which of them is the one and only default policy."""
 
     def default(self):
         default = [p for p in self.values() if p.default]
@@ -80,7 +80,7 @@ class AvailableResourcePolicies(dict):
 
 class Resource(metaclass=ResourceType):
 
-    """ A resource represents a resource that can be configured on the system.
+    """A resource represents a resource that can be configured on the system.
     This might be as simple as a symlink or as complex as a database schema
     migration. Resources have policies that represent how the resource is to
     be treated. Providers are the implementation of the resource policy.
@@ -139,7 +139,7 @@ class Resource(metaclass=ResourceType):
     """
 
     def __init__(self, **kwargs):
-        """ Takes a reference to a Yay AST node """
+        """Takes a reference to a Yay AST node"""
         self.observers = list()
 
         for key, value in kwargs.items():
@@ -164,9 +164,9 @@ class Resource(metaclass=ResourceType):
         yield from klass.__args__
 
     def serialize(self, builder=None):
-        """ Return all argument names and values in a dictionary. If an
+        """Return all argument names and values in a dictionary. If an
         argument has no default and has not been set, it's value in the
-        dictionary will be None. """
+        dictionary will be None."""
         retval = {}
         for name, arg in self.__args__.items():
             if arg.present(self):
@@ -178,8 +178,8 @@ class Resource(metaclass=ResourceType):
         self.observers.append(resource)
 
     def apply(self, runner):
-        """ Apply the provider for the selected policy, and then fire any
-        events that are being observed. """
+        """Apply the provider for the selected policy, and then fire any
+        events that are being observed."""
 
         adapter = log.LoggerAdapter(logger, {"fuselage.resource": self.id})
 
@@ -197,16 +197,16 @@ class Resource(metaclass=ResourceType):
         return changed
 
     def fire_event(self, context):
-        """ Apply the appropriate policies on the resources that are observing
-        this resource for the firing of a policy. """
+        """Apply the appropriate policies on the resources that are observing
+        this resource for the firing of a policy."""
         logger.debug(f"Sending triggers from {self}")
         for resource in self.observers:
             logger.debug(f"Sending trigger from {self!r} to {resource!r}")
             context.state.set_trigger(resource)
 
     def bind(self, resources):
-        """ Bind this resource to all the resources on which it triggers.
-        Returns a list of the resources to which we are bound. """
+        """Bind this resource to all the resources on which it triggers.
+        Returns a list of the resources to which we are bound."""
         bound = []
         if self.watches:
             for trigger in self.watches:

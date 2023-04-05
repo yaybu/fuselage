@@ -24,7 +24,7 @@ from fuselage.resource import Resource
 
 class File(Resource):
 
-    """ A provider for this resource will create or amend an existing file to
+    """A provider for this resource will create or amend an existing file to
     the provided specification.
 
     For example, the following will create the /etc/hosts file based on a static local file::
@@ -89,7 +89,7 @@ class File(Resource):
 
 class FileApplyPolicy(Policy):
 
-    """ Create a file and populate it's contents if required.
+    """Create a file and populate it's contents if required.
 
     You must provide a name.
 
@@ -104,8 +104,8 @@ class FileApplyPolicy(Policy):
 
 class FileRemovePolicy(Policy):
 
-    """ Delete a file if it exists. You should only provide the name in this
-    case. """
+    """Delete a file if it exists. You should only provide the name in this
+    case."""
 
     resource = File
     name = "remove"
@@ -120,7 +120,7 @@ class FileRemovePolicy(Policy):
 
 class FileWatchedPolicy(Policy):
 
-    """ Watches a file to see if it changes when a resource a file.
+    """Watches a file to see if it changes when a resource a file.
 
     This policy is used internally and shouldn't be used directly.
     """

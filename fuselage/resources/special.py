@@ -21,7 +21,7 @@ from fuselage.resource import Resource
 
 class Special(Resource):
 
-    """ A special file, as created by mknod. """
+    """A special file, as created by mknod."""
 
     name = FullPath()
     """ The full path to the special file on disk. """
@@ -59,7 +59,7 @@ class Special(Resource):
 
 class SpecialAppliedPolicy(Policy):
 
-    """ Ensure a block or character special file exists """
+    """Ensure a block or character special file exists"""
 
     name = "apply"
     default = True
@@ -76,10 +76,10 @@ class SpecialAppliedPolicy(Policy):
 
 class SpecialRemovedPolicy(Policy):
 
-    """ If the special file specified exists, remove it.
+    """If the special file specified exists, remove it.
 
     You should only specify the special file to remove, the other fields are
-    not needed """
+    not needed"""
 
     name = "remove"
     default = False

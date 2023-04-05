@@ -22,7 +22,12 @@ class TestDummyCheckout(TestCaseWithRunner):
     def test_dummy_checkout(self):
         self.bundle.add(Directory(name="/dummy"))
         self.bundle.add(
-            Checkout(name="/dummy", repository="", scm="dummy", changes=["/dummy/foo"],)
+            Checkout(
+                name="/dummy",
+                repository="",
+                scm="dummy",
+                changes=["/dummy/foo"],
+            )
         )
         self.bundle.add(
             File(name="/dummy/change_detected", watches=["Checkout[/dummy]"])

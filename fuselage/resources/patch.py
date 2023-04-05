@@ -64,7 +64,7 @@ class Patch(Resource):
 
 class PatchApplyPolicy(Policy):
 
-    """ Apply a patch.
+    """Apply a patch.
 
     You must provide a target.
     """

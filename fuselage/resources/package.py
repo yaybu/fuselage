@@ -19,7 +19,7 @@ from fuselage.resource import Resource
 
 class Package(Resource):
 
-    """ Represents an operating system package, installed and managed via the
+    """Represents an operating system package, installed and managed via the
     OS package management system. For example, to ensure these three packages
     are installed::
 
@@ -49,7 +49,7 @@ class Package(Resource):
 
 class PackageInstallPolicy(Policy):
 
-    """ Install the specified package. If the package is already installed it
+    """Install the specified package. If the package is already installed it
     will not be upgraded or changed. Your package upgrade and patching
     strategy should be independent of Yaybu in general.
     """
@@ -65,7 +65,7 @@ class PackageInstallPolicy(Policy):
 
 class PackageUninstallPolicy(Policy):
 
-    """ Uninstall the specified package, if it is installed. """
+    """Uninstall the specified package, if it is installed."""
 
     resource = Package
     name = "uninstall"

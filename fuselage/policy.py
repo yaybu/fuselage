@@ -17,7 +17,7 @@ from fuselage import error
 
 class PolicyType(type):
 
-    """ Registers the policy on the resource """
+    """Registers the policy on the resource"""
 
     def __new__(meta, class_name, bases, new_attrs):
         cls = type.__new__(meta, class_name, bases, new_attrs)
@@ -67,8 +67,8 @@ class Policy(metaclass=PolicyType):
         raise error.NonConformingPolicy("\n".join(msg))
 
     def get_provider(self):
-        """ Get the one and only one provider that is valid for this resource,
-        policy and overall context """
+        """Get the one and only one provider that is valid for this resource,
+        policy and overall context"""
         import fuselage.providers  # noqa
 
         valid = [p.isvalid(self, self.resource) for p in self.providers]
@@ -89,7 +89,7 @@ class NullPolicy(Policy):
 
 class ArgumentAssertion:
 
-    """ An assertion of the state of an argument """
+    """An assertion of the state of an argument"""
 
     def __init__(self, name):
         self.name = name
@@ -97,11 +97,11 @@ class ArgumentAssertion:
 
 class Present(ArgumentAssertion):
 
-    """ The argument has been specified, or has a default value. """
+    """The argument has been specified, or has a default value."""
 
     def test(self, resource):
-        """ Test that the argument this asserts for is present in the
-        resource. """
+        """Test that the argument this asserts for is present in the
+        resource."""
         return resource.__args__[self.name].present(resource)
 
     def describe(self, resource):
@@ -110,8 +110,8 @@ class Present(ArgumentAssertion):
 
 class Absent(Present):
 
-    """ The argument has not been specified by the user and has no default
-    value. An argument with a default value is always defined. """
+    """The argument has not been specified by the user and has no default
+    value. An argument with a default value is always defined."""
 
     def test(self, resource):
         return not super().test(resource)

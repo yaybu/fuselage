@@ -185,7 +185,10 @@ class DeploymentTask(FuselageMixin, tasks.WrappedCallableTask):
             command.append("--simulate")
 
         if "loglevel" in kwargs:
-            if kwargs["loglevel"].lower() not in ("info", "debug",):
+            if kwargs["loglevel"].lower() not in (
+                "info",
+                "debug",
+            ):
                 utils.error("Invalid loglevel")
                 return
             command.extend(["-v"] * {"info": 0, "debug": 1}[kwargs["loglevel"].lower()])

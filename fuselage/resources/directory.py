@@ -22,7 +22,7 @@ from fuselage.resource import Resource
 
 class Directory(Resource):
 
-    """ A directory on disk. Directories have limited metadata, so this
+    """A directory on disk. Directories have limited metadata, so this
     resource is quite limited.
 
     For example::
@@ -54,8 +54,8 @@ class Directory(Resource):
 
 class DirectoryAppliedPolicy(Policy):
 
-    """ Ensure a directory exists and matches the specification provided
-    by the resource. """
+    """Ensure a directory exists and matches the specification provided
+    by the resource."""
 
     resource = Directory
     name = "apply"
@@ -65,7 +65,7 @@ class DirectoryAppliedPolicy(Policy):
 
 class DirectoryRemovedPolicy(Policy):
 
-    """ If a directory described by this resource exists then remove it.
+    """If a directory described by this resource exists then remove it.
 
     This isn't recursive, if you want to remove a directory and all its contents
     use `remove-recursive`.
@@ -87,7 +87,7 @@ class DirectoryRemovedPolicy(Policy):
 
 class DirectoryRemovedRecursivePolicy(Policy):
 
-    """ If a directory described by this resource exists then remove it and
+    """If a directory described by this resource exists then remove it and
     its children.
 
     You should only provide the path to the directory when using this policy.

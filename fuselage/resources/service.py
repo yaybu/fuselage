@@ -19,7 +19,7 @@ from fuselage.resource import Resource
 
 class Service(Resource):
 
-    """ This represents service startup and shutdown via an init daemon. """
+    """This represents service startup and shutdown via an init daemon."""
 
     name = String()
     """ A unique name representing an initd service.
@@ -72,7 +72,7 @@ class Service(Resource):
 
 class ServiceStartPolicy(Policy):
 
-    """ Start a service if it isn't running """
+    """Start a service if it isn't running"""
 
     resource = Service
     name = "start"
@@ -85,7 +85,7 @@ class ServiceStartPolicy(Policy):
 
 class ServiceStopPolicy(Policy):
 
-    """ Stop a service if it is running """
+    """Stop a service if it is running"""
 
     resource = Service
     name = "stop"
@@ -97,7 +97,7 @@ class ServiceStopPolicy(Policy):
 
 class ServiceRestartPolicy(Policy):
 
-    """ Restart a service
+    """Restart a service
 
     If a service isn't running it will just be started instead.
     """
@@ -112,7 +112,7 @@ class ServiceRestartPolicy(Policy):
 
 class ServiceReloadPolicy(Policy):
 
-    """ Get the service to reload its configuration
+    """Get the service to reload its configuration
 
     If a service isn't running it will just be started instead.
     """

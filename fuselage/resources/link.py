@@ -22,7 +22,7 @@ from fuselage.resource import Resource
 
 class Link(Resource):
 
-    """ A resource representing a symbolic link. The link will be from `name`
+    """A resource representing a symbolic link. The link will be from `name`
     to `to`. If you specify owner, group and/or mode then these settings will
     be applied to the link itself, not to the object linked to.
 

@@ -103,11 +103,17 @@ class DockerBuilder:
         tar_buffer.seek(0)
 
         c = docker.Client(
-            base_url="unix://var/run/docker.sock", version="1.12", timeout=10,
+            base_url="unix://var/run/docker.sock",
+            version="1.12",
+            timeout=10,
         )
 
         build_output = c.build(
-            fileobj=tar_buffer, custom_context=True, stream=True, rm=True, tag=self.tag,
+            fileobj=tar_buffer,
+            custom_context=True,
+            stream=True,
+            rm=True,
+            tag=self.tag,
         )
 
         status = None

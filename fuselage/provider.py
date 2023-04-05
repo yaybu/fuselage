@@ -22,7 +22,7 @@ from fuselage import log, policy
 
 class ProviderType(ABCMeta):
 
-    """ Registers the provider with the resource which it provides """
+    """Registers the provider with the resource which it provides"""
 
     def __new__(meta, class_name, bases, new_attrs):
         cls = super().__new__(meta, class_name, bases, new_attrs)
@@ -69,19 +69,19 @@ class Provider(metaclass=ProviderType):
 
     @classmethod
     def isvalid(self, policy, resource):
-        """ Returns True if this provider is valid for the specified resource,
+        """Returns True if this provider is valid for the specified resource,
         within the context of the provided yay structure. This returns True by
         default. If you want your provider to be more discriminating, then
         make it so. In particular if you want two providers for a policy, then
-        only one of those providers may return True from this method. """
+        only one of those providers may return True from this method."""
         return True
 
     @abstractmethod
     def apply(self, shell):
-        """ Execute this provider using the supplied shell object. This base
+        """Execute this provider using the supplied shell object. This base
         method must be overridden. This should return True if the provider
         changed anything, or False if it did not need to change anything (i.e.
-        the Resource was already in the state the policy ensures). """
+        the Resource was already in the state the policy ensures)."""
         return False
 
 

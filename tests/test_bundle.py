@@ -23,21 +23,35 @@ class TestBundle(unittest.TestCase):
         self.bundle = bundle.ResourceBundle()
 
     def test_add__simple(self):
-        self.bundle.add(resources.File(name="/tmp/example", owner="root",))
+        self.bundle.add(
+            resources.File(
+                name="/tmp/example",
+                owner="root",
+            )
+        )
         self.assertEqual(len(self.bundle), 1)
         self.assertEqual(self.bundle["File[/tmp/example]"].name, "/tmp/example")
 
     def test_add__simple_no_duplicates(self):
-        self.bundle.add(resources.File(name="/tmp/no_dupes",))
+        self.bundle.add(
+            resources.File(
+                name="/tmp/no_dupes",
+            )
+        )
         self.assertRaises(
             error.ParseError,
             self.bundle.add,
-            resources.File(name="/tmp/no_dupes", owner="tim",),
+            resources.File(
+                name="/tmp/no_dupes",
+                owner="tim",
+            ),
         )
 
     def test_add__bind(self):
         self.bundle.add(
-            resources.File(name="/etc/apache2/sites-enabled/www-example-com",)
+            resources.File(
+                name="/etc/apache2/sites-enabled/www-example-com",
+            )
         )
         self.bundle.add(
             resources.Execute(
@@ -71,7 +85,12 @@ class TestBundle(unittest.TestCase):
 
     def test_create(self):
         # FIXME: dict is a pep8 workaround
-        r = self.bundle.create("File", **dict(name="/tmp/example",))
+        r = self.bundle.create(
+            "File",
+            **dict(
+                name="/tmp/example",
+            ),
+        )
         self.assertEqual(r.name, "/tmp/example")
         self.assertEqual(len(self.bundle), 1)
 

@@ -19,7 +19,11 @@ from tests.base import TestCaseWithBundle, fuzz_resource
 
 class TestPackage(TestCaseWithBundle):
     def test_minimal(self):
-        r = self.bundle.add(Package(name="ubuntu-desktop",))
+        r = self.bundle.add(
+            Package(
+                name="ubuntu-desktop",
+            )
+        )
         self.assertEqual(r.name, "ubuntu-desktop")
 
     def test_fuzz(self):

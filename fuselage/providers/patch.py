@@ -21,7 +21,7 @@ from fuselage.utils import force_bytes
 
 class Patch(provider.Provider):
 
-    """ Provides file creation using templates or static files. """
+    """Provides file creation using templates or static files."""
 
     policies = (resources.patch.PatchApplyPolicy,)
 

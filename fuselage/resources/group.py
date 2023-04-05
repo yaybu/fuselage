@@ -19,7 +19,7 @@ from fuselage.resource import Resource
 
 class Group(Resource):
 
-    """ A resource representing a unix group stored in the /etc/group file.
+    """A resource representing a unix group stored in the /etc/group file.
     groupadd and groupmod are used to actually make modifications.
 
     For example::
@@ -45,7 +45,7 @@ class Group(Resource):
 
 class GroupApplyPolicy(Policy):
 
-    """ Create the group, or ensure it has the specified attributes. """
+    """Create the group, or ensure it has the specified attributes."""
 
     resource = Group
     name = "apply"
@@ -55,7 +55,7 @@ class GroupApplyPolicy(Policy):
 
 class GroupRemovePolicy(Policy):
 
-    """ Remove an existing group if it still exists.
+    """Remove an existing group if it still exists.
 
     You should only specify the name of the group when using this policy."""
 

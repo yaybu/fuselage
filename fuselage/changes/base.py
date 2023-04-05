@@ -20,11 +20,11 @@ import abc
 
 class Change:
 
-    """ Base class for changes """
+    """Base class for changes"""
 
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
     def apply(self, ctx):
-        """ Apply the specified change. The supplied renderer will be
-        instantiated as below. """
+        """Apply the specified change. The supplied renderer will be
+        instantiated as below."""

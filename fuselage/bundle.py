@@ -23,9 +23,9 @@ logger = logging.getLogger(__name__)
 
 class ResourceBundle:
 
-    """ An ordered, indexed collection of resources. Pass in a specification
+    """An ordered, indexed collection of resources. Pass in a specification
     that consists of scalars, lists and dictionaries and this class will
-    instantiate the appropriate resources into the structure. """
+    instantiate the appropriate resources into the structure."""
 
     BUNDLE_VERSION = 1
 
@@ -155,8 +155,8 @@ class ResourceBundle:
                     raise
 
     def apply(self, runner):
-        """ Apply the resources to the system, using the provided context and
-        overall configuration. """
+        """Apply the resources to the system, using the provided context and
+        overall configuration."""
         for resource in self.resources:
             if hasattr(resource, "_original_hash"):
                 resource._original_hash = resource.hash()

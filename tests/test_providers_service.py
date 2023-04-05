@@ -110,7 +110,11 @@ class TestService(TestCaseWithRunner):
 
     def test_restart(self):
         self.bundle.add(
-            Service(name="test", policy="restart", restart="touch /restarted",)
+            Service(
+                name="test",
+                policy="restart",
+                restart="touch /restarted",
+            )
         )
         self.apply()
         self.failUnlessExists("/restarted")

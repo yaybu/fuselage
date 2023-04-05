@@ -19,7 +19,12 @@ from tests.base import TestCaseWithBundle, fuzz_resource
 
 class TestExecute(TestCaseWithBundle):
     def test_minimal(self):
-        r = self.bundle.add(Execute(name="my-command", command="touch /foo",))
+        r = self.bundle.add(
+            Execute(
+                name="my-command",
+                command="touch /foo",
+            )
+        )
         self.assertEqual(r.name, "my-command")
 
     def test_fuzz(self):

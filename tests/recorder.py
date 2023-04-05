@@ -133,7 +133,10 @@ class Player:
         def _(*args, **kwargs):
             f, results, exception = self.results.pop(0)
             assert function_name == f, "'{}' != '{}', args={!r}, kwargs={!r}".format(
-                function_name, f, args, kwargs,
+                function_name,
+                f,
+                args,
+                kwargs,
             )
 
             logger.debug(f"fuselage.platform.{function_name}(*{args!r}, **{kwargs!r})")
